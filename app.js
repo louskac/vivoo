@@ -1,3 +1,7 @@
+// Embedded qrcode-generator Library
+var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(l=4*u+17),e(0,0),e(l-7,0),e(0,l-7),i(),o(),v(t,r),7<=u&&h(t),null==n&&(n=w(u,f,c)),d(n,r)}var u=t,f=y[r],g=null,l=0,n=null,c=[],s={},e=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||l<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||l<=r+n||(g[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},o=function(){for(var t=8;t<l-8;t+=1)null==g[t][6]&&(g[t][6]=t%2==0);for(var r=8;r<l-8;r+=1)null==g[6][r]&&(g[6][r]=r%2==0)},i=function(){for(var t=B.getPatternPosition(u),r=0;r<t.length;r+=1)for(var e=0;e<t.length;e+=1){var n=t[r],o=t[e];if(null==g[n][o])for(var i=-2;i<=2;i+=1)for(var a=-2;a<=2;a+=1)g[n+i][o+a]=-2==i||2==i||-2==a||2==a||0==i&&0==a}},h=function(t){for(var r=B.getBCHTypeNumber(u),e=0;e<18;e+=1){var n=!t&&1==(r>>e&1);g[Math.floor(e/3)][e%3+l-8-3]=n}for(e=0;e<18;e+=1){n=!t&&1==(r>>e&1);g[e%3+l-8-3][Math.floor(e/3)]=n}},v=function(t,r){for(var e=f<<3|r,n=B.getBCHTypeInfo(e),o=0;o<15;o+=1){var i=!t&&1==(n>>o&1);o<6?g[o][8]=i:o<8?g[o+1][8]=i:g[l-15+o][8]=i}for(o=0;o<15;o+=1){i=!t&&1==(n>>o&1);o<8?g[8][l-o-1]=i:o<9?g[8][15-o-1+1]=i:g[8][15-o-1]=i}g[l-8][8]=!t},d=function(t,r){for(var e=-1,n=l-1,o=7,i=0,a=B.getMaskFunction(r),u=l-1;0<u;u-=2)for(6==u&&(u-=1);;){for(var f=0;f<2;f+=1)if(null==g[n][u-f]){var c=!1;i<t.length&&(c=1==(t[i]>>>o&1)),a(n,u-f)&&(c=!c),g[n][u-f]=c,-1==(o-=1)&&(i+=1,o=7)}if((n+=e)<0||l<=n){n-=e,e=-e;break}}},w=function(t,r,e){for(var n=b.getRSBlocks(t,r),o=M(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=C(i[u],l.getLength()-1).mod(l);a[u]=new Array(l.getLength()-1);for(g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=0<=s?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};s.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=x(t);break;case"Alphanumeric":e=m(t);break;case"Byte":e=L(t);break;case"Kanji":e=D(t);break;default:throw"mode:"+r}c.push(e),n=null},s.isDark=function(t,r){if(t<0||l<=t||r<0||l<=r)throw t+","+r;return g[t][r]},s.getModuleCount=function(){return l},s.make=function(){if(u<1){for(var t=1;t<40;t++){for(var r=b.getRSBlocks(t,f),e=M(),n=0;n<c.length;n++){var o=c[n];e.put(o.getMode(),4),e.put(o.getLength(),B.getLengthInBits(o.getMode(),t)),o.write(e)}var i=0;for(n=0;n<r.length;n++)i+=r[n].dataCount;if(e.getLengthInBits()<=8*i)break}u=t}a(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){a(!0,e);var n=B.getLostPoint(s);(0==e||n<t)&&(t=n,r=e)}return r}())},s.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<s.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<s.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=s.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},s.createSvgTag=function(t,r,e,n){var o={};"object"==typeof t&&(t=(o=t).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,f,c=s.getModuleCount()*t+2*r,g="";for(f="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",g+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',g+=o.scalable?"":' width="'+c+'px" height="'+c+'px"',g+=' viewBox="0 0 '+c+" "+c+'" ',g+=' preserveAspectRatio="xMinYMin meet"',g+=n.text||e.text?' role="img" aria-labelledby="'+p([n.id,e.id].join(" ").trim())+'"':"",g+=">",g+=n.text?'<title id="'+p(n.id)+'">'+p(n.text)+"</title>":"",g+=e.text?'<description id="'+p(e.id)+'">'+p(e.text)+"</description>":"",g+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',g+='<path d="',a=0;a<s.getModuleCount();a+=1)for(u=a*t+r,i=0;i<s.getModuleCount();i+=1)s.isDark(a,i)&&(g+="M"+(i*t+r)+","+u+f);return g+='" stroke="transparent" fill="black"/>',g+="</svg>"},s.createDataURL=function(o,t){o=o||2,t=void 0===t?4*o:t;var r=s.getModuleCount()*o+2*t,i=t,a=r-t;return I(r,r,function(t,r){if(i<=t&&t<a&&i<=r&&r<a){var e=Math.floor((t-i)/o),n=Math.floor((r-i)/o);return s.isDark(n,e)?0:1}return 1})},s.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=s.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=s.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=p(e),o+='"'),o+="/>"};var p=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return s.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*s.getModuleCount()+2*t,u=t,f=a-t,c={"██":"█","█ ":"▀"," █":"▄","  ":" "},g={"██":"▀","█ ":"▀"," █":" ","  ":" "},l="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<f&&u<=r&&r<f&&s.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<f&&u<=r+1&&r+1<f&&s.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",l+=t<1&&f<=r+1?g[i]:c[i];l+="\n"}return a%2&&0<t?l.substring(0,l.length-a-1)+Array(1+a).join("▀"):l.substring(0,l.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=s.getModuleCount()*t+2*r,u=r,f=a-r,c=Array(t+1).join("██"),g=Array(t+1).join("  "),l="",h="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),h="",n=0;n<a;n+=1)i=1,u<=n&&n<f&&u<=e&&e<f&&s.isDark(o,Math.floor((n-u)/t))&&(i=0),h+=i?c:g;for(o=0;o<t;o+=1)l+=h+"\n"}return l.substring(0,l.length-1)},s.renderTo2dContext=function(t,r){r=r||2;for(var e=s.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=s.isDark(n,o)?"black":"white",t.fillRect(n*r,o*r,r,r)},s}i.stringToBytes=(i.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,i.createStringToBytes=function(u,f){var i=function(){function t(){var t=r.read();if(-1==t)throw"eof";return t}for(var r=S(u),e=0,n={};;){var o=r.read();if(-1==o)break;var i=t(),a=t()<<8|t();n[String.fromCharCode(o<<8|i)]=a,e+=1}if(e!=f)throw e+" != "+f;return n}(),a="?".charCodeAt(0);return function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);if(n<128)r.push(n);else{var o=i[t.charAt(e)];"number"==typeof o?(255&o)==o?r.push(o):(r.push(o>>>8),r.push(255&o)):r.push(a)}}return r}};var r,t,a=1,u=2,o=4,f=8,y={L:1,M:0,Q:3,H:2},e=0,n=1,c=2,g=3,l=4,h=5,s=6,v=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],(t={}).getBCHTypeInfo=function(t){for(var r=t<<10;0<=d(r)-d(1335);)r^=1335<<d(r)-d(1335);return 21522^(t<<10|r)},t.getBCHTypeNumber=function(t){for(var r=t<<12;0<=d(r)-d(7973);)r^=7973<<d(r)-d(7973);return t<<12|r},t.getPatternPosition=function(t){return r[t-1]},t.getMaskFunction=function(t){switch(t){case e:return function(t,r){return(t+r)%2==0};case n:return function(t,r){return t%2==0};case c:return function(t,r){return r%3==0};case g:return function(t,r){return(t+r)%3==0};case l:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case h:return function(t,r){return t*r%2+t*r%3==0};case s:return function(t,r){return(t*r%2+t*r%3)%2==0};case v:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},t.getErrorCorrectPolynomial=function(t){for(var r=C([1],0),e=0;e<t;e+=1)r=r.multiply(C([1,w.gexp(e)],0));return r},t.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case o:case f:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case o:return 16;case f:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case o:return 16;case f:return 12;default:throw"mode:"+t}}},t.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);5<i&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},t);function d(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r}var w=function(){for(var r=new Array(256),e=new Array(256),t=0;t<8;t+=1)r[t]=1<<t;for(t=8;t<256;t+=1)r[t]=r[t-4]^r[t-5]^r[t-6]^r[t-8];for(t=0;t<255;t+=1)e[r[t]]=t;var n={glog:function(t){if(t<1)throw"glog("+t+")";return e[t]},gexp:function(t){for(;t<0;)t+=255;for(;256<=t;)t-=255;return r[t]}};return n}();function C(n,o){if(void 0===n.length)throw n.length+"/"+o;var r=function(){for(var t=0;t<n.length&&0==n[t];)t+=1;for(var r=new Array(n.length-t+o),e=0;e<n.length-t;e+=1)r[e]=n[e+t];return r}(),i={getAt:function(t){return r[t]},getLength:function(){return r.length},multiply:function(t){for(var r=new Array(i.getLength()+t.getLength()-1),e=0;e<i.getLength();e+=1)for(var n=0;n<t.getLength();n+=1)r[e+n]^=w.gexp(w.glog(i.getAt(e))+w.glog(t.getAt(n)));return C(r,0)},mod:function(t){if(i.getLength()-t.getLength()<0)return i;for(var r=w.glog(i.getAt(0))-w.glog(t.getAt(0)),e=new Array(i.getLength()),n=0;n<i.getLength();n+=1)e[n]=i.getAt(n);for(n=0;n<t.getLength();n+=1)e[n]^=w.gexp(w.glog(t.getAt(n))+r);return C(e,0).mod(t)}};return i}function p(){var e=[],o={writeByte:function(t){e.push(255&t)},writeShort:function(t){o.writeByte(t),o.writeByte(t>>>8)},writeBytes:function(t,r,e){r=r||0,e=e||t.length;for(var n=0;n<e;n+=1)o.writeByte(t[n+r])},writeString:function(t){for(var r=0;r<t.length;r+=1)o.writeByte(t.charCodeAt(r))},toByteArray:function(){return e},toString:function(){var t="";t+="[";for(var r=0;r<e.length;r+=1)0<r&&(t+=","),t+=e[r];return t+="]"}};return o}var k,A,b=(k=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],(A={}).getRSBlocks=function(t,r){var e=function(t,r){switch(r){case y.L:return k[4*(t-1)+0];case y.M:return k[4*(t-1)+1];case y.Q:return k[4*(t-1)+2];case y.H:return k[4*(t-1)+3];default:return}}(t,r);if(void 0===e)throw"bad rs block @ typeNumber:"+t+"/errorCorrectionLevel:"+r;for(var n,o,i=e.length/3,a=[],u=0;u<i;u+=1)for(var f=e[3*u+0],c=e[3*u+1],g=e[3*u+2],l=0;l<f;l+=1)a.push((n=g,o=void 0,(o={}).totalCount=c,o.dataCount=n,o));return a},A),M=function(){var e=[],n=0,o={getBuffer:function(){return e},getAt:function(t){var r=Math.floor(t/8);return 1==(e[r]>>>7-t%8&1)},put:function(t,r){for(var e=0;e<r;e+=1)o.putBit(1==(t>>>r-e-1&1))},getLengthInBits:function(){return n},putBit:function(t){var r=Math.floor(n/8);e.length<=r&&e.push(0),t&&(e[r]|=128>>>n%8),n+=1}};return o},x=function(t){var r=a,n=t,e={getMode:function(){return r},getLength:function(t){return n.length},write:function(t){for(var r=n,e=0;e+2<r.length;)t.put(o(r.substring(e,e+3)),10),e+=3;e<r.length&&(r.length-e==1?t.put(o(r.substring(e,e+1)),4):r.length-e==2&&t.put(o(r.substring(e,e+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return e},m=function(t){var r=u,n=t,e={getMode:function(){return r},getLength:function(t){return n.length},write:function(t){for(var r=n,e=0;e+1<r.length;)t.put(45*o(r.charAt(e))+o(r.charAt(e+1)),11),e+=2;e<r.length&&t.put(o(r.charAt(e)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return e},L=function(t){var r=o,e=i.stringToBytes(t),n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=0;r<e.length;r+=1)t.put(e[r],8)}};return n},D=function(t){var r=f,e=i.stringToBytesFuncs.SJIS;if(!e)throw"sjis not supported.";!function(){var t=e("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=e(t),n={getMode:function(){return r},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return n},S=function(t){var e=t,n=0,o=0,i=0,r={read:function(){for(;i<8;){if(n>=e.length){if(0==i)return-1;throw"unexpected end of file./"+i}var t=e.charAt(n);if(n+=1,"="==t)return i=0,-1;t.match(/^\s$/)||(o=o<<6|a(t.charCodeAt(0)),i+=6)}var r=o>>>i-8&255;return i-=8,r}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return r},I=function(t,r,e){for(var n=function(t,r){var n=t,o=r,l=new Array(t*r),e={setPixel:function(t,r,e){l[r*n+t]=e},write:function(t){t.writeString("GIF87a"),t.writeShort(n),t.writeShort(o),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(n),t.writeShort(o),t.writeByte(0);var r=i(2);t.writeByte(2);for(var e=0;255<r.length-e;)t.writeByte(255),t.writeBytes(r,e,255),e+=255;t.writeByte(r.length-e),t.writeBytes(r,e,r.length-e),t.writeByte(0),t.writeString(";")}},i=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,o=h(),i=0;i<r;i+=1)o.add(String.fromCharCode(i));o.add(String.fromCharCode(r)),o.add(String.fromCharCode(e));var a=p(),u=function(t){var e=t,n=0,o=0,r={write:function(t,r){if(t>>>r!=0)throw"length over";for(;8<=n+r;)e.writeByte(255&(t<<n|o)),r-=8-n,t>>>=8-n,n=o=0;o|=t<<n,n+=r},flush:function(){0<n&&e.writeByte(o)}};return r}(a);u.write(r,n);var f=0,c=String.fromCharCode(l[f]);for(f+=1;f<l.length;){var g=String.fromCharCode(l[f]);f+=1,o.contains(c+g)?c+=g:(u.write(o.indexOf(c),n),o.size()<4095&&(o.size()==1<<n&&(n+=1),o.add(c+g)),c=g)}return u.write(o.indexOf(c),n),u.write(e,n),u.flush(),a.toByteArray()},h=function(){var r={},e=0,n={add:function(t){if(n.contains(t))throw"dup key:"+t;r[t]=e,e+=1},size:function(){return e},indexOf:function(t){return r[t]},contains:function(t){return void 0!==r[t]}};return n};return e}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=p();n.write(a);for(var u=function(){function e(t){a+=String.fromCharCode(r(63&t))}var n=0,o=0,i=0,a="",t={},r=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return t.writeByte=function(t){for(n=n<<8|255&t,o+=8,i+=1;6<=o;)e(n>>>o-6),o-=6},t.flush=function(){if(0<o&&(e(n<<6-o),o=n=0),i%3!=0)for(var t=3-i%3,r=0;r<t;r+=1)a+="="},t.toString=function(){return a},t}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return i}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||57344<=n?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});
+window.qrcode = qrcode;
+
 /* ==========================================================================
    ViVoo - Client-Side Prototype Logic
    Features: TikTok Feed, Smart Seating POV, Apple Pay, Split Payment,
@@ -55,7 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
     groupBuyCount: 3,
     splitSession: null,
     tickets: [], // Purchased tickets
-    isMuted: true
+    isMuted: true,
+    gridCityFilter: 'all',
+    gridPriceFilter: 'all',
+    selectedTicketId: null,
+    navigationHistory: []
   };
 
   // Mock Events Database with local, range-request optimized video files
@@ -63,16 +71,17 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       id: 'derby',
       title: 'Prague Football Derby: Sparta vs Slavia',
-      tag: 'Adrenalin',
-      vibe: 'adrenalin',
+      tag: 'Sport',
+      vibe: 'sport',
       location: 'epet ARENA, Prague',
       date: 'Saturday, Oct 14 • 18:00',
       lineup: 'AC Sparta Praha vs SK Slavia Praha',
       weather: { temp: '16°C', text: 'Clear Sky', icon: 'clear' },
       videoUrl: './videos/derby.mp4',
-      bgImg: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop',
+      bgImg: './images/derby.jpg',
       priceMin: 300,
       priceMax: 1200,
+      isFree: false,
       sectors: [
         { name: 'Sektor C (Upper Gallery)', price: 350, povType: 'far-stadium' },
         { name: 'Sektor B (Mid Tier)', price: 650, povType: 'mid-stadium' },
@@ -82,16 +91,17 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       id: 'techno',
       title: 'Basement Syndicate: Warehouse Techno Night',
-      tag: 'Party',
-      vibe: 'party',
+      tag: 'Music',
+      vibe: 'music',
       location: 'Hala 13, Holešovice',
       date: 'Friday, Oct 20 • 22:00',
       lineup: 'Boris Brejcha, Amelie Lens, DJ Shadow, Charlotte de Witte',
       weather: { temp: '18°C', text: 'Indoor Event', icon: 'indoor' },
       videoUrl: './videos/techno.mp4',
-      bgImg: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&auto=format&fit=crop',
+      bgImg: './images/techno.jpg',
       priceMin: 400,
       priceMax: 1600,
+      isFree: false,
       sectors: [
         { name: 'Warehouse General Admission', price: 450, povType: 'dancefloor-back' },
         { name: 'VIP Boiler Deck', price: 850, povType: 'dancefloor-front' },
@@ -101,34 +111,35 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       id: 'basketball',
       title: 'Red Bull Half Court Basketball Finals',
-      tag: 'Adrenalin',
-      vibe: 'adrenalin',
+      tag: 'Sport',
+      vibe: 'sport',
       location: 'Riegrovy Sady, Prague',
       date: 'Sunday, Oct 15 • 15:00',
       lineup: 'Prague Streetball Elite & Guest Dunkers',
       weather: { temp: '19°C', text: 'Sunny Day', icon: 'clear' },
       videoUrl: './videos/basketball.mp4',
-      bgImg: 'https://images.unsplash.com/photo-1544698310-74ea9d1c8258?w=800&auto=format&fit=crop',
-      priceMin: 150,
-      priceMax: 500,
+      bgImg: './images/basketball.jpg',
+      priceMin: 0,
+      priceMax: 0,
+      isFree: true,
       sectors: [
-        { name: 'Grandstand Bleachers', price: 180, povType: 'dancefloor-back' },
-        { name: 'Courtside VIP Bench', price: 450, povType: 'dancefloor-front' }
+        { name: 'General Admission Standing', price: 0, povType: 'dancefloor-back' }
       ]
     },
     {
       id: 'summerbeats',
       title: 'Summer Beats Open Air Festival',
-      tag: 'Party',
-      vibe: 'party',
+      tag: 'Music',
+      vibe: 'music',
       location: 'Žluté lázně, Prague',
       date: 'Saturday, Aug 19 • 14:00',
       lineup: 'Solomun, Tale of Us, Adriatique, Keinemusik',
       weather: { temp: '26°C', text: 'Warm & Sunny', icon: 'clear' },
       videoUrl: './videos/summerbeats.mp4',
-      bgImg: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop',
+      bgImg: './images/summerbeats.jpg',
       priceMin: 490,
       priceMax: 1490,
+      isFree: false,
       sectors: [
         { name: 'General Admission Beach Area', price: 550, povType: 'dancefloor-back' },
         { name: 'VIP Main Deck VIP Seating', price: 1200, povType: 'dancefloor-front' }
@@ -137,16 +148,17 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       id: 'ballet',
       title: 'Magical Water Fountain Light Show',
-      tag: 'Klid',
-      vibe: 'klid',
+      tag: 'Culture',
+      vibe: 'culture',
       location: 'Křižík Fountain, Exhibition Grounds',
       date: 'Sunday, Oct 22 • 19:30',
       lineup: 'Laterna Magika Dance Ensemble & Prague Symphony Orchestra',
       weather: { temp: '14°C', text: 'Light Breeze', icon: 'windy' },
       videoUrl: './videos/ballet.mp4',
-      bgImg: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=800&auto=format&fit=crop',
+      bgImg: './images/ballet.jpg',
       priceMin: 250,
       priceMax: 900,
+      isFree: false,
       sectors: [
         { name: 'Grandstand Balcony C', price: 300, povType: 'fountain-far' },
         { name: 'Premium Terrace B', price: 550, povType: 'fountain-mid' },
@@ -156,20 +168,55 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       id: 'flora',
       title: 'Flora Acoustic: Garden Symphony Concert',
-      tag: 'Klid',
-      vibe: 'klid',
+      tag: 'Culture',
+      vibe: 'culture',
       location: 'Flora Exhibition Grounds, Olomouc',
       date: 'Saturday, Oct 28 • 16:00',
       lineup: 'Olomouc Symphonic Soloists & Flora Acoustic Trio',
       weather: { temp: '15°C', text: 'Sunny Day', icon: 'clear' },
       videoUrl: './videos/flora.mp4',
-      bgImg: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=800&auto=format&fit=crop',
-      priceMin: 200,
-      priceMax: 700,
+      bgImg: './images/flora.jpg',
+      priceMin: 0,
+      priceMax: 0,
+      isFree: true,
       sectors: [
-        { name: 'Sektor Garden A (Acoustic Pitch)', price: 250, povType: 'fountain-near' },
-        { name: 'Sektor Terraces B (Elevated View)', price: 450, povType: 'fountain-mid' },
-        { name: 'General Admission Balcony C', price: 650, povType: 'fountain-far' }
+        { name: 'General Admission Gardens', price: 0, povType: 'fountain-mid' }
+      ]
+    },
+    {
+      id: 'networking_meetup',
+      title: 'Prague Tech Founders Meetup',
+      tag: 'Networking',
+      vibe: 'networking',
+      location: 'Start-up Loft, Holešovice',
+      date: 'Thursday, Nov 9 • 19:00',
+      lineup: 'Keynote Panel & Investor Pitch Arena',
+      weather: { temp: '17°C', text: 'Indoor Loft', icon: 'indoor' },
+      videoUrl: './videos/techno.mp4',
+      bgImg: './images/networking.jpg',
+      priceMin: 0,
+      priceMax: 0,
+      isFree: true,
+      sectors: [
+        { name: 'Loft General Admission', price: 0, povType: 'dancefloor-back' }
+      ]
+    },
+    {
+      id: 'comedy_night',
+      title: 'English Comedy Night: Stands-ups live',
+      tag: 'Fun',
+      vibe: 'fun',
+      location: 'The Comedy Cellar, Prague',
+      date: 'Wednesday, Nov 15 • 20:30',
+      lineup: 'Toby Smith (UK) & Local Talent Showcase',
+      weather: { temp: '18°C', text: 'Comedy Cellar', icon: 'indoor' },
+      videoUrl: './videos/techno.mp4',
+      bgImg: './images/fun.jpg',
+      priceMin: 220,
+      priceMax: 450,
+      isFree: false,
+      sectors: [
+        { name: 'General Admission seating', price: 250, povType: 'dancefloor-back' }
       ]
     }
   ];
@@ -181,12 +228,37 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2. VIEW ROUTER (SPA navigation with View Transitions support)
   // --------------------------------------------------------------------------
   
-  function navigateTo(screenId) {
+  function navigateTo(screenId, pushToHistory = true) {
     if (state.activeScreen === screenId) return;
 
-    // Track previous screen before switching to detail views
-    if (screenId === 'detail-screen') {
-      state.previousScreen = state.activeScreen;
+    // Clean up secure ticket intervals & hologram loops when navigating away
+    if (screenId !== 'ticket-screen') {
+      if (ticketCountdownInterval) {
+        clearInterval(ticketCountdownInterval);
+        ticketCountdownInterval = null;
+      }
+      if (hologramAnimFrame) {
+        cancelAnimationFrame(hologramAnimFrame);
+        hologramAnimFrame = null;
+      }
+      const oldCanvas = document.getElementById('pass-hologram-canvas');
+      if (oldCanvas && oldCanvas._cleanup) {
+        oldCanvas._cleanup();
+      }
+      state.selectedTicketId = null;
+    }
+
+    const mainTabs = ['feed-screen', 'grid-screen', 'ticket-screen', 'profile-screen'];
+
+    // Track active screen routing stack
+    if (pushToHistory) {
+      if (mainTabs.includes(screenId)) {
+        state.navigationHistory = []; // Reset subscreen stack on tab switches
+      } else {
+        if (state.navigationHistory.length === 0 || state.navigationHistory[state.navigationHistory.length - 1] !== state.activeScreen) {
+          state.navigationHistory.push(state.activeScreen);
+        }
+      }
     }
 
     const oldScreen = document.getElementById(state.activeScreen);
@@ -197,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
       newScreen.classList.add('active');
       
       // Bottom navigation capsule visibility
-      const mainTabs = ['feed-screen', 'grid-screen', 'ticket-screen', 'profile-screen'];
       const capsuleNav = document.querySelector('.bottom-nav-capsule');
       if (mainTabs.includes(screenId)) {
         capsuleNav.classList.remove('hidden');
@@ -236,10 +307,103 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function syncCapsuleNav(screenId) {
-    const navButtons = document.querySelectorAll('.capsule-nav-item');
+  function navigateBack() {
+    if (state.navigationHistory && state.navigationHistory.length > 0) {
+      const prev = state.navigationHistory.pop();
+      navigateTo(prev, false);
+    } else {
+      navigateTo('feed-screen', false);
+    }
+  }
+
+  // Highlight positioning logic
+  const capsule = document.querySelector('.bottom-nav-capsule');
+  const highlight = document.getElementById('capsule-nav-highlight');
+  const navButtons = document.querySelectorAll('.capsule-nav-item');
+  
+  let isDragging = false;
+
+  function updateHighlightToButton(btn, animate = true) {
+    if (!highlight || !btn) return;
+    
+    if (animate) {
+      capsule.classList.remove('is-dragging');
+    } else {
+      capsule.classList.add('is-dragging');
+    }
+    
+    const highlightWidth = 56; // Matching premium capsule design width
+    const btnCenterX = btn.offsetLeft + btn.offsetWidth / 2;
+    const targetX = btnCenterX - highlightWidth / 2;
+    
+    highlight.style.width = `${highlightWidth}px`;
+    highlight.style.transform = `translate3d(${targetX}px, 0, 0)`;
+    
+    // Clear any temporary rubber-band translate on snap back
+    capsule.style.transform = '';
+  }
+
+  function updateHighlightToX(pointerX, animate = false) {
+    if (!highlight) return;
+    
+    if (animate) {
+      capsule.classList.remove('is-dragging');
+    } else {
+      capsule.classList.add('is-dragging');
+    }
+    
+    const highlightWidth = 56;
+    const minCenterX = 8 + highlightWidth / 2;
+    const maxCenterX = capsule.offsetWidth - 8 - highlightWidth / 2;
+    
+    let targetX = 0;
+    let stretchedWidth = highlightWidth;
+    let shiftX = 0;
+    
+    // Elastic rubber-banding physics calculations when pulling near limits
+    if (pointerX < minCenterX) {
+      const overflow = minCenterX - pointerX;
+      stretchedWidth = highlightWidth + overflow * 0.45; // Stretch width elastically
+      targetX = 8 - (overflow * 0.15); // Slide left slightly with high resistance
+      targetX = Math.max(2, targetX);
+      shiftX = -overflow * 0.2; // Rubber-band shift the entire nav bar in direction of pull
+    } else if (pointerX > maxCenterX) {
+      const overflow = pointerX - maxCenterX;
+      stretchedWidth = highlightWidth + overflow * 0.45; // Stretch width elastically
+      targetX = (capsule.offsetWidth - 8 - highlightWidth) + (overflow * 0.15); // Slide right slightly with high resistance
+      targetX = Math.min(capsule.offsetWidth - stretchedWidth - 2, targetX);
+      shiftX = overflow * 0.2; // Rubber-band shift the entire nav bar in direction of pull
+    } else {
+      stretchedWidth = highlightWidth;
+      targetX = pointerX - highlightWidth / 2;
+      shiftX = 0;
+    }
+    
+    highlight.style.width = `${stretchedWidth}px`;
+    highlight.style.transform = `translate3d(${targetX}px, 0, 0)`;
+    
+    // Apply horizontal translation shift to the nav capsule
+    capsule.style.transform = `translateX(-50%) translate3d(${shiftX}px, 0, 0)`;
+    
+    // Update button active state as we drag (using highlight's center coordinate)
+    updateActiveIconProximity(targetX + stretchedWidth / 2);
+  }
+
+  function updateActiveIconProximity(centerX) {
+    let minDistance = Infinity;
+    let closestBtn = null;
+    
     navButtons.forEach(btn => {
-      if (btn.dataset.screen === screenId) {
+      const btnCenterX = btn.offsetLeft + btn.offsetWidth / 2;
+      const distance = Math.abs(centerX - btnCenterX);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestBtn = btn;
+      }
+    });
+    
+    navButtons.forEach(btn => {
+      if (btn === closestBtn) {
         btn.classList.add('active');
       } else {
         btn.classList.remove('active');
@@ -247,10 +411,113 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function syncCapsuleNav(screenId) {
+    navButtons.forEach(btn => {
+      if (btn.dataset.screen === screenId) {
+        btn.classList.add('active');
+        updateHighlightToButton(btn, true);
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  // Pointer event listeners for touch drag interaction
+  if (capsule) {
+    capsule.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      
+      isDragging = true;
+      capsule.classList.add('is-dragging');
+      capsule.setPointerCapture(e.pointerId);
+      
+      const rect = capsule.getBoundingClientRect();
+      const pointerX = e.clientX - rect.left;
+      
+      updateHighlightToX(pointerX, false);
+    });
+
+    capsule.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      
+      const rect = capsule.getBoundingClientRect();
+      const pointerX = e.clientX - rect.left;
+      
+      updateHighlightToX(pointerX, false);
+    });
+
+    capsule.addEventListener('pointerup', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      capsule.releasePointerCapture(e.pointerId);
+      capsule.classList.remove('is-dragging');
+      
+      // Snap to the closest button and navigate
+      const rect = capsule.getBoundingClientRect();
+      const pointerX = e.clientX - rect.left;
+      
+      let minDistance = Infinity;
+      let closestBtn = null;
+      
+      navButtons.forEach(btn => {
+        const btnCenterX = btn.offsetLeft + btn.offsetWidth / 2;
+        const distance = Math.abs(pointerX - btnCenterX);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestBtn = btn;
+        }
+      });
+      
+      if (closestBtn) {
+        updateHighlightToButton(closestBtn, true);
+        navigateTo(closestBtn.dataset.screen);
+      } else {
+        capsule.style.transform = '';
+      }
+    });
+
+    capsule.addEventListener('pointercancel', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      capsule.releasePointerCapture(e.pointerId);
+      capsule.classList.remove('is-dragging');
+      
+      // Snap back to the current active screen button
+      const activeBtn = capsule.querySelector('.capsule-nav-item.active');
+      if (activeBtn) {
+        updateHighlightToButton(activeBtn, true);
+      } else {
+        capsule.style.transform = '';
+      }
+    });
+
+    // Handle window resize to keep highlight aligned
+    window.addEventListener('resize', () => {
+      const activeBtn = capsule.querySelector('.capsule-nav-item.active');
+      if (activeBtn) {
+        updateHighlightToButton(activeBtn, false);
+      }
+    });
+
+    // Initialize highlight position on load and pre-fill wallet with placeholder tickets
+    setTimeout(() => {
+      const activeBtn = capsule.querySelector('.capsule-nav-item.active');
+      if (activeBtn) {
+        updateHighlightToButton(activeBtn, false);
+      }
+      
+      // Pre-fill tickets database with mock tickets for visual testing
+      if (state.tickets.length === 0 && eventsData.length > 2) {
+        createMockTicket(eventsData[0], eventsData[0].sectors[1], false, 'Jakub Dostál');
+        createMockTicket(eventsData[2], eventsData[2].sectors[0], true, 'Jakub Dostál (Host)');
+      }
+    }, 150);
+  }
+
   // Back button routing
-  document.getElementById('detail-back-btn').addEventListener('click', () => navigateTo(state.previousScreen || 'feed-screen'));
-  document.getElementById('checkout-back-btn').addEventListener('click', () => navigateTo('detail-screen'));
-  document.getElementById('ugc-back-btn').addEventListener('click', () => navigateTo('profile-screen'));
+  document.getElementById('detail-back-btn').addEventListener('click', () => navigateBack());
+  document.getElementById('checkout-back-btn').addEventListener('click', () => navigateBack());
+  document.getElementById('ugc-back-btn').addEventListener('click', () => navigateBack());
 
   // Global bottom nav capsule click bindings
   document.querySelectorAll('.capsule-nav-item').forEach(btn => {
@@ -560,7 +827,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------------------------------------------------------------------------
   
   const videoFeedContainer = document.getElementById('video-feed');
-  const vibes = ['all', 'party', 'adrenalin', 'klid'];
+  const vibes = ['all', 'sport', 'culture', 'fun', 'networking', 'music'];
 
   // Switch vibe function
   function switchVibe(selectedVibe) {
@@ -655,6 +922,62 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Pricing segmented toggle switch on discovery grid
+  document.querySelectorAll('.pricing-switch-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.pricing-segment-switch .pricing-switch-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.gridPriceFilter = btn.dataset.priceFilter;
+      renderDiscoveryGrid();
+    });
+  });
+
+  // Location selector inline dropdown handlers
+  const locationSelector = document.getElementById('grid-location-selector');
+  const locationDropdown = document.getElementById('location-dropdown');
+  const dropdownItems = document.querySelectorAll('.location-dropdown-item');
+  const currentLocationText = document.getElementById('current-location-text');
+
+  if (locationSelector && locationDropdown) {
+    locationSelector.addEventListener('click', (e) => {
+      e.stopPropagation();
+      locationDropdown.classList.toggle('active');
+    });
+  }
+
+  // Close dropdown on clicking outside
+  document.addEventListener('click', () => {
+    if (locationDropdown) {
+      locationDropdown.classList.remove('active');
+    }
+  });
+
+  dropdownItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const selectedLoc = item.dataset.location;
+      state.gridCityFilter = selectedLoc;
+
+      // Update selected state of item list
+      dropdownItems.forEach(i => i.classList.remove('selected'));
+      item.classList.add('selected');
+
+      // Update location pill button label
+      if (currentLocationText) {
+        if (selectedLoc === 'all') {
+          currentLocationText.textContent = 'All';
+        } else if (selectedLoc === 'prague') {
+          currentLocationText.textContent = 'Prague';
+        } else if (selectedLoc === 'olomouc') {
+          currentLocationText.textContent = 'Olomouc';
+        }
+      }
+
+      locationDropdown.classList.remove('active');
+      renderDiscoveryGrid();
+    });
+  });
+
   // Search input typing handler
   const searchInput = document.getElementById('grid-search-input');
   if (searchInput) {
@@ -664,24 +987,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Render Discovery Grid lists (Zábava v Praze & Zábava v Olomouci)
+  // Render Discovery Grid lists (Spotlight Banner + 2-Column Grid)
   function renderDiscoveryGrid() {
-    const pragueWrapper = document.getElementById('cards-prague');
-    const olomoucWrapper = document.getElementById('cards-olomouc');
+    const heroSpotlight = document.getElementById('grid-hero-spotlight');
+    const experiencesContainer = document.getElementById('grid-experiences-container');
+    const titleText = document.getElementById('grid-section-title-text');
     
-    if (!pragueWrapper || !olomoucWrapper) return;
+    if (!experiencesContainer) return;
 
-    pragueWrapper.innerHTML = '';
-    olomoucWrapper.innerHTML = '';
+    experiencesContainer.innerHTML = '';
+    if (heroSpotlight) {
+      heroSpotlight.innerHTML = '';
+      heroSpotlight.style.display = 'none';
+    }
 
     const query = (state.gridSearchQuery || '').toLowerCase().trim();
     const vibe = state.gridVibeFilter || 'all';
+    const city = state.gridCityFilter || 'all';
+    const priceFilter = state.gridPriceFilter || 'all';
 
-    // Filter events
+    // Filter events by vibe
     let filtered = [...eventsData];
     if (vibe !== 'all') {
       filtered = filtered.filter(ev => ev.vibe === vibe);
     }
+    
+    // Filter by city
+    if (city === 'prague') {
+      filtered = filtered.filter(ev => 
+        ev.location.toLowerCase().includes('prague') || 
+        ev.location.toLowerCase().includes('praha') ||
+        ev.location.toLowerCase().includes('holesovice')
+      );
+    } else if (city === 'olomouc') {
+      filtered = filtered.filter(ev => 
+        ev.location.toLowerCase().includes('olomouc')
+      );
+    }
+
+    // Filter by price segmented switch (Paid vs Free)
+    if (priceFilter === 'paid') {
+      filtered = filtered.filter(ev => !ev.isFree);
+    } else if (priceFilter === 'free') {
+      filtered = filtered.filter(ev => ev.isFree);
+    }
+
+    // Filter by search query
     if (query) {
       filtered = filtered.filter(ev => 
         ev.title.toLowerCase().includes(query) || 
@@ -690,52 +1041,100 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     }
 
-    // Split by location
-    const pragueEvents = filtered.filter(ev => 
-      ev.location.toLowerCase().includes('prague') || 
-      ev.location.toLowerCase().includes('praha') ||
-      ev.location.toLowerCase().includes('holesovice')
-    );
-
-    const olomoucEvents = filtered.filter(ev => 
-      ev.location.toLowerCase().includes('olomouc')
-    );
-
-    // Populate Prague row
-    if (pragueEvents.length === 0) {
-      pragueWrapper.innerHTML = `<span class="empty-cards-msg">Žádné akce v Praze</span>`;
-    } else {
-      pragueEvents.forEach(ev => {
-        pragueWrapper.appendChild(createEventCardElement(ev));
-      });
+    // Set Section title based on selection
+    if (titleText) {
+      if (city === 'all') {
+        titleText.textContent = vibe === 'all' ? 'All Experiences' : `All ${vibe.charAt(0).toUpperCase() + vibe.slice(1)} Experiences`;
+      } else if (city === 'prague') {
+        titleText.textContent = vibe === 'all' ? 'Experiences in Prague' : `Prague ${vibe.charAt(0).toUpperCase() + vibe.slice(1)} Events`;
+      } else if (city === 'olomouc') {
+        titleText.textContent = vibe === 'all' ? 'Experiences in Olomouc' : `Olomouc ${vibe.charAt(0).toUpperCase() + vibe.slice(1)} Events`;
+      }
     }
 
-    // Populate Olomouc row
-    if (olomoucEvents.length === 0) {
-      olomoucWrapper.innerHTML = `<span class="empty-cards-msg">Žádné akce v Olomouci</span>`;
+    if (filtered.length === 0) {
+      experiencesContainer.innerHTML = `<span class="empty-cards-msg" style="grid-column: 1/-1; text-align: center; padding: 40px 0; color: var(--color-text-muted);">No experiences match your filters.</span>`;
+      const trendingRow = document.getElementById('trending-carousel-row');
+      if (trendingRow) trendingRow.style.display = 'none';
+      return;
+    }
+
+    const formatPrice = (price) => price === 0 ? 'FREE' : `${price} CZK+`;
+
+    // Render Spotlight Hero Event (the first event in list)
+    const heroEv = filtered[0];
+    if (heroSpotlight && heroEv) {
+      heroSpotlight.style.display = 'block';
+      heroSpotlight.innerHTML = `
+        <div class="hero-bg-container">
+          <img src="${heroEv.bgImg}" alt="${heroEv.title}" onerror="this.style.display='none'; this.parentNode.classList.add('fallback-bg');">
+        </div>
+        <div class="hero-gradient-overlay"></div>
+        <div class="hero-spotlight-badge">Featured Spotlight</div>
+        <div class="hero-play-indicator">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2.5"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+        </div>
+        <div class="hero-info-card">
+          <div class="hero-info-left">
+            <span class="hero-title">${heroEv.title}</span>
+            <span class="hero-meta">${heroEv.location.split(',')[0]} • ${heroEv.tag}</span>
+          </div>
+          <div class="hero-info-right">
+            <span class="hero-price">${formatPrice(heroEv.priceMin)}</span>
+          </div>
+        </div>
+      `;
+      heroSpotlight.onclick = () => {
+        openEventDetails(heroEv);
+      };
+    }
+
+    // Populate Trending Carousel Row (Horizontal Tilted Cards)
+    const trendingContainer = document.getElementById('trending-carousel-container');
+    const trendingRow = document.getElementById('trending-carousel-row');
+    if (trendingContainer) {
+      trendingContainer.innerHTML = '';
+      if (filtered.length > 1) {
+        if (trendingRow) trendingRow.style.display = 'block';
+        const trendingEvents = filtered.slice(1, 5); // Up to 4 events
+        trendingEvents.forEach(ev => {
+          trendingContainer.appendChild(createTiltedCardElement(ev));
+        });
+      } else {
+        if (trendingRow) trendingRow.style.display = 'none';
+      }
+    }
+
+    // Populate Experiences Grid
+    const gridEvents = filtered.slice(1);
+    if (gridEvents.length === 0) {
+      experiencesContainer.appendChild(createEventCardElement(heroEv));
     } else {
-      olomoucEvents.forEach(ev => {
-        olomoucWrapper.appendChild(createEventCardElement(ev));
+      gridEvents.forEach(ev => {
+        experiencesContainer.appendChild(createEventCardElement(ev));
       });
     }
   }
 
-  // Helper to construct event card (image4.png)
-  function createEventCardElement(ev) {
+  // Helper to construct tilted event card
+  function createTiltedCardElement(ev) {
     const card = document.createElement('div');
-    card.className = 'event-card';
+    card.className = 'tilted-card';
     
+    const shortDate = ev.date.split('•')[0].split(',')[1] ? ev.date.split('•')[0].split(',')[1].trim() : ev.date.split('•')[0].trim();
+
     card.innerHTML = `
-      <div class="card-thumbnail-wrapper">
-        <img src="${ev.bgImg}" alt="${ev.title}" class="card-image" loading="lazy">
-        <div class="card-play-icon">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-        </div>
+      <div class="tilted-card-date-badge">${shortDate}</div>
+      <div class="card-image-container">
+        <img src="${ev.bgImg}" alt="${ev.title}" loading="lazy" onerror="this.style.display='none'; this.parentNode.classList.add('fallback-bg');">
       </div>
-      <div class="card-details">
-        <span class="card-title">${ev.title}</span>
-        <span class="card-desc">${ev.date.split('•')[0].trim()} • ${ev.priceMin} CZK+</span>
-        <span class="card-venue">${ev.location.split(',')[0]}</span>
+      <div class="card-gradient-overlay"></div>
+      <div class="tilted-card-details">
+        <span class="tilted-card-title">${ev.title}</span>
+        <div class="tilted-card-meta">
+          <span>${ev.location.split(',')[0]}</span>
+          <strong class="tilted-card-price">${ev.priceMin === 0 ? 'FREE' : ev.priceMin + ' CZK+'}</strong>
+        </div>
       </div>
     `;
 
@@ -746,9 +1145,42 @@ document.addEventListener('DOMContentLoaded', () => {
     return card;
   }
 
+  // Helper to construct event card
+  function createEventCardElement(ev) {
+    const card = document.createElement('div');
+    card.className = 'event-card';
+    
+    const formatPrice = (price) => price === 0 ? 'FREE' : `${price} CZK+`;
+
+    card.innerHTML = `
+      <div class="card-tag-badge">${ev.tag.toUpperCase()}</div>
+      <div class="card-play-badge">
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="white"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+      </div>
+      <div class="card-image-container">
+        <img src="${ev.bgImg}" alt="${ev.title}" loading="lazy" onerror="this.style.display='none'; this.parentNode.classList.add('fallback-bg');">
+      </div>
+      <div class="card-gradient-overlay"></div>
+      <div class="card-text-overlay">
+        <span class="card-text-title">${ev.title}</span>
+        <div class="card-text-meta">
+          <span>${ev.location.split(',')[0]}</span>
+          <strong>${formatPrice(ev.priceMin)}</strong>
+        </div>
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      openEventDetails(ev);
+    });
+
+
+    return card;
+  }
+
   // Render Profile/Cashless wallet page details
   function renderProfileScreen() {
-    const balance = document.getElementById('profile-wallet-credit');
+    const balance = document.getElementById('profile-wallet-credit-stat');
     if (balance) {
       balance.textContent = state.credit;
     }
@@ -1308,9 +1740,29 @@ document.addEventListener('DOMContentLoaded', () => {
     state.tickets.push(newTicket);
   }
 
+  let ticketCountdownInterval = null;
+  let ticketCountdownTime = 60;
+  let ticketQrState = 0;
+  let hologramAnimFrame = null;
+
   function renderTicketsList() {
     const wrapper = document.getElementById('tickets-list-wrapper');
+    if (!wrapper) return;
     wrapper.innerHTML = '';
+
+    // Stop previous intervals
+    if (ticketCountdownInterval) {
+      clearInterval(ticketCountdownInterval);
+      ticketCountdownInterval = null;
+    }
+    if (qrRotationInterval) {
+      clearInterval(qrRotationInterval);
+      qrRotationInterval = null;
+    }
+    if (hologramAnimFrame) {
+      cancelAnimationFrame(hologramAnimFrame);
+      hologramAnimFrame = null;
+    }
 
     if (state.tickets.length === 0) {
       wrapper.innerHTML = `
@@ -1322,135 +1774,608 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    state.tickets.forEach(ticket => {
-      const card = document.createElement('div');
-      card.className = 'wallet-card scroll-child';
-      card.id = `ticket-card-${ticket.id}`;
+    if (!state.selectedTicketId) {
+      // 1. RENDER PASSES LIST FOLDER
+      const grid = document.createElement('div');
+      grid.className = 'passes-folder-grid';
       
-      card.innerHTML = `
-        <div class="wallet-card-header">
-          <span class="wallet-brand">VIVOO SECURE DIGI-ID</span>
-          <button class="wallet-apple-wallet-btn">
-            <!-- Mini Apple Logo -->
-            <svg width="10" height="12" viewBox="0 0 170 170" fill="white"><path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.34.13-9.13-1.92-14.35-6.14-3.57-2.83-7.53-7.53-11.87-14.1-8.59-12.87-14.59-26.65-17.98-41.34-3.4-14.7-5.1-28.02-5.1-39.98 0-16.7 4.16-29.85 12.48-39.46 8.32-9.62 18.51-14.51 30.56-14.68 5.7.13 11.72 1.76 18.06 4.88 6.34 3.12 11.1 4.7 14.3 4.7 2.68 0 7.2-1.56 13.56-4.7 6.35-3.11 12.61-4.78 18.77-5 12.53-.25 22.86 4.22 30.99 13.43-10.15 6.13-17.15 14.28-21 24.47-3.85 10.18-3.41 20.73 1.3 31.64 4.71 10.9 11.72 18.8 21.02 23.68-2.68 7.37-5.69 13.62-9.04 18.74zM119.22 30.12c0-8.08 2.82-15.42 8.46-22.02 6.64-7.73 14.59-11.89 23.86-12.48.16 1.03.24 2 .24 2.92 0 7.82-2.92 15.17-8.77 22.05-3.05 3.52-6.9 6.44-11.57 8.76-4.66 2.32-9.14 3.6-13.43 3.84-.52-1.03-.79-2.06-.79-3.07z"/></svg>
-            Add to Apple Wallet
+      state.tickets.forEach(ticket => {
+        const card = document.createElement('div');
+        card.className = 'pass-folder-card scroll-child';
+        card.id = `pass-folder-card-${ticket.id}`;
+        
+        const priceValue = ticket.seat.price >= 800 ? 'ELITE' : ticket.seat.price >= 450 ? 'ADVANCED' : 'SPORT';
+        const visuals = getDivisionVisuals(priceValue);
+        
+        card.innerHTML = `
+          <div class="pass-folder-card-bg" style="background-image: url('${ticket.event.bgImg}');"></div>
+          <div class="pass-folder-card-overlay"></div>
+          <div class="pass-folder-card-badge ${visuals.tagClass}">${visuals.name}</div>
+          <div class="pass-folder-card-details">
+            <span class="pass-folder-card-serial">${ticket.id} • ${ticket.code || 'VVO-2026'}</span>
+            <h3 class="pass-folder-card-title">${ticket.event.title}</h3>
+            <div class="pass-folder-card-meta">
+              <span>${ticket.event.location.split(',')[0]}</span>
+              <strong>${ticket.seat.name.split(' (')[0]}</strong>
+            </div>
+          </div>
+        `;
+        
+        card.addEventListener('click', () => {
+          state.selectedTicketId = ticket.id;
+          renderTicketsList();
+        });
+        
+        grid.appendChild(card);
+      });
+      
+      wrapper.appendChild(grid);
+    } else {
+      // 2. RENDER PASS DETAILS (WODCOMP / EVENTOO INSPIRED SECURE TICKET)
+      const ticket = state.tickets.find(t => t.id === state.selectedTicketId);
+      if (!ticket) {
+        state.selectedTicketId = null;
+        renderTicketsList();
+        return;
+      }
+
+      // Initialize dynamic properties if missing
+      ticket.gate = ticket.gate || 'GATE ' + String.fromCharCode(65 + Math.floor(Math.random() * 3));
+      ticket.seatNum = ticket.seatNum || 'LANE ' + Math.floor(1 + Math.random() * 8);
+      ticket.code = ticket.code || 'VVO-2026-' + ticket.id.split('-')[1];
+      ticket.organizer = ticket.event.title.includes('Derby') ? 'AC Sparta Praha' : ticket.event.title.includes('Techno') ? 'Basement Syndicate' : 'ViVoo Events';
+      ticket.division = ticket.seat.price >= 800 ? 'ELITE' : ticket.seat.price >= 450 ? 'ADVANCED' : 'SPORT';
+      ticket.mintAddress = ticket.mintAddress || '';
+      ticket.isAddedToWallet = ticket.isAddedToWallet || false;
+
+      const visuals = getDivisionVisuals(ticket.division);
+
+      const passDetails = document.createElement('div');
+      passDetails.className = 'pass-details-view animate-fadeIn';
+
+      passDetails.innerHTML = `
+        <!-- Back Link -->
+        <div class="pass-back-row">
+          <button class="pass-back-btn" id="btn-pass-back">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to My Passes
           </button>
         </div>
 
-        <div class="wallet-card-body">
-          <h3 class="wallet-event-name">${ticket.event.title}</h3>
-          
-          <!-- Animated Rotate QR Code Container -->
-          <div class="wallet-qr-container">
-            <svg class="wallet-qr-svg" id="qr-svg-${ticket.id}" viewBox="0 0 100 100">
-              <!-- Rendered via loop in js -->
-            </svg>
-            <div class="wallet-qr-indicator">
-              <div class="qr-spinner"></div>
-              <span>Secured: Auto-refreshing</span>
-            </div>
+        <!-- The Pass visual card -->
+        <div class="pass-stub-wrapper">
+          <!-- Floating Division Badge Pill -->
+          <div class="pass-division-badge ${visuals.tagClass}">
+            ${visuals.name}
           </div>
 
-          <div class="wallet-info-row">
-            <div class="wallet-info-cell">
-              <span>Holder</span>
-              <strong>${ticket.holderName}</strong>
-            </div>
-            <div class="wallet-info-cell">
-              <span>Seat Coordinate</span>
-              <strong>${ticket.seat.name.split(',')[0]}</strong>
-            </div>
-            <div class="wallet-info-cell">
-              <span>Gate Access</span>
-              <strong>${ticket.isScanned ? '<span style="color:var(--color-accent-green)">Scanned</span>' : 'Wait at Gate'}</strong>
-            </div>
-          </div>
-        </div>
+          <div class="pass-stub-panel ticket-stub-texture">
+            <!-- Moving iridescent hologram canvas overlay -->
+            <canvas id="pass-hologram-canvas" class="pass-hologram-canvas"></canvas>
 
-        <div class="wallet-card-footer">
-          <div class="wallet-action-row">
-            <button class="btn btn-outline-danger btn-block btn-resale" data-id="${ticket.id}">
-              1-Click Resale (Refund)
-            </button>
+            <!-- Ambient radial color glow behind QR -->
+            <div class="pass-glow-ambient" style="background: radial-gradient(circle, ${visuals.glowColor}25 0%, transparent 70%);"></div>
+
+            <!-- Secure Pass Header -->
+            <div class="pass-header-meta">
+              <div class="pass-header-left">
+                <span class="pass-dot-indicator ${visuals.dotClass}"></span>
+                <span class="pass-header-tag-text">${visuals.name} PASS</span>
+              </div>
+              <span class="pass-header-serial">${ticket.code}</span>
+            </div>
+
+            <!-- Event Hero info -->
+            <div class="pass-event-hero">
+              <h2 class="pass-event-title">${ticket.event.title}</h2>
+              <div class="pass-event-subinfo">
+                <span class="pass-edition-badge">${ticket.event.tag.toUpperCase()}</span>
+                <span class="pass-event-location-text">${ticket.event.location}</span>
+              </div>
+              <div class="pass-event-date-row">
+                <span class="pass-date-label">Confirmed Attendance</span>
+              </div>
+            </div>
+
+            <!-- SafeTix Rotating QR Container -->
+            <div class="pass-qr-container">
+              <div class="pass-qr-bracket-box">
+                <!-- Tech corner brackets -->
+                <div class="qr-bracket top-left"></div>
+                <div class="qr-bracket top-right"></div>
+                <div class="qr-bracket bottom-left"></div>
+                <div class="qr-bracket bottom-right"></div>
+
+                <!-- QR code visual block -->
+                <div class="pass-qr-image-wrapper">
+                  <img id="secure-qr-img" src="" alt="Dynamic Secure QR">
+                  
+                  <!-- Scan laser line animation -->
+                  <div class="scan-laser-line" style="background: linear-gradient(to bottom, transparent, ${visuals.accentColor}, transparent);"></div>
+
+                  <!-- Twin-state label overlay -->
+                  <div class="pass-twin-state-overlay">
+                    <span id="qr-state-dot" class="state-dot"></span>
+                    <span id="qr-state-label" class="state-text">STATE A</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Security Refresh Timer -->
+              <div class="pass-timer-row">
+                <svg class="pass-timer-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <span class="pass-timer-text">
+                  Access Code Refreshes In <strong id="pass-countdown-timer">00:60</strong>
+                </span>
+              </div>
+            </div>
+
+            <!-- On-Chain Security Metadata Collapsible -->
+            <div class="pass-collapsible-wrapper">
+              <button class="pass-collapse-btn" id="btn-toggle-security-keys">
+                <span class="btn-collapse-title-left">
+                  <span class="collapse-dot"></span>
+                  On-Chain Security Keys
+                </span>
+                <span id="collapse-toggle-text">Show Keys</span>
+              </button>
+              
+              <div class="pass-collapse-content hidden" id="security-keys-content">
+                <div class="key-field">
+                  <label>SOLANA NFT MINT</label>
+                  <strong id="onchain-nft-mint" class="selectable-key">${ticket.mintAddress || 'Not yet minted on Solana Testnet'}</strong>
+                </div>
+                <div class="key-field">
+                  <label>ATHLETE PUBLIC KEY</label>
+                  <strong class="selectable-key">VVOO-JAKUB-DOSTAL-SOL-KEY-2026</strong>
+                </div>
+                <div class="key-field">
+                  <label>ACTIVE SIGNATURE (ED25519)</label>
+                  <strong id="onchain-active-sig" class="selectable-key italic">-</strong>
+                </div>
+                <div class="key-row-grid">
+                  <div class="key-field">
+                    <label>VALIDITY EPOCH</label>
+                    <strong id="onchain-validity-epoch">-</strong>
+                  </div>
+                  <div class="key-field">
+                    <label>STATE NONCE</label>
+                    <strong id="onchain-state-nonce">-</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Perforation Line with Stub Cutouts -->
+            <div class="pass-perforation-divider">
+              <div class="stub-cutout left"></div>
+              <div class="perforation-dashed-line"></div>
+              <div class="stub-cutout right"></div>
+            </div>
+
+            <!-- Info details grid -->
+            <div class="pass-info-details-grid">
+              <div class="info-details-box">
+                <span class="info-box-label">GATE (VSTUP)</span>
+                <strong class="info-box-value">${ticket.gate}</strong>
+              </div>
+              <div class="info-details-box">
+                <span class="info-box-label">KATEGORIE (SECTOR)</span>
+                <strong class="info-box-value">${ticket.seat.name.split(' (')[0]}</strong>
+              </div>
+              <div class="info-details-box">
+                <span class="info-box-label">ORGANIZÁTOR</span>
+                <strong class="info-box-value">${ticket.organizer}</strong>
+              </div>
+              <div class="info-details-box">
+                <span class="info-box-label">LANE / ROW (DRÁHA)</span>
+                <strong class="info-box-value">${ticket.seatNum}</strong>
+              </div>
+            </div>
+
+            <!-- Czech Description block -->
+            <div class="pass-description-block">
+              <span class="desc-header">INFORMACE O ZÁVODU</span>
+              <div class="desc-content">
+                This entry ticket certifies registration for ${ticket.event.title}. Access code rotates on-chain every 60 seconds to prevent unauthorized copy. Present this secure QR at the stadium gate.
+              </div>
+            </div>
+
+            <!-- Pass Action buttons -->
+            <div class="pass-actions-area">
+              ${!ticket.mintAddress ? `
+                <button class="btn btn-mint-nft-solana" id="btn-mint-ticket-nft">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                  Mint Ticket NFT on Solana Testnet
+                </button>
+              ` : `
+                <button class="btn btn-solana-explorer-link" id="btn-sol-explorer">
+                  View NFT on Solana Explorer
+                </button>
+              `}
+
+              <button class="btn btn-refund-resale btn-resale-detail" id="btn-refund-ticket">
+                1-Click Resale & 80% Refund
+              </button>
+
+              <button class="btn btn-add-apple-wallet" id="btn-add-wallet">
+                ${ticket.isAddedToWallet ? '✓ Added to Apple Wallet' : 'Add to Apple Wallet'}
+              </button>
+            </div>
           </div>
         </div>
       `;
 
-      wrapper.appendChild(card);
-      
-      // Start ticking QR Code draw logic
-      drawSecureQRCode(ticket.id);
-    });
+      wrapper.appendChild(passDetails);
 
-    // Start background QR Code updater interval
-    startQRCodeRotation();
+      // Back button click listener
+      document.getElementById('btn-pass-back').onclick = () => {
+        state.selectedTicketId = null;
+        renderTicketsList();
+      };
 
-    // Hook Resale refund buttons
-    document.querySelectorAll('.btn-resale').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const tId = btn.dataset.id;
-        processTicketResaleRefund(tId);
-      });
-    });
+      // Toggle collapsible keys
+      document.getElementById('btn-toggle-security-keys').onclick = () => {
+        const content = document.getElementById('security-keys-content');
+        const text = document.getElementById('collapse-toggle-text');
+        if (content.classList.contains('hidden')) {
+          content.classList.remove('hidden');
+          text.textContent = 'Hide Keys';
+        } else {
+          content.classList.add('hidden');
+          text.textContent = 'Show Keys';
+        }
+      };
+
+      // Mint Solana NFT Simulation
+      const btnMint = document.getElementById('btn-mint-ticket-nft');
+      if (btnMint) {
+        btnMint.onclick = () => {
+          btnMint.disabled = true;
+          btnMint.innerHTML = `
+            <svg class="pass-timer-icon animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            Minting on Solana Testnet...
+          `;
+          
+          setTimeout(() => {
+            ticket.mintAddress = 'SOL-MINT-' + Array.from({length: 12}, () => Math.floor(Math.random()*16).toString(16)).join('').toUpperCase();
+            alert('NFT Minted successfully on Solana Testnet!');
+            renderTicketsList();
+          }, 1800);
+        };
+      }
+
+      // View Solana Explorer
+      const btnExplorer = document.getElementById('btn-sol-explorer');
+      if (btnExplorer) {
+        btnExplorer.onclick = () => {
+          window.open(`https://explorer.solana.com/address/${ticket.mintAddress}?cluster=testnet`, '_blank');
+        };
+      }
+
+      // Apple Wallet click listener
+      const btnWallet = document.getElementById('btn-add-wallet');
+      if (btnWallet) {
+        btnWallet.onclick = () => {
+          ticket.isAddedToWallet = true;
+          btnWallet.textContent = '✓ Added to Apple Wallet';
+          btnWallet.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+          btnWallet.style.background = 'rgba(16, 185, 129, 0.1)';
+          btnWallet.style.color = '#10b981';
+          alert(`${ticket.event.title} ticket pass added to Apple Wallet!`);
+        };
+      }
+
+      // Resale click listener
+      document.getElementById('btn-refund-ticket').onclick = () => {
+        if(confirm('Are you sure you want to list this ticket on Fan Exchange for an 80% refund?')) {
+          processTicketResaleRefund(ticket.id);
+        }
+      };
+
+      // Start Hologram shader canvas loop
+      const holoCanvas = document.getElementById('pass-hologram-canvas');
+      if (holoCanvas) {
+        initPassHologram(holoCanvas, ticket.division);
+      }
+
+      // Start Countdown and dynamic QR rotation loop
+      ticketCountdownTime = 60;
+      ticketQrState = 0;
+      updateDynamicQRCode(ticket);
+
+      ticketCountdownInterval = setInterval(() => {
+        ticketQrState = ticketQrState === 0 ? 1 : 0;
+        ticketCountdownTime--;
+        if (ticketCountdownTime <= 0) {
+          ticketCountdownTime = 60;
+        }
+        updateDynamicQRCode(ticket);
+      }, 1000);
+    }
   }
 
-  // Generates randomized SVG blocks simulating QR code encryption changing
-  function drawSecureQRCode(ticketId) {
-    const svg = document.getElementById(`qr-svg-${ticketId}`);
-    if (!svg) return;
+  function getDivisionVisuals(division) {
+    switch (division) {
+      case 'ELITE':
+        return {
+          name: 'ELITE DIVISION',
+          dotClass: 'div-dot-elite',
+          tagClass: 'div-tag-elite',
+          glowColor: '#fbbf24',
+          accentColor: '#fbbf24'
+        };
+      case 'ADVANCED':
+        return {
+          name: 'ADVANCED DIVISION',
+          dotClass: 'div-dot-advanced',
+          tagClass: 'div-tag-advanced',
+          glowColor: '#f472b6',
+          accentColor: '#f472b6'
+        };
+      default: // SPORT
+        return {
+          name: 'SPORT DIVISION',
+          dotClass: 'div-dot-sport',
+          tagClass: 'div-tag-sport',
+          glowColor: '#10b981',
+          accentColor: '#10b981'
+        };
+    }
+  }
 
-    // Generate random mock QR block components
-    let rects = `<rect width="100" height="100" fill="#fff" />`;
-    
-    // Standard Finder patterns (corners)
-    rects += `
-      <!-- Top-left finder -->
-      <rect x="5" y="5" width="25" height="25" fill="#000" />
-      <rect x="8" y="8" width="19" height="19" fill="#fff" />
-      <rect x="12" y="12" width="11" height="11" fill="#000" />
-      
-      <!-- Top-right finder -->
-      <rect x="70" y="5" width="25" height="25" fill="#000" />
-      <rect x="73" y="8" width="19" height="19" fill="#fff" />
-      <rect x="77" y="12" width="11" height="11" fill="#000" />
+  function initPassHologram(canvas, division) {
+    let gl = null;
+    try {
+      gl = canvas.getContext('webgl', { alpha: false, depth: false });
+    } catch (e) {
+      // Ignore fallback
+    }
 
-      <!-- Bottom-left finder -->
-      <rect x="5" y="70" width="25" height="25" fill="#000" />
-      <rect x="8" y="73" width="19" height="19" fill="#fff" />
-      <rect x="12" y="77" width="11" height="11" fill="#000" />
-    `;
+    // Color multipliers and intensities from Eventoo-app
+    let mult = { r: 0.5, g: 0.8, b: 1.2 }; // Default / SPORT / NEWBIES
+    let intensity = 0.35;
 
-    // Dynamic random filler pixels
-    for (let r = 0; r < 14; r++) {
-      for (let c = 0; c < 14; c++) {
-        // Skip finder pattern coordinates (Top-left, top-right, bottom-left)
-        if (r < 5 && c < 5) continue;
-        if (r < 5 && c >= 9) continue;
-        if (r >= 9 && c < 5) continue;
+    if (division === 'ELITE') {
+      mult = { r: 1.2, g: 1.0, b: 0.3 };
+      intensity = 0.4;
+    } else if (division === 'ADVANCED') {
+      mult = { r: 1.3, g: 0.3, b: 0.9 };
+      intensity = 0.38;
+    } else if (division === 'SPORT') {
+      mult = { r: 0.2, g: 1.3, b: 0.8 };
+      intensity = 0.35;
+    }
 
-        if (Math.random() > 0.45) {
-          const x = 5 + (c * 6.4);
-          const y = 5 + (r * 6.4);
-          rects += `<rect x="${x}" y="${y}" width="4" height="4" fill="#000" />`;
+    let ro = null;
+
+    if (gl) {
+      // WebGL path
+      const vsSource = `
+        attribute vec2 a_position;
+        varying vec2 v_texCoord;
+        void main() {
+          v_texCoord = a_position * 0.5 + 0.5;
+          gl_Position = vec4(a_position, 0.0, 1.0);
         }
+      `;
+
+      const fsSource = `
+        precision highp float;
+        varying vec2 v_texCoord;
+        uniform float u_time;
+        uniform vec2 u_resolution;
+        uniform vec3 u_multiplier;
+        uniform float u_intensity;
+
+        void main() {
+          vec2 uv = v_texCoord;
+          vec2 p = -1.0 + 2.0 * uv;
+          p.x *= u_resolution.x / u_resolution.y;
+
+          float t = u_time * 0.4;
+          
+          // Iridescent/Holographic noise calculations
+          float r = 0.5 + 0.5 * sin(p.x * 2.2 + t + cos(p.y * 2.8 + t));
+          float g = 0.5 + 0.5 * sin(p.y * 1.8 - t + sin(p.x * 3.2 + t));
+          float b = 0.5 + 0.5 * sin((p.x + p.y) * 2.0 + t * 1.3);
+          
+          // Liquid metal shimmering details
+          float shimmer = sin(p.x * 12.0 + p.y * 12.0 + t * 4.5);
+          shimmer = smoothstep(0.84, 1.0, shimmer) * 0.15;
+          
+          vec3 baseColor = vec3(r, g, b) * u_multiplier;
+          baseColor += shimmer;
+          
+          baseColor *= u_intensity;
+          baseColor += vec3(0.04, 0.04, 0.08); // Ambient deep navy lift
+
+          gl_FragColor = vec4(baseColor, 1.0);
+        }
+      `;
+
+      const createShader = (glCtx, type, source) => {
+        const shader = glCtx.createShader(type);
+        if (!shader) return null;
+        glCtx.shaderSource(shader, source);
+        glCtx.compileShader(shader);
+        if (!glCtx.getShaderParameter(shader, glCtx.COMPILE_STATUS)) {
+          console.warn("Shader compile error:", glCtx.getShaderInfoLog(shader));
+          glCtx.deleteShader(shader);
+          return null;
+        }
+        return shader;
+      };
+
+      const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+      const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+      if (vs && fs) {
+        const program = gl.createProgram();
+        gl.attachShader(program, vs);
+        gl.attachShader(program, fs);
+        gl.linkProgram(program);
+
+        if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          gl.useProgram(program);
+
+          const positionBuffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+          gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+            gl.STATIC_DRAW
+          );
+
+          const positionLocation = gl.getAttribLocation(program, "a_position");
+          gl.enableVertexAttribArray(positionLocation);
+          gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+          const timeLocation = gl.getUniformLocation(program, "u_time");
+          const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+          const multiplierLocation = gl.getUniformLocation(program, "u_multiplier");
+          const intensityLocation = gl.getUniformLocation(program, "u_intensity");
+
+          const resize = () => {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width || 350;
+            canvas.height = rect.height || 600;
+            gl.viewport(0, 0, canvas.width, canvas.height);
+          };
+
+          resize();
+          ro = new ResizeObserver(() => resize());
+          ro.observe(canvas);
+
+          const render = (time) => {
+            if (!gl) return;
+            gl.uniform1f(timeLocation, time * 0.001);
+            gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+            gl.uniform3f(multiplierLocation, mult.r, mult.g, mult.b);
+            gl.uniform1f(intensityLocation, intensity);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            hologramAnimFrame = requestAnimationFrame(render);
+          };
+
+          hologramAnimFrame = requestAnimationFrame(render);
+        }
+      }
+    } else {
+      // 2D fallback path
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        let t = 0;
+        const resize = () => {
+          const rect = canvas.getBoundingClientRect();
+          const dpr = window.devicePixelRatio || 1;
+          canvas.width = (rect.width || 350) * dpr;
+          canvas.height = (rect.height || 600) * dpr;
+          ctx.scale(dpr, dpr);
+        };
+
+        resize();
+        ro = new ResizeObserver(() => resize());
+        ro.observe(canvas);
+
+        const render2D = () => {
+          t += 0.015;
+          const w = canvas.width / (window.devicePixelRatio || 1);
+          const h = canvas.height / (window.devicePixelRatio || 1);
+
+          ctx.clearRect(0, 0, w, h);
+
+          // Render multi-layered liquid mesh approximation
+          const cx = w / 2 + Math.sin(t) * 90;
+          const cy = h / 2 + Math.cos(t * 0.7) * 130;
+          const grad = ctx.createRadialGradient(cx, cy, 30, w / 2, h / 2, h * 0.75);
+
+          const r = Math.floor((128 + 127 * Math.sin(t)) * mult.r);
+          const g = Math.floor((128 + 127 * Math.cos(t * 0.6)) * mult.g);
+          const b = Math.floor((128 + 127 * Math.sin(t * 0.4 + 1)) * mult.b);
+
+          grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${intensity})`);
+          grad.addColorStop(0.5, "rgba(22, 19, 45, 0.45)");
+          grad.addColorStop(1, "rgba(9, 9, 12, 0.98)");
+
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, w, h);
+
+          // Rotating specular light line
+          const shimmerY = ((t * 80) % (h + 200)) - 100;
+          const shimmerGrad = ctx.createLinearGradient(0, shimmerY, w, shimmerY + 60);
+          shimmerGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+          shimmerGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.08)');
+          shimmerGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+          ctx.fillStyle = shimmerGrad;
+          ctx.fillRect(0, 0, w, h);
+
+          hologramAnimFrame = requestAnimationFrame(render2D);
+        };
+
+        hologramAnimFrame = requestAnimationFrame(render2D);
       }
     }
 
-    // Dynamic scanning line sweeping across the QR
-    const scanY = (Date.now() / 30) % 100;
-    rects += `<line x1="0" y1="${scanY}" x2="100" y2="${scanY}" stroke="rgba(255, 42, 84, 0.45)" stroke-width="2.5" />`;
-
-    svg.innerHTML = rects;
+    canvas._cleanup = () => {
+      if (ro) ro.disconnect();
+      if (hologramAnimFrame) {
+        cancelAnimationFrame(hologramAnimFrame);
+      }
+      gl = null;
+    };
   }
 
-  function startQRCodeRotation() {
-    if (qrRotationInterval) clearInterval(qrRotationInterval);
-    
-    qrRotationInterval = setInterval(() => {
-      state.tickets.forEach(ticket => {
-        drawSecureQRCode(ticket.id);
-      });
-    }, 1500); // Regenerate every 1.5 seconds for visual feedback
+  function updateDynamicQRCode(ticket) {
+    const qrImg = document.getElementById('secure-qr-img');
+    const qrDot = document.getElementById('qr-state-dot');
+    const qrLabel = document.getElementById('qr-state-label');
+    const timerText = document.getElementById('pass-countdown-timer');
+
+    const epochLabel = document.getElementById('onchain-validity-epoch');
+    const nonceLabel = document.getElementById('onchain-state-nonce');
+    const sigLabel = document.getElementById('onchain-active-sig');
+
+    if (!qrImg) return;
+
+    // Format Countdown String
+    const formattedSeconds = String(ticketCountdownTime).padStart(2, '0');
+    if (timerText) timerText.textContent = `00:${formattedSeconds}`;
+
+    // Update state visuals
+    if (qrDot) {
+      qrDot.className = `state-dot ${ticketQrState === 0 ? 'bg-[#00eefc]' : 'bg-pink-500'}`;
+    }
+    if (qrLabel) {
+      qrLabel.textContent = `STATE ${ticketQrState === 0 ? 'A' : 'B'}`;
+    }
+
+    const currentEpoch = Math.floor(Date.now() / 60000) * 60000;
+    const currentSig = "sig_" + Math.random().toString(36).substring(2, 12).toUpperCase();
+
+    // Populate Key Metadatas
+    if (epochLabel) epochLabel.textContent = currentEpoch;
+    if (nonceLabel) nonceLabel.textContent = `Nonce: ${ticketQrState}`;
+    if (sigLabel) sigLabel.textContent = currentSig;
+
+    // Generate real QR payload
+    const tokenPayload = {
+      m: ticket.mintAddress || ticket.id,
+      o: "Jakub Dostál (0xVVOO)",
+      t: currentEpoch,
+      n: ticketQrState,
+      s: currentSig
+    };
+
+    try {
+      const qr = qrcode(10, 'L');
+      qr.addData(JSON.stringify(tokenPayload));
+      qr.make();
+      const qrDataUrl = qr.createDataURL(6);
+      qrImg.src = qrDataUrl;
+    } catch (e) {
+      console.error('Failed to update secure QR code:', e);
+    }
   }
 
   // 1-Click resale refund process
@@ -1562,7 +2487,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   ugcFileInput.addEventListener('change', () => {
     if (ugcFileInput.files.length > 0) {
-      selectedUgcType = 'party'; // default fallback clip simulation
+      selectedUgcType = 'music'; // default fallback clip simulation
       submitUgcBtn.disabled = false;
       dragZone.querySelector('span').textContent = ugcFileInput.files[0].name;
     }
@@ -1582,7 +2507,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     dragZone.classList.remove('dragover');
     if (e.dataTransfer.files.length > 0) {
-      selectedUgcType = 'party';
+      selectedUgcType = 'music';
       submitUgcBtn.disabled = false;
       dragZone.querySelector('span').textContent = e.dataTransfer.files[0].name;
     }
@@ -1627,7 +2552,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let sampleUgcVid = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4';
     let vibeTitle = 'Concert Crowds Vibe check';
     
-    if (selectedUgcType === 'adrenalin') {
+    if (selectedUgcType === 'sport') {
       sampleUgcVid = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4';
       vibeTitle = 'Epic Sector B goal celebration';
     }
@@ -1635,14 +2560,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const ugcFeedItem = {
       id: `ugc-${Date.now()}`,
       title: vibeTitle,
-      tag: selectedUgcType === 'adrenalin' ? 'Adrenalin' : 'Party',
+      tag: selectedUgcType === 'sport' ? 'Sport' : 'Music',
       vibe: selectedUgcType,
-      location: selectedUgcType === 'adrenalin' ? 'epet ARENA Prague' : 'Hala 13 Prague',
+      location: selectedUgcType === 'sport' ? 'epet ARENA Prague' : 'Hala 13 Prague',
       date: 'Simulated UGC Vibe Loop',
       lineup: 'Fan Video Upload',
       weather: { temp: '20°C', text: 'Crowd Vibe', icon: 'clear' },
       videoUrl: sampleUgcVid,
-      bgImg: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=800&auto=format&fit=crop',
+      bgImg: selectedUgcType === 'sport' ? './images/derby.jpg' : './images/techno.jpg',
       priceMin: 300,
       priceMax: 1200,
       isUGC: true,
@@ -1690,9 +2615,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (feedHeaderCredit) {
       feedHeaderCredit.textContent = `${state.credit} CZK`;
     }
-    const profileWalletCredit = document.getElementById('profile-wallet-credit');
+    const profileWalletCredit = document.getElementById('profile-wallet-credit-stat');
     if (profileWalletCredit) {
-      profileWalletCredit.textContent = state.credit;
+       profileWalletCredit.textContent = state.credit;
     }
   }
 
@@ -1704,6 +2629,52 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCashlessCredits(200);
     animateCreditUpdate(200);
   });
+
+  // Profile Page: Top Up Button
+  const profileTopupBtn = document.getElementById('btn-wallet-topup');
+  if (profileTopupBtn) {
+    profileTopupBtn.addEventListener('click', () => {
+      updateCashlessCredits(200);
+      animateCreditUpdate(200);
+      
+      const activeScreen = document.querySelector('.app-screen.active');
+      if (activeScreen) {
+        const toast = document.createElement('div');
+        toast.style.position = 'absolute';
+        toast.style.bottom = '100px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%) translateY(20px)';
+        toast.style.background = 'rgba(16, 185, 129, 0.95)';
+        toast.style.color = '#fff';
+        toast.style.padding = '10px 20px';
+        toast.style.borderRadius = '20px';
+        toast.style.fontFamily = 'var(--font-family-title)';
+        toast.style.fontSize = '0.75rem';
+        toast.style.fontWeight = '700';
+        toast.style.boxShadow = '0 10px 25px rgba(16, 185, 129, 0.4)';
+        toast.style.zIndex = '1000';
+        toast.style.opacity = '0';
+        toast.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+        toast.textContent = '+200 CZK Top-up Success!';
+        
+        activeScreen.appendChild(toast);
+        
+        // Trigger reflow
+        toast.offsetHeight;
+        
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateX(-50%) translateY(-20px)';
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
+        }, 1500);
+      }
+    });
+  }
 
   // Sim Button: Friend 1 Pays
   document.getElementById('sim-friend-pay-1').addEventListener('click', () => {
