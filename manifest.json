@@ -1,0 +1,24 @@
+{
+  "name": "ViVoo Event Experience",
+  "short_name": "ViVoo",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#09090d",
+  "theme_color": "#ff2a54",
+  "description": "Immersive event discovery and zero-friction ticket checkout.",
+  "icons": [
+    {
+      "src": "icon.png?v=3",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.svg?v=3",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
