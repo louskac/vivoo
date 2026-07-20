@@ -14,5 +14,8 @@
     "ticketing"
   ],
   "author": "Antigravity",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^25.3.0"
+  }
 }

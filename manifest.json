@@ -9,13 +9,13 @@
   "description": "Immersive event discovery and zero-friction ticket checkout.",
   "icons": [
     {
-      "src": "icon.png?v=3",
+      "src": "icon.png?v=17",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon.svg?v=3",
+      "src": "icon.svg?v=17",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

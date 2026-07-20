@@ -23,6 +23,7 @@ if ('serviceWorker' in navigator) {
           installingWorker.addEventListener('statechange', () => {
             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
               console.log('[PWA] New update installed. Reloading...');
+              window.location.reload();
             }
           });
         });
@@ -45,184 +46,421 @@ document.addEventListener('DOMContentLoaded', () => {
 
   
   // --------------------------------------------------------------------------
-  // 1. MOCK DATA & STATE MANAGEMENT
+  // 1. DATABASE & AUTHENTICATION STATE MANAGEMENT
   // --------------------------------------------------------------------------
   
   // Global App State
   const state = {
-    credit: 400, // Starting platform credit
-    activeScreen: 'feed-screen',
+    credit: 0, 
+    activeScreen: 'auth-screen', // default screen is now auth-screen
     currentVibe: 'all',
     currentPlayingIndex: 0,
     selectedEvent: null,
     selectedSeat: null,
     groupBuyCount: 3,
     splitSession: null,
-    tickets: [], // Purchased tickets
+    tickets: [], // Purchased tickets from DB
     isMuted: true,
     gridCityFilter: 'all',
     gridPriceFilter: 'all',
     selectedTicketId: null,
-    navigationHistory: []
+    navigationHistory: [],
+    user: null,  // Logged in user details
+    token: null  // For bearer authentication (stores userId)
   };
 
-  // Mock Events Database with local, range-request optimized video files
-  const eventsData = [
-    {
-      id: 'derby',
-      title: 'Prague Football Derby: Sparta vs Slavia',
-      tag: 'Sport',
-      vibe: 'sport',
-      location: 'epet ARENA, Prague',
-      date: 'Saturday, Oct 14 • 18:00',
-      lineup: 'AC Sparta Praha vs SK Slavia Praha',
-      weather: { temp: '16°C', text: 'Clear Sky', icon: 'clear' },
-      videoUrl: './videos/derby.mp4',
-      bgImg: './images/derby.jpg',
-      priceMin: 300,
-      priceMax: 1200,
-      isFree: false,
-      sectors: [
-        { name: 'Sektor C (Upper Gallery)', price: 350, povType: 'far-stadium' },
-        { name: 'Sektor B (Mid Tier)', price: 650, povType: 'mid-stadium' },
-        { name: 'Sektor A (Lower Pitchside)', price: 1100, povType: 'near-stadium' }
-      ]
-    },
-    {
-      id: 'techno',
-      title: 'Basement Syndicate: Warehouse Techno Night',
-      tag: 'Music',
-      vibe: 'music',
-      location: 'Hala 13, Holešovice',
-      date: 'Friday, Oct 20 • 22:00',
-      lineup: 'Boris Brejcha, Amelie Lens, DJ Shadow, Charlotte de Witte',
-      weather: { temp: '18°C', text: 'Indoor Event', icon: 'indoor' },
-      videoUrl: './videos/techno.mp4',
-      bgImg: './images/techno.jpg',
-      priceMin: 400,
-      priceMax: 1600,
-      isFree: false,
-      sectors: [
-        { name: 'Warehouse General Admission', price: 450, povType: 'dancefloor-back' },
-        { name: 'VIP Boiler Deck', price: 850, povType: 'dancefloor-front' },
-        { name: 'Backstage Access Pass', price: 1500, povType: 'backstage' }
-      ]
-    },
-    {
-      id: 'basketball',
-      title: 'Red Bull Half Court Basketball Finals',
-      tag: 'Sport',
-      vibe: 'sport',
-      location: 'Riegrovy Sady, Prague',
-      date: 'Sunday, Oct 15 • 15:00',
-      lineup: 'Prague Streetball Elite & Guest Dunkers',
-      weather: { temp: '19°C', text: 'Sunny Day', icon: 'clear' },
-      videoUrl: './videos/basketball.mp4',
-      bgImg: './images/basketball.jpg',
-      priceMin: 0,
-      priceMax: 0,
-      isFree: true,
-      sectors: [
-        { name: 'General Admission Standing', price: 0, povType: 'dancefloor-back' }
-      ]
-    },
-    {
-      id: 'summerbeats',
-      title: 'Summer Beats Open Air Festival',
-      tag: 'Music',
-      vibe: 'music',
-      location: 'Žluté lázně, Prague',
-      date: 'Saturday, Aug 19 • 14:00',
-      lineup: 'Solomun, Tale of Us, Adriatique, Keinemusik',
-      weather: { temp: '26°C', text: 'Warm & Sunny', icon: 'clear' },
-      videoUrl: './videos/summerbeats.mp4',
-      bgImg: './images/summerbeats.jpg',
-      priceMin: 490,
-      priceMax: 1490,
-      isFree: false,
-      sectors: [
-        { name: 'General Admission Beach Area', price: 550, povType: 'dancefloor-back' },
-        { name: 'VIP Main Deck VIP Seating', price: 1200, povType: 'dancefloor-front' }
-      ]
-    },
-    {
-      id: 'ballet',
-      title: 'Magical Water Fountain Light Show',
-      tag: 'Culture',
-      vibe: 'culture',
-      location: 'Křižík Fountain, Exhibition Grounds',
-      date: 'Sunday, Oct 22 • 19:30',
-      lineup: 'Laterna Magika Dance Ensemble & Prague Symphony Orchestra',
-      weather: { temp: '14°C', text: 'Light Breeze', icon: 'windy' },
-      videoUrl: './videos/ballet.mp4',
-      bgImg: './images/ballet.jpg',
-      priceMin: 250,
-      priceMax: 900,
-      isFree: false,
-      sectors: [
-        { name: 'Grandstand Balcony C', price: 300, povType: 'fountain-far' },
-        { name: 'Premium Terrace B', price: 550, povType: 'fountain-mid' },
-        { name: 'Front VIP Row A', price: 850, povType: 'fountain-near' }
-      ]
-    },
-    {
-      id: 'flora',
-      title: 'Flora Acoustic: Garden Symphony Concert',
-      tag: 'Culture',
-      vibe: 'culture',
-      location: 'Flora Exhibition Grounds, Olomouc',
-      date: 'Saturday, Oct 28 • 16:00',
-      lineup: 'Olomouc Symphonic Soloists & Flora Acoustic Trio',
-      weather: { temp: '15°C', text: 'Sunny Day', icon: 'clear' },
-      videoUrl: './videos/flora.mp4',
-      bgImg: './images/flora.jpg',
-      priceMin: 0,
-      priceMax: 0,
-      isFree: true,
-      sectors: [
-        { name: 'General Admission Gardens', price: 0, povType: 'fountain-mid' }
-      ]
-    },
-    {
-      id: 'networking_meetup',
-      title: 'Prague Tech Founders Meetup',
-      tag: 'Networking',
-      vibe: 'networking',
-      location: 'Start-up Loft, Holešovice',
-      date: 'Thursday, Nov 9 • 19:00',
-      lineup: 'Keynote Panel & Investor Pitch Arena',
-      weather: { temp: '17°C', text: 'Indoor Loft', icon: 'indoor' },
-      videoUrl: './videos/techno.mp4',
-      bgImg: './images/networking.jpg',
-      priceMin: 0,
-      priceMax: 0,
-      isFree: true,
-      sectors: [
-        { name: 'Loft General Admission', price: 0, povType: 'dancefloor-back' }
-      ]
-    },
-    {
-      id: 'comedy_night',
-      title: 'English Comedy Night: Stands-ups live',
-      tag: 'Fun',
-      vibe: 'fun',
-      location: 'The Comedy Cellar, Prague',
-      date: 'Wednesday, Nov 15 • 20:30',
-      lineup: 'Toby Smith (UK) & Local Talent Showcase',
-      weather: { temp: '18°C', text: 'Comedy Cellar', icon: 'indoor' },
-      videoUrl: './videos/techno.mp4',
-      bgImg: './images/fun.jpg',
-      priceMin: 220,
-      priceMax: 450,
-      isFree: false,
-      sectors: [
-        { name: 'General Admission seating', price: 250, povType: 'dancefloor-back' }
-      ]
-    }
-  ];
+  let eventsData = [];
+  let activeFeedEvents = [];
 
-  // Make a working copy of events for the feed
-  let activeFeedEvents = [...eventsData];
+  // API Request Headers Helper
+  function getHeaders() {
+    const headers = { 'Content-Type': 'application/json' };
+    if (state.token) {
+      headers['Authorization'] = `Bearer ${state.token}`;
+    }
+    return headers;
+  }
+
+  // API Call Helpers
+  async function apiFetch(endpoint, options = {}) {
+    const defaultHeaders = getHeaders();
+    const mergedOptions = {
+      ...options,
+      headers: {
+        ...defaultHeaders,
+        ...options.headers
+      }
+    };
+    const response = await fetch(endpoint, mergedOptions);
+    const data = await response.json();
+    if (!response.ok || data.success === false) {
+      throw new Error(data.error || `HTTP error ${response.status}`);
+    }
+    return data;
+  }
+
+  // Modern Auth Screen Elements
+  const authStepEntry = document.getElementById('auth-step-entry');
+  const authStepOtp = document.getElementById('auth-step-otp');
+  const authIdentityForm = document.getElementById('auth-identity-form');
+  const authIdentityInput = document.getElementById('auth-identity');
+  const authError = document.getElementById('auth-error-msg');
+  const otpSentTarget = document.getElementById('otp-sent-target');
+  const otpDigits = document.querySelectorAll('.otp-digit');
+  
+  const authAppleBtn = document.getElementById('auth-apple-btn');
+  const authBiometricOverlay = document.getElementById('auth-biometric-overlay');
+  const bioScanStatus = document.getElementById('bio-scan-status');
+
+  let currentIdentity = '';
+
+  // 1. Apple Sign-In Biometric flow
+  if (authAppleBtn && authBiometricOverlay) {
+    authAppleBtn.addEventListener('click', () => {
+      authError.classList.add('hidden');
+      authBiometricOverlay.classList.remove('hidden');
+      bioScanStatus.textContent = 'Verifying Apple ID...';
+
+      setTimeout(() => {
+        bioScanStatus.textContent = 'Face ID Matched!';
+        
+        setTimeout(async () => {
+          try {
+            const data = await apiFetch('/api/auth/apple', {
+              method: 'POST',
+              body: JSON.stringify({})
+            });
+            authBiometricOverlay.classList.add('hidden');
+            loginSuccess(data.user);
+          } catch (err) {
+            authBiometricOverlay.classList.add('hidden');
+            authError.textContent = err.message;
+            authError.classList.remove('hidden');
+          }
+        }, 800);
+      }, 1500);
+    });
+  }
+
+  // 2. Identity Input (Email/Phone) Form Submit
+  if (authIdentityForm) {
+    authIdentityForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      authError.classList.add('hidden');
+      const identity = authIdentityInput.value.trim();
+      if (!identity) return;
+
+      try {
+        const data = await apiFetch('/api/auth/otp/send', {
+          method: 'POST',
+          body: JSON.stringify({ identity })
+        });
+        
+        currentIdentity = identity;
+        otpSentTarget.textContent = identity;
+        authStepEntry.classList.add('hidden');
+        authStepOtp.classList.remove('hidden');
+        
+        otpDigits.forEach(input => input.value = '');
+        if (otpDigits[0]) otpDigits[0].focus();
+      } catch (err) {
+        authError.textContent = err.message;
+        authError.classList.remove('hidden');
+      }
+    });
+  }
+
+  // 3. OTP Digits Input Auto-focus progression & Submit
+  otpDigits.forEach((input, idx) => {
+    input.addEventListener('input', async (e) => {
+      authError.classList.add('hidden');
+      const val = input.value.replace(/[^0-9]/g, '');
+      input.value = val;
+
+      if (val && idx < otpDigits.length - 1) {
+        otpDigits[idx + 1].focus();
+      } else if (val && idx === otpDigits.length - 1) {
+        await verifyOtpCode();
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && idx > 0) {
+        otpDigits[idx - 1].focus();
+      }
+    });
+  });
+
+  async function verifyOtpCode() {
+    const code = Array.from(otpDigits).map(input => input.value).join('');
+    if (code.length < 4) return;
+
+    try {
+      const data = await apiFetch('/api/auth/otp/verify', {
+        method: 'POST',
+        body: JSON.stringify({ identity: currentIdentity, code })
+      });
+      loginSuccess(data.user);
+    } catch (err) {
+      authError.textContent = err.message;
+      authError.classList.remove('hidden');
+      otpDigits.forEach(input => input.value = '');
+      if (otpDigits[0]) otpDigits[0].focus();
+    }
+  }
+
+  // Resend code trigger
+  const btnOtpResend = document.getElementById('btn-otp-resend');
+  if (btnOtpResend) {
+    btnOtpResend.addEventListener('click', async () => {
+      authError.classList.add('hidden');
+      try {
+        await apiFetch('/api/auth/otp/send', {
+          method: 'POST',
+          body: JSON.stringify({ identity: currentIdentity })
+        });
+        alert('Test verification code resent! Enter 1234.');
+        otpDigits.forEach(input => input.value = '');
+        if (otpDigits[0]) otpDigits[0].focus();
+      } catch (err) {
+        authError.textContent = err.message;
+        authError.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Back button from OTP screen
+  const btnOtpBack = document.getElementById('btn-otp-back');
+  if (btnOtpBack) {
+    btnOtpBack.addEventListener('click', () => {
+      authError.classList.add('hidden');
+      authStepOtp.classList.add('hidden');
+      authStepEntry.classList.remove('hidden');
+    });
+  }
+
+  function loginSuccess(user) {
+    state.user = user;
+    state.token = user.id;
+    state.credit = user.cashless_credit;
+    localStorage.setItem('viv_user', JSON.stringify(user));
+    localStorage.setItem('viv_token', user.id);
+    
+    updateCreditUI();
+    updateProfileUI();
+    
+    initAppContent().then(() => {
+      navigateTo('feed-screen');
+    });
+  }
+
+  function logout() {
+    state.user = null;
+    state.token = null;
+    state.credit = 0;
+    state.tickets = [];
+    localStorage.removeItem('viv_user');
+    localStorage.removeItem('viv_token');
+    
+    if (authIdentityForm) authIdentityForm.reset();
+    authStepOtp.classList.add('hidden');
+    authStepEntry.classList.remove('hidden');
+    
+    const statusPill = document.querySelector('.tester-panel .status-pill');
+    if (statusPill) {
+      statusPill.textContent = 'Not Linked';
+      statusPill.className = 'status-pill';
+    }
+
+    navigateTo('auth-screen');
+  }
+
+  const btnSignOut = document.getElementById('btn-sign-out');
+  if (btnSignOut) {
+    btnSignOut.addEventListener('click', () => {
+      logout();
+    });
+  }
+
+  function updateCreditUI() {
+    const profileCreditStat = document.getElementById('profile-wallet-credit-stat');
+    const testerCredit = document.getElementById('tester-credit');
+    if (profileCreditStat) profileCreditStat.textContent = state.credit;
+    if (testerCredit) testerCredit.textContent = state.credit;
+    const feedHeaderCredit = document.getElementById('feed-header-credit-badge');
+    if (feedHeaderCredit) {
+      feedHeaderCredit.textContent = `${state.credit} CZK`;
+    }
+  }
+
+  function updateProfileUI() {
+    if (!state.user) return;
+    const nameEl = document.querySelector('.profile-header-main h2');
+    const usernameEl = document.querySelector('.profile-header-main .profile-username');
+    const bioEl = document.querySelector('.profile-header-main .profile-bio');
+    
+    if (nameEl) nameEl.textContent = state.user.full_name;
+    if (usernameEl) usernameEl.textContent = `@${state.user.username}`;
+    if (bioEl) bioEl.textContent = state.user.bio || 'No bio provided.';
+  }
+
+  async function initAppContent() {
+    try {
+      await fetchEvents();
+      await fetchTickets();
+      await fetchActivities();
+      
+      // Seed default feeds and render
+      activeFeedEvents = [...eventsData];
+      renderFeed();
+      renderDiscoveryGrid();
+      
+      // Update tester status
+      const statusPill = document.querySelector('.tester-panel .status-pill');
+      if (statusPill) {
+        statusPill.textContent = `Linked (@${state.user.username})`;
+        statusPill.className = 'status-pill status-linked';
+      }
+    } catch (e) {
+      console.error('[App Init] Failed to load user content:', e);
+    }
+  }
+
+  async function fetchEvents() {
+    const data = await apiFetch('/api/events');
+    eventsData = data.events;
+  }
+
+  async function fetchTickets() {
+    const data = await apiFetch('/api/tickets');
+    state.tickets = data.tickets;
+    renderTicketsList();
+  }
+
+  async function fetchActivities() {
+    const data = await apiFetch('/api/wallet/activities');
+    renderActivitiesList(data.activities);
+  }
+
+  function renderActivitiesList(activities) {
+    const container = document.querySelector('.history-list');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    if (activities.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding: 10px; color: var(--color-text-muted); font-size:0.75rem;">No activity log found.</div>';
+      return;
+    }
+    
+    activities.forEach(act => {
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      
+      let iconType = 'reward';
+      let iconSvg = '';
+      
+      if (act.type === 'purchase') {
+        iconType = 'purchase';
+        iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`;
+      } else if (act.type === 'refund') {
+        iconType = 'refund';
+        iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>`;
+      } else {
+        iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>`;
+      }
+      
+      const isPositive = act.amount > 0;
+      const amtStr = isPositive ? `+${act.amount} CZK` : `${act.amount} CZK`;
+      const valClass = isPositive ? 'history-val positive' : 'history-val';
+      
+      item.innerHTML = `
+        <div class="history-icon ${iconType}">
+          ${iconSvg}
+        </div>
+        <div class="history-details">
+          <span class="history-item-title">${act.title}</span>
+          <span class="history-item-time">${act.time}</span>
+        </div>
+        <strong class="${valClass}">${amtStr}</strong>
+      `;
+      container.appendChild(item);
+    });
+  }
+
+  function showToast(message, isError = false) {
+    const existing = document.getElementById('viv-global-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'viv-global-toast';
+    toast.style.position = 'absolute';
+    toast.style.bottom = '105px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+    toast.style.background = isError ? 'rgba(239, 68, 68, 0.95)' : 'rgba(16, 185, 129, 0.95)';
+    toast.style.color = '#fff';
+    toast.style.padding = '12px 24px';
+    toast.style.borderRadius = '24px';
+    toast.style.fontFamily = 'var(--font-family-title)';
+    toast.style.fontSize = '0.8rem';
+    toast.style.fontWeight = '700';
+    toast.style.boxShadow = isError ? '0 10px 25px rgba(239, 68, 68, 0.3)' : '0 10px 25px rgba(16, 185, 129, 0.3)';
+    toast.style.zIndex = '9999';
+    toast.style.opacity = '0';
+    toast.style.transition = 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+    toast.style.whiteSpace = 'nowrap';
+    toast.style.display = 'flex';
+    toast.style.alignItems = 'center';
+    toast.style.gap = '8px';
+
+    const icon = isError 
+      ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`
+      : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+    toast.innerHTML = `${icon} <span>${message}</span>`;
+    
+    const container = document.getElementById('app-container') || document.body;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      toast.style.opacity = '1';
+    }, 10);
+
+    setTimeout(() => {
+      toast.style.transform = 'translateX(-50%) translateY(-10px)';
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 350);
+    }, 3000);
+  }
+
+  async function initAuth() {
+    const cachedUser = localStorage.getItem('viv_user');
+    const cachedToken = localStorage.getItem('viv_token');
+    
+    if (cachedUser && cachedToken) {
+      state.user = JSON.parse(cachedUser);
+      state.token = cachedToken;
+      state.credit = state.user.cashless_credit;
+      
+      try {
+        const data = await apiFetch('/api/auth/me');
+        state.user = data.user;
+        state.credit = data.user.cashless_credit;
+        localStorage.setItem('viv_user', JSON.stringify(data.user));
+        
+        updateCreditUI();
+        updateProfileUI();
+        await initAppContent();
+        navigateTo('feed-screen');
+      } catch (err) {
+        console.error('Session verification failed, logging out', err);
+        logout();
+      }
+    } else {
+      navigateTo('auth-screen');
+    }
+  }
 
   // --------------------------------------------------------------------------
   // 2. VIEW ROUTER (SPA navigation with View Transitions support)
@@ -506,11 +744,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateHighlightToButton(activeBtn, false);
       }
       
-      // Pre-fill tickets database with mock tickets for visual testing
-      if (state.tickets.length === 0 && eventsData.length > 2) {
-        createMockTicket(eventsData[0], eventsData[0].sectors[1], false, 'Jakub Dostál');
-        createMockTicket(eventsData[2], eventsData[2].sectors[0], true, 'Jakub Dostál (Host)');
-      }
+      initAuth();
     }, 150);
   }
 
@@ -1491,11 +1725,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('apple-pay-amount').textContent = `${state.selectedSeat.price} CZK`;
 
     // Reset Biometrics UI
-    const bioIcon = document.getElementById('bio-touch');
+    const bioIcon = document.getElementById('bio-face-id');
     const bioText = document.getElementById('bio-text');
-    bioIcon.closest('.biometric-icon-wrapper').classList.remove('success');
-    bioIcon.setAttribute('stroke', '#E02041');
-    bioText.textContent = 'Double-press side button to pay';
+    const bioWrapper = document.getElementById('face-id-trigger');
+    if (bioWrapper) {
+      bioWrapper.classList.remove('success', 'scanning');
+    }
+    if (bioIcon) {
+      bioIcon.setAttribute('stroke', '#ffffff');
+    }
+    if (bioText) {
+      bioText.textContent = 'Tap Face ID to authorize payment';
+    }
 
     // Show Sheet Drawer
     document.getElementById('apple-pay-sheet').classList.remove('hidden');
@@ -1506,36 +1747,86 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('apple-pay-sheet').classList.add('hidden');
   });
 
-  // Handle biometric fingerprint click simulation
-  document.querySelector('.biometric-icon-wrapper').addEventListener('click', () => {
-    const bioIcon = document.getElementById('bio-touch');
-    const bioText = document.getElementById('bio-text');
-    const isGroup = document.getElementById('pay-group').checked;
+  // Handle biometric Face ID click simulation
+  const bioWrapper = document.getElementById('face-id-trigger');
+  if (bioWrapper) {
+    bioWrapper.addEventListener('click', () => {
+      const bioIcon = document.getElementById('bio-face-id');
+      const bioText = document.getElementById('bio-text');
+      const isGroup = document.getElementById('pay-group').checked;
 
-    bioText.textContent = 'Verifying Relatoo Profile...';
-    
-    // Simulate biometric matching
-    setTimeout(() => {
-      bioIcon.closest('.biometric-icon-wrapper').classList.add('success');
-      bioIcon.setAttribute('stroke', '#10b981'); // Change to green
-      bioText.textContent = 'Payment Authorized! Processing ticket...';
+      if (bioWrapper.classList.contains('scanning') || bioWrapper.classList.contains('success')) return;
+
+      bioWrapper.classList.add('scanning');
+      bioText.textContent = 'Scanning Face ID...';
       
-      // Delay screen redirection
+      // Simulate biometric matching
       setTimeout(() => {
-        // Hide Apple Pay Sheet
-        document.getElementById('apple-pay-sheet').classList.add('hidden');
+        bioWrapper.classList.remove('scanning');
+        bioWrapper.classList.add('success');
+        if (bioIcon) bioIcon.setAttribute('stroke', '#10b981'); // Change to green
+        bioText.textContent = 'Payment Authorized! Processing ticket...';
+        
+        // Delay screen redirection
+        setTimeout(async () => {
+          // Hide Apple Pay Sheet
+          document.getElementById('apple-pay-sheet').classList.add('hidden');
 
-        if (isGroup) {
-          // Initialize Split Payment dashboard
-          startSplitPaymentFlow();
-        } else {
-          // Complete direct booking: create ticket
-          createMockTicket(state.selectedEvent, state.selectedSeat, false);
-          navigateTo('ticket-screen');
+        try {
+          if (isGroup) {
+            // Initialize Split Payment dashboard via API
+            const data = await apiFetch('/api/split/create', {
+              method: 'POST',
+              body: JSON.stringify({
+                eventId: state.selectedEvent.id,
+                sectorName: state.selectedSeat.name,
+                price: state.selectedSeat.price,
+                totalSeats: state.groupBuyCount
+              })
+            });
+            state.credit = data.newCredit;
+            updateCreditUI();
+            await fetchTickets();
+            await fetchActivities();
+            startSplitPaymentFlow(data.sessionId);
+          } else {
+            // Complete direct booking: create ticket in DB
+            const data = await apiFetch('/api/tickets/purchase', {
+              method: 'POST',
+              body: JSON.stringify({
+                eventId: state.selectedEvent.id,
+                sectorName: state.selectedSeat.name,
+                price: state.selectedSeat.price,
+                holderName: state.user.full_name,
+                isGroup: false
+              })
+            });
+            state.credit = data.newCredit;
+            updateCreditUI();
+            await fetchTickets();
+            await fetchActivities();
+            navigateTo('ticket-screen');
+          }
+        } catch (e) {
+          showToast(e.message, true);
+          // Reset Biometrics UI on failure so they can try again
+          const bioIcon = document.getElementById('bio-face-id');
+          const bioText = document.getElementById('bio-text');
+          const bioWrapper = document.getElementById('face-id-trigger');
+          if (bioWrapper) {
+            bioWrapper.classList.remove('success', 'scanning');
+          }
+          if (bioIcon) {
+            bioIcon.setAttribute('stroke', '#ffffff');
+          }
+          if (bioText) {
+            bioText.textContent = 'Tap Face ID to authorize payment';
+          }
         }
       }, 1000);
     }, 1500);
-  });
+    });
+  }
 
   // --------------------------------------------------------------------------
   // 6. SPLIT PAYMENT LIVE COUNTDOWN DASHBOARD
@@ -1543,61 +1834,57 @@ document.addEventListener('DOMContentLoaded', () => {
   
   let splitTimerInterval = null;
 
-  function startSplitPaymentFlow() {
-    // Generate split session details
-    state.splitSession = {
-      event: state.selectedEvent,
-      seat: state.selectedSeat,
-      totalFriends: state.groupBuyCount - 1,
-      friendsPaid: 0,
-      secondsRemaining: 45, // Demo accelerated timer (15 minutes simulation in 45s)
-      friends: [
-        { name: 'Honza (Friend 1)', status: 'waiting', avatar: 'H' },
-        { name: 'Karel (Friend 2)', status: 'waiting', avatar: 'K' }
-      ]
-    };
+  async function startSplitPaymentFlow(sessionId) {
+    try {
+      const data = await apiFetch(`/api/split/status?sessionId=${sessionId}`);
+      
+      state.splitSessionId = sessionId;
+      state.splitSession = {
+        event: {
+          id: data.session.eventId,
+          title: data.session.eventTitle,
+          location: data.session.eventLocation,
+          bgImg: data.session.eventBgImg
+        },
+        seat: {
+          name: data.session.sectorName,
+          price: data.session.price
+        },
+        totalSeats: data.session.totalSeats,
+        paidSeats: data.session.paidSeats,
+        secondsRemaining: 45, // Demo accelerated timer
+        members: data.members
+      };
 
-    if (state.groupBuyCount === 4) {
-      state.splitSession.friends.push({ name: 'David (Friend 3)', status: 'waiting', avatar: 'D' });
-    } else if (state.groupBuyCount === 2) {
-      state.splitSession.friends = [{ name: 'Honza (Friend 1)', status: 'waiting', avatar: 'H' }];
+      // Enable tester panel friend triggers
+      document.getElementById('sim-friend-pay-1').disabled = false;
+      if (state.splitSession.totalSeats >= 3) {
+        document.getElementById('sim-friend-pay-2').disabled = false;
+      }
+      document.getElementById('sim-trigger-expiry').disabled = false;
+
+      // Set Dashboard labels
+      document.getElementById('paid-count').textContent = data.session.paidSeats;
+      document.getElementById('total-count').textContent = data.session.totalSeats;
+      document.getElementById('share-link-url').value = `https://vivoo.cz/split/${sessionId}`;
+
+      renderSplitFriendsList();
+      startSplitTimer();
+      navigateTo('split-dashboard-screen');
+    } catch (e) {
+      console.error('Failed to load split session:', e);
     }
-
-    // Enable tester panel friend triggers
-    document.getElementById('sim-friend-pay-1').disabled = false;
-    if (state.groupBuyCount >= 3) {
-      document.getElementById('sim-friend-pay-2').disabled = false;
-    }
-    document.getElementById('sim-trigger-expiry').disabled = false;
-
-    // Set Dashboard labels
-    document.getElementById('paid-count').textContent = '1';
-    document.getElementById('total-count').textContent = state.groupBuyCount;
-    document.getElementById('share-link-url').value = `https://vivoo.cz/split/${Math.random().toString(36).substring(7)}`;
-
-    renderSplitFriendsList();
-    startSplitTimer();
-    navigateTo('split-dashboard-screen');
   }
 
   function renderSplitFriendsList() {
     const container = document.getElementById('friends-list-container');
-    container.innerHTML = `
-      <!-- User row -->
-      <div class="friend-row">
-        <div class="friend-info">
-          <div class="friend-avatar" style="background:var(--color-accent-crimson)">ME</div>
-          <span class="friend-name">You (Organizer)</span>
-        </div>
-        <div class="friend-status status-check">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>Paid</span>
-        </div>
-      </div>
-    `;
+    container.innerHTML = '';
 
-    state.splitSession.friends.forEach(f => {
-      const isPaid = f.status === 'paid';
+    if (!state.splitSession || !state.splitSession.members) return;
+
+    state.splitSession.members.forEach(member => {
+      const isHost = member.user_id === state.user.id;
+      const isPaid = member.status === 'paid';
       const statusHtml = isPaid 
         ? `<div class="friend-status status-check">
              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1607,12 +1894,16 @@ document.addEventListener('DOMContentLoaded', () => {
              <span class="loading-dots">Waiting</span>
            </div>`;
 
+      const avatarLetter = isHost ? 'ME' : member.name.charAt(0).toUpperCase();
+      const avatarStyle = isHost ? 'style="background:var(--color-accent-crimson)"' : '';
+      const nameText = isHost ? 'You (Organizer)' : member.name;
+
       const row = document.createElement('div');
       row.className = 'friend-row';
       row.innerHTML = `
         <div class="friend-info">
-          <div class="friend-avatar">${f.avatar}</div>
-          <span class="friend-name">${f.name}</span>
+          <div class="friend-avatar" ${avatarStyle}>${avatarLetter}</div>
+          <span class="friend-name">${nameText}</span>
         </div>
         ${statusHtml}
       `;
@@ -1767,10 +2058,35 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.tickets.length === 0) {
       wrapper.innerHTML = `
         <div class="empty-tickets-view">
-          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="6" x2="6" y2="18"/></svg>
-          <h3>Your Wallet is Empty</h3>
-          <p>Go back to the Discovery Feed to browse events and purchase tickets.</p>
+          <div class="empty-tickets-glow"></div>
+          <div class="empty-tickets-card">
+            <div class="empty-tickets-icon-wrapper">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                <rect x="2" y="4" width="20" height="16" rx="3" stroke="url(#wallet-glow-grad)" />
+                <path d="M18 10h.01M18 14h.01" stroke-width="2" stroke-linecap="round" />
+                <path d="M2 12c3 0 3-3 6-3s3 3 6 3 3-3 6-3v6c-3 0-3-3-6-3s-3 3-6 3-3-3-6-3v-6z" stroke="url(#wallet-glow-grad)" stroke-dasharray="2 1" />
+                <defs>
+                  <linearGradient id="wallet-glow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="var(--color-accent-crimson)" />
+                    <stop offset="100%" stop-color="var(--color-accent-magenta)" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <h3>Your Wallet is Empty</h3>
+            <p>Secure active access passes from the Discovery Feed to unlock vertical video streams and geofence scanner check-ins.</p>
+            <button type="button" class="btn btn-primary btn-block empty-explore-btn" id="btn-empty-explore">
+              Explore Events
+            </button>
+          </div>
         </div>`;
+      
+      const exploreBtn = document.getElementById('btn-empty-explore');
+      if (exploreBtn) {
+        exploreBtn.addEventListener('click', () => {
+          navigateTo('feed-screen');
+        });
+      }
       return;
     }
 
@@ -1811,287 +2127,291 @@ document.addEventListener('DOMContentLoaded', () => {
       
       wrapper.appendChild(grid);
     } else {
-      // 2. RENDER PASS DETAILS (WODCOMP / EVENTOO INSPIRED SECURE TICKET)
-      const ticket = state.tickets.find(t => t.id === state.selectedTicketId);
-      if (!ticket) {
-        state.selectedTicketId = null;
-        renderTicketsList();
-        return;
-      }
+      try {
+        // 2. RENDER PASS DETAILS (WODCOMP / EVENTOO INSPIRED SECURE TICKET)
+        const ticket = state.tickets.find(t => t.id === state.selectedTicketId);
+        if (!ticket) {
+          state.selectedTicketId = null;
+          renderTicketsList();
+          return;
+        }
 
-      // Initialize dynamic properties if missing
-      ticket.gate = ticket.gate || 'GATE ' + String.fromCharCode(65 + Math.floor(Math.random() * 3));
-      ticket.seatNum = ticket.seatNum || 'LANE ' + Math.floor(1 + Math.random() * 8);
-      ticket.code = ticket.code || 'VVO-2026-' + ticket.id.split('-')[1];
-      ticket.organizer = ticket.event.title.includes('Derby') ? 'AC Sparta Praha' : ticket.event.title.includes('Techno') ? 'Basement Syndicate' : 'ViVoo Events';
-      ticket.division = ticket.seat.price >= 800 ? 'ELITE' : ticket.seat.price >= 450 ? 'ADVANCED' : 'SPORT';
-      ticket.mintAddress = ticket.mintAddress || '';
-      ticket.isAddedToWallet = ticket.isAddedToWallet || false;
+        // Initialize dynamic properties if missing
+        ticket.gate = ticket.gate || 'GATE ' + String.fromCharCode(65 + Math.floor(Math.random() * 3));
+        ticket.seatNum = ticket.seatNum || 'LANE ' + Math.floor(1 + Math.random() * 8);
+        ticket.code = ticket.code || 'VVO-2026-' + ticket.id.split('-')[1];
+        ticket.organizer = ticket.event.title.includes('Derby') ? 'AC Sparta Praha' : ticket.event.title.includes('Techno') ? 'Basement Syndicate' : 'ViVoo Events';
+        ticket.division = ticket.seat.price >= 800 ? 'ELITE' : ticket.seat.price >= 450 ? 'ADVANCED' : 'SPORT';
+        ticket.mintAddress = ticket.mintAddress || '';
+        ticket.isAddedToWallet = ticket.isAddedToWallet || false;
 
-      const visuals = getDivisionVisuals(ticket.division);
+        const visuals = getDivisionVisuals(ticket.division);
 
-      const passDetails = document.createElement('div');
-      passDetails.className = 'pass-details-view animate-fadeIn';
+        const passDetails = document.createElement('div');
+        passDetails.className = 'pass-details-view animate-fadeIn';
 
-      passDetails.innerHTML = `
-        <!-- Back Link -->
-        <div class="pass-back-row">
-          <button class="pass-back-btn" id="btn-pass-back">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-            Back to My Passes
-          </button>
-        </div>
-
-        <!-- The Pass visual card -->
-        <div class="pass-stub-wrapper">
-          <!-- Floating Division Badge Pill -->
-          <div class="pass-division-badge ${visuals.tagClass}">
-            ${visuals.name}
+        passDetails.innerHTML = `
+          <!-- Back Link -->
+          <div class="pass-back-row">
+            <button class="pass-back-btn" id="btn-pass-back">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Back to My Passes
+            </button>
           </div>
 
-          <div class="pass-stub-panel ticket-stub-texture">
-            <!-- Moving iridescent hologram canvas overlay -->
-            <canvas id="pass-hologram-canvas" class="pass-hologram-canvas"></canvas>
-
-            <!-- Ambient radial color glow behind QR -->
-            <div class="pass-glow-ambient" style="background: radial-gradient(circle, ${visuals.glowColor}25 0%, transparent 70%);"></div>
-
-            <!-- Secure Pass Header -->
-            <div class="pass-header-meta">
-              <div class="pass-header-left">
-                <span class="pass-dot-indicator ${visuals.dotClass}"></span>
-                <span class="pass-header-tag-text">${visuals.name} PASS</span>
-              </div>
-              <span class="pass-header-serial">${ticket.code}</span>
+          <!-- The Pass visual card -->
+          <div class="pass-stub-wrapper">
+            <!-- Floating Division Badge Pill -->
+            <div class="pass-division-badge ${visuals.tagClass}">
+              ${visuals.name}
             </div>
 
-            <!-- Event Hero info -->
-            <div class="pass-event-hero">
-              <h2 class="pass-event-title">${ticket.event.title}</h2>
-              <div class="pass-event-subinfo">
-                <span class="pass-edition-badge">${ticket.event.tag.toUpperCase()}</span>
-                <span class="pass-event-location-text">${ticket.event.location}</span>
+            <div class="pass-stub-panel ticket-stub-texture">
+              <!-- Moving iridescent hologram canvas overlay -->
+              <canvas id="pass-hologram-canvas" class="pass-hologram-canvas"></canvas>
+
+              <!-- Ambient radial color glow behind QR -->
+              <div class="pass-glow-ambient" style="background: radial-gradient(circle, ${visuals.glowColor}25 0%, transparent 70%);"></div>
+
+              <!-- Secure Pass Header -->
+              <div class="pass-header-meta">
+                <div class="pass-header-left">
+                  <span class="pass-dot-indicator ${visuals.dotClass}"></span>
+                  <span class="pass-header-tag-text">${visuals.name} PASS</span>
+                </div>
+                <span class="pass-header-serial">${ticket.code}</span>
               </div>
-              <div class="pass-event-date-row">
-                <span class="pass-date-label">Confirmed Attendance</span>
+
+              <!-- Event Hero info -->
+              <div class="pass-event-hero">
+                <h2 class="pass-event-title">${ticket.event.title}</h2>
+                <div class="pass-event-subinfo">
+                  <span class="pass-edition-badge">${ticket.event.tag.toUpperCase()}</span>
+                  <span class="pass-event-location-text">${ticket.event.location}</span>
+                </div>
+                <div class="pass-event-date-row">
+                  <span class="pass-date-label">Confirmed Attendance</span>
+                </div>
               </div>
-            </div>
 
-            <!-- SafeTix Rotating QR Container -->
-            <div class="pass-qr-container">
-              <div class="pass-qr-bracket-box">
-                <!-- Tech corner brackets -->
-                <div class="qr-bracket top-left"></div>
-                <div class="qr-bracket top-right"></div>
-                <div class="qr-bracket bottom-left"></div>
-                <div class="qr-bracket bottom-right"></div>
+              <!-- SafeTix Rotating QR Container -->
+              <div class="pass-qr-container">
+                <div class="pass-qr-bracket-box">
+                  <!-- Tech corner brackets -->
+                  <div class="qr-bracket top-left"></div>
+                  <div class="qr-bracket top-right"></div>
+                  <div class="qr-bracket bottom-left"></div>
+                  <div class="qr-bracket bottom-right"></div>
 
-                <!-- QR code visual block -->
-                <div class="pass-qr-image-wrapper">
-                  <img id="secure-qr-img" src="" alt="Dynamic Secure QR">
-                  
-                  <!-- Scan laser line animation -->
-                  <div class="scan-laser-line" style="background: linear-gradient(to bottom, transparent, ${visuals.accentColor}, transparent);"></div>
+                  <!-- QR code visual block -->
+                  <div class="pass-qr-image-wrapper">
+                    <img id="secure-qr-img" src="" alt="Dynamic Secure QR">
+                    
+                    <!-- Scan laser line animation -->
+                    <div class="scan-laser-line" style="background: linear-gradient(to bottom, transparent, ${visuals.accentColor}, transparent);"></div>
 
-                  <!-- Twin-state label overlay -->
-                  <div class="pass-twin-state-overlay">
-                    <span id="qr-state-dot" class="state-dot"></span>
-                    <span id="qr-state-label" class="state-text">STATE A</span>
+                    <!-- Twin-state label overlay -->
+                    <div class="pass-twin-state-overlay">
+                      <span id="qr-state-dot" class="state-dot"></span>
+                      <span id="qr-state-label" class="state-text">STATE A</span>
+                    </div>
                   </div>
                 </div>
+
+                <!-- Security Refresh Timer -->
+                <div class="pass-timer-row">
+                  <svg class="pass-timer-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                  <span class="pass-timer-text">
+                    Access Code Refreshes In <strong id="pass-countdown-timer">00:60</strong>
+                  </span>
+                </div>
               </div>
 
-              <!-- Security Refresh Timer -->
-              <div class="pass-timer-row">
-                <svg class="pass-timer-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                <span class="pass-timer-text">
-                  Access Code Refreshes In <strong id="pass-countdown-timer">00:60</strong>
-                </span>
-              </div>
-            </div>
-
-            <!-- On-Chain Security Metadata Collapsible -->
-            <div class="pass-collapsible-wrapper">
-              <button class="pass-collapse-btn" id="btn-toggle-security-keys">
-                <span class="btn-collapse-title-left">
-                  <span class="collapse-dot"></span>
-                  On-Chain Security Keys
-                </span>
-                <span id="collapse-toggle-text">Show Keys</span>
-              </button>
-              
-              <div class="pass-collapse-content hidden" id="security-keys-content">
-                <div class="key-field">
-                  <label>SOLANA NFT MINT</label>
-                  <strong id="onchain-nft-mint" class="selectable-key">${ticket.mintAddress || 'Not yet minted on Solana Testnet'}</strong>
-                </div>
-                <div class="key-field">
-                  <label>ATHLETE PUBLIC KEY</label>
-                  <strong class="selectable-key">VVOO-JAKUB-DOSTAL-SOL-KEY-2026</strong>
-                </div>
-                <div class="key-field">
-                  <label>ACTIVE SIGNATURE (ED25519)</label>
-                  <strong id="onchain-active-sig" class="selectable-key italic">-</strong>
-                </div>
-                <div class="key-row-grid">
+              <!-- On-Chain Security Metadata Collapsible -->
+              <div class="pass-collapsible-wrapper">
+                <button class="pass-collapse-btn" id="btn-toggle-security-keys">
+                  <span class="btn-collapse-title-left">
+                    <span class="collapse-dot"></span>
+                    On-Chain Security Keys
+                  </span>
+                  <span id="collapse-toggle-text">Show Keys</span>
+                </button>
+                
+                <div class="pass-collapse-content hidden" id="security-keys-content">
                   <div class="key-field">
-                    <label>VALIDITY EPOCH</label>
-                    <strong id="onchain-validity-epoch">-</strong>
+                    <label>SOLANA NFT MINT</label>
+                    <strong id="onchain-nft-mint" class="selectable-key">${ticket.mintAddress || 'Not yet minted on Solana Testnet'}</strong>
                   </div>
                   <div class="key-field">
-                    <label>STATE NONCE</label>
-                    <strong id="onchain-state-nonce">-</strong>
+                    <label>ATHLETE PUBLIC KEY</label>
+                    <strong class="selectable-key">VVOO-JAKUB-DOSTAL-SOL-KEY-2026</strong>
+                  </div>
+                  <div class="key-field">
+                    <label>ACTIVE SIGNATURE (ED25519)</label>
+                    <strong id="onchain-active-sig" class="selectable-key italic">-</strong>
+                  </div>
+                  <div class="key-row-grid">
+                    <div class="key-field">
+                      <label>VALIDITY EPOCH</label>
+                      <strong id="onchain-validity-epoch">-</strong>
+                    </div>
+                    <div class="key-field">
+                      <label>STATE NONCE</label>
+                      <strong id="onchain-state-nonce">-</strong>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Perforation Line with Stub Cutouts -->
-            <div class="pass-perforation-divider">
-              <div class="stub-cutout left"></div>
-              <div class="perforation-dashed-line"></div>
-              <div class="stub-cutout right"></div>
-            </div>
+              <!-- Perforation Line with Stub Cutouts -->
+              <div class="pass-perforation-divider">
+                <div class="stub-cutout left"></div>
+                <div class="perforation-dashed-line"></div>
+                <div class="stub-cutout right"></div>
+              </div>
 
-            <!-- Info details grid -->
-            <div class="pass-info-details-grid">
-              <div class="info-details-box">
-                <span class="info-box-label">GATE (VSTUP)</span>
-                <strong class="info-box-value">${ticket.gate}</strong>
+              <!-- Info details grid -->
+              <div class="pass-info-details-grid">
+                <div class="info-details-box">
+                  <span class="info-box-label">GATE (VSTUP)</span>
+                  <strong class="info-box-value">${ticket.gate}</strong>
+                </div>
+                <div class="info-details-box">
+                  <span class="info-box-label">KATEGORIE (SECTOR)</span>
+                  <strong class="info-box-value">${ticket.seat.name.split(' (')[0]}</strong>
+                </div>
+                <div class="info-details-box">
+                  <span class="info-box-label">ORGANIZÁTOR</span>
+                  <strong class="info-box-value">${ticket.organizer}</strong>
+                </div>
+                <div class="info-details-box">
+                  <span class="info-box-label">LANE / ROW (DRÁHA)</span>
+                  <strong class="info-box-value">${ticket.seatNum}</strong>
+                </div>
               </div>
-              <div class="info-details-box">
-                <span class="info-box-label">KATEGORIE (SECTOR)</span>
-                <strong class="info-box-value">${ticket.seat.name.split(' (')[0]}</strong>
-              </div>
-              <div class="info-details-box">
-                <span class="info-box-label">ORGANIZÁTOR</span>
-                <strong class="info-box-value">${ticket.organizer}</strong>
-              </div>
-              <div class="info-details-box">
-                <span class="info-box-label">LANE / ROW (DRÁHA)</span>
-                <strong class="info-box-value">${ticket.seatNum}</strong>
-              </div>
-            </div>
 
-            <!-- Czech Description block -->
-            <div class="pass-description-block">
-              <span class="desc-header">INFORMACE O ZÁVODU</span>
-              <div class="desc-content">
-                This entry ticket certifies registration for ${ticket.event.title}. Access code rotates on-chain every 60 seconds to prevent unauthorized copy. Present this secure QR at the stadium gate.
+              <!-- Czech Description block -->
+              <div class="pass-description-block">
+                <span class="desc-header">INFORMACE O ZÁVODU</span>
+                <div class="desc-content">
+                  This entry ticket certifies registration for ${ticket.event.title}. Access code rotates on-chain every 60 seconds to prevent unauthorized copy. Present this secure QR at the stadium gate.
+                </div>
               </div>
-            </div>
 
-            <!-- Pass Action buttons -->
-            <div class="pass-actions-area">
-              ${!ticket.mintAddress ? `
-                <button class="btn btn-mint-nft-solana" id="btn-mint-ticket-nft">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                  Mint Ticket NFT on Solana Testnet
+              <!-- Pass Action buttons -->
+              <div class="pass-actions-area">
+                ${!ticket.mintAddress ? `
+                  <button class="btn btn-mint-nft-solana" id="btn-mint-ticket-nft">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                    Mint Ticket NFT on Solana Testnet
+                  </button>
+                ` : `
+                  <button class="btn btn-solana-explorer-link" id="btn-sol-explorer">
+                    View NFT on Solana Explorer
+                  </button>
+                `}
+
+                <button class="btn btn-refund-resale btn-resale-detail" id="btn-refund-ticket">
+                  1-Click Resale & 80% Refund
                 </button>
-              ` : `
-                <button class="btn btn-solana-explorer-link" id="btn-sol-explorer">
-                  View NFT on Solana Explorer
+
+                <button class="btn btn-add-apple-wallet" id="btn-add-wallet">
+                  ${ticket.isAddedToWallet ? '✓ Added to Apple Wallet' : 'Add to Apple Wallet'}
                 </button>
-              `}
-
-              <button class="btn btn-refund-resale btn-resale-detail" id="btn-refund-ticket">
-                1-Click Resale & 80% Refund
-              </button>
-
-              <button class="btn btn-add-apple-wallet" id="btn-add-wallet">
-                ${ticket.isAddedToWallet ? '✓ Added to Apple Wallet' : 'Add to Apple Wallet'}
-              </button>
+              </div>
             </div>
           </div>
-        </div>
-      `;
+        `;
 
-      wrapper.appendChild(passDetails);
+        wrapper.appendChild(passDetails);
 
-      // Back button click listener
-      document.getElementById('btn-pass-back').onclick = () => {
-        state.selectedTicketId = null;
-        renderTicketsList();
-      };
-
-      // Toggle collapsible keys
-      document.getElementById('btn-toggle-security-keys').onclick = () => {
-        const content = document.getElementById('security-keys-content');
-        const text = document.getElementById('collapse-toggle-text');
-        if (content.classList.contains('hidden')) {
-          content.classList.remove('hidden');
-          text.textContent = 'Hide Keys';
-        } else {
-          content.classList.add('hidden');
-          text.textContent = 'Show Keys';
-        }
-      };
-
-      // Mint Solana NFT Simulation
-      const btnMint = document.getElementById('btn-mint-ticket-nft');
-      if (btnMint) {
-        btnMint.onclick = () => {
-          btnMint.disabled = true;
-          btnMint.innerHTML = `
-            <svg class="pass-timer-icon animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-            Minting on Solana Testnet...
-          `;
-          
-          setTimeout(() => {
-            ticket.mintAddress = 'SOL-MINT-' + Array.from({length: 12}, () => Math.floor(Math.random()*16).toString(16)).join('').toUpperCase();
-            alert('NFT Minted successfully on Solana Testnet!');
-            renderTicketsList();
-          }, 1800);
+        // Back button click listener
+        document.getElementById('btn-pass-back').onclick = () => {
+          state.selectedTicketId = null;
+          renderTicketsList();
         };
-      }
 
-      // View Solana Explorer
-      const btnExplorer = document.getElementById('btn-sol-explorer');
-      if (btnExplorer) {
-        btnExplorer.onclick = () => {
-          window.open(`https://explorer.solana.com/address/${ticket.mintAddress}?cluster=testnet`, '_blank');
+        // Toggle collapsible keys
+        document.getElementById('btn-toggle-security-keys').onclick = () => {
+          const content = document.getElementById('security-keys-content');
+          const text = document.getElementById('collapse-toggle-text');
+          if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            text.textContent = 'Hide Keys';
+          } else {
+            content.classList.add('hidden');
+            text.textContent = 'Show Keys';
+          }
         };
-      }
 
-      // Apple Wallet click listener
-      const btnWallet = document.getElementById('btn-add-wallet');
-      if (btnWallet) {
-        btnWallet.onclick = () => {
-          ticket.isAddedToWallet = true;
-          btnWallet.textContent = '✓ Added to Apple Wallet';
-          btnWallet.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-          btnWallet.style.background = 'rgba(16, 185, 129, 0.1)';
-          btnWallet.style.color = '#10b981';
-          alert(`${ticket.event.title} ticket pass added to Apple Wallet!`);
+        // Mint Solana NFT Simulation
+        const btnMint = document.getElementById('btn-mint-ticket-nft');
+        if (btnMint) {
+          btnMint.onclick = () => {
+            btnMint.disabled = true;
+            btnMint.innerHTML = `
+              <svg class="pass-timer-icon animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Minting on Solana Testnet...
+            `;
+            
+            setTimeout(() => {
+              ticket.mintAddress = 'SOL-MINT-' + Array.from({length: 12}, () => Math.floor(Math.random()*16).toString(16)).join('').toUpperCase();
+              alert('NFT Minted successfully on Solana Testnet!');
+              renderTicketsList();
+            }, 1800);
+          };
+        }
+
+        // View Solana Explorer
+        const btnExplorer = document.getElementById('btn-sol-explorer');
+        if (btnExplorer) {
+          btnExplorer.onclick = () => {
+            window.open(`https://explorer.solana.com/address/${ticket.mintAddress}?cluster=testnet`, '_blank');
+          };
+        }
+
+        // Apple Wallet click listener
+        const btnWallet = document.getElementById('btn-add-wallet');
+        if (btnWallet) {
+          btnWallet.onclick = () => {
+            ticket.isAddedToWallet = true;
+            btnWallet.textContent = '✓ Added to Apple Wallet';
+            btnWallet.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+            btnWallet.style.background = 'rgba(16, 185, 129, 0.1)';
+            btnWallet.style.color = '#10b981';
+            alert(`${ticket.event.title} ticket pass added to Apple Wallet!`);
+          };
+        }
+
+        // Resale click listener
+        document.getElementById('btn-refund-ticket').onclick = () => {
+          if(confirm('Are you sure you want to list this ticket on Fan Exchange for an 80% refund?')) {
+            processTicketResaleRefund(ticket.id);
+          }
         };
-      }
 
-      // Resale click listener
-      document.getElementById('btn-refund-ticket').onclick = () => {
-        if(confirm('Are you sure you want to list this ticket on Fan Exchange for an 80% refund?')) {
-          processTicketResaleRefund(ticket.id);
+        // Start Hologram shader canvas loop
+        const holoCanvas = document.getElementById('pass-hologram-canvas');
+        if (holoCanvas) {
+          initPassHologram(holoCanvas, ticket.division);
         }
-      };
 
-      // Start Hologram shader canvas loop
-      const holoCanvas = document.getElementById('pass-hologram-canvas');
-      if (holoCanvas) {
-        initPassHologram(holoCanvas, ticket.division);
-      }
-
-      // Start Countdown and dynamic QR rotation loop
-      ticketCountdownTime = 60;
-      ticketQrState = 0;
-      updateDynamicQRCode(ticket);
-
-      ticketCountdownInterval = setInterval(() => {
-        ticketQrState = ticketQrState === 0 ? 1 : 0;
-        ticketCountdownTime--;
-        if (ticketCountdownTime <= 0) {
-          ticketCountdownTime = 60;
-        }
+        // Start Countdown and dynamic QR rotation loop
+        ticketCountdownTime = 60;
+        ticketQrState = 0;
         updateDynamicQRCode(ticket);
-      }, 1000);
+
+        ticketCountdownInterval = setInterval(() => {
+          ticketQrState = ticketQrState === 0 ? 1 : 0;
+          ticketCountdownTime--;
+          if (ticketCountdownTime <= 0) {
+            ticketCountdownTime = 60;
+          }
+          updateDynamicQRCode(ticket);
+        }, 1000);
+      } catch (err) {
+        console.error('[renderTicketsList Error]', err);
+      }
     }
   }
 
@@ -2427,21 +2747,23 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedUgcType = null;
 
   // Gate Scan Click Simulator
-  simScanBtn.addEventListener('click', () => {
+  simScanBtn.addEventListener('click', async () => {
     // Requires a ticket to scan
     if (state.tickets.length === 0) {
       alert('Please purchase a ticket first before simulating gate scan entry!');
       return;
     }
 
-    // Mark tickets as scanned
-    state.tickets.forEach(t => t.isScanned = true);
-    renderTicketsList();
-
-    alert('Security Gate: Ticket scanned successfully. Geofence activated: User has entered the venue.');
-    
-    // Advance simulation controls
-    simNotificationBtn.disabled = false;
+    try {
+      await apiFetch('/api/tickets/scan', { method: 'POST' });
+      await fetchTickets();
+      alert('Security Gate: Ticket scanned successfully. Geofence activated: User has entered the venue.');
+      
+      // Advance simulation controls
+      simNotificationBtn.disabled = false;
+    } catch (e) {
+      console.error('Failed to scan ticket:', e);
+    }
   });
 
   // Next-day UGC reminder notification click
@@ -2543,9 +2865,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 150);
   });
 
-  function handleUgcUploadSuccess() {
-    // 1. Reward credit
-    updateCashlessCredits(100);
+  async function handleUgcUploadSuccess() {
+    // 1. Reward credit in DB
+    await updateCashlessCredits(100, 'UGC Video Upload Reward', 'reward');
     animateCreditUpdate(100);
 
     // 2. Add video UGC event block to top of discovery feed list
@@ -2574,7 +2896,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sectors: []
     };
 
-    // Prepend to database
+    // Prepend to memory events array
     eventsData.unshift(ugcFeedItem);
     
     // Re-filter active feed
@@ -2606,23 +2928,37 @@ document.addEventListener('DOMContentLoaded', () => {
   const testCreditVal = document.getElementById('tester-credit');
   const headerCreditBadge = document.getElementById('header-credit-badge');
 
-  function updateCashlessCredits(amountChange) {
-    state.credit += amountChange;
-    if (testCreditVal) {
-      testCreditVal.textContent = state.credit;
-    }
-    const feedHeaderCredit = document.getElementById('feed-header-credit-badge');
-    if (feedHeaderCredit) {
-      feedHeaderCredit.textContent = `${state.credit} CZK`;
-    }
-    const profileWalletCredit = document.getElementById('profile-wallet-credit-stat');
-    if (profileWalletCredit) {
-       profileWalletCredit.textContent = state.credit;
+  async function updateCashlessCredits(amountChange, title = 'Credits Top Up', type = 'reward') {
+    if (!state.user) return;
+    
+    try {
+      const data = await apiFetch('/api/wallet/update', {
+        method: 'POST',
+        body: JSON.stringify({ amount: amountChange, title, type })
+      });
+      state.credit = data.newCredit;
+      
+      // Update UI elements
+      if (testCreditVal) {
+        testCreditVal.textContent = state.credit;
+      }
+      const feedHeaderCredit = document.getElementById('feed-header-credit-badge');
+      if (feedHeaderCredit) {
+        feedHeaderCredit.textContent = `${state.credit} CZK`;
+      }
+      const profileWalletCredit = document.getElementById('profile-wallet-credit-stat');
+      if (profileWalletCredit) {
+         profileWalletCredit.textContent = state.credit;
+      }
+      
+      // Re-fetch activities log
+      await fetchActivities();
+    } catch (e) {
+      console.error('Failed to update cashless credits in DB:', e);
     }
   }
 
-  // Credit Badge Init
-  updateCashlessCredits(0);
+  // Credit Badge Init is deferred to authentication loginSuccess.
 
   // Sim Button: Add Credit
   document.getElementById('sim-add-credit-btn').addEventListener('click', () => {
@@ -2677,52 +3013,63 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Sim Button: Friend 1 Pays
-  document.getElementById('sim-friend-pay-1').addEventListener('click', () => {
-    if (!state.splitSession) return;
+  document.getElementById('sim-friend-pay-1').addEventListener('click', async () => {
+    if (!state.splitSession || !state.splitSessionId) return;
     
-    // Mark friend as paid
-    const friend = state.splitSession.friends.find(f => f.avatar === 'H');
+    // Find Honza
+    const friend = state.splitSession.members.find(m => m.name === 'Honza');
     if (friend && friend.status !== 'paid') {
-      friend.status = 'paid';
-      state.splitSession.friendsPaid++;
-      document.getElementById('paid-count').textContent = state.splitSession.friendsPaid + 1;
-      
-      renderSplitFriendsList();
-      checkAllSplitPaid();
+      try {
+        await apiFetch('/api/split/pay', {
+          method: 'POST',
+          body: JSON.stringify({ sessionId: state.splitSessionId, memberId: friend.id })
+        });
+        
+        // Refresh session status from server
+        await startSplitPaymentFlow(state.splitSessionId);
+        checkAllSplitPaid();
+      } catch (e) {
+        console.error('Failed to simulate friend pay:', e);
+      }
     }
   });
 
   // Sim Button: Friend 2 Pays
-  document.getElementById('sim-friend-pay-2').addEventListener('click', () => {
-    if (!state.splitSession) return;
+  document.getElementById('sim-friend-pay-2').addEventListener('click', async () => {
+    if (!state.splitSession || !state.splitSessionId) return;
     
-    // Mark friend as paid
-    const friend = state.splitSession.friends.find(f => f.avatar === 'K');
+    // Find Karel
+    const friend = state.splitSession.members.find(m => m.name === 'Karel');
     if (friend && friend.status !== 'paid') {
-      friend.status = 'paid';
-      state.splitSession.friendsPaid++;
-      document.getElementById('paid-count').textContent = state.splitSession.friendsPaid + 1;
-      
-      renderSplitFriendsList();
-      checkAllSplitPaid();
+      try {
+        await apiFetch('/api/split/pay', {
+          method: 'POST',
+          body: JSON.stringify({ sessionId: state.splitSessionId, memberId: friend.id })
+        });
+        
+        // Refresh session status from server
+        await startSplitPaymentFlow(state.splitSessionId);
+        checkAllSplitPaid();
+      } catch (e) {
+        console.error('Failed to simulate friend pay:', e);
+      }
     }
   });
 
-  function checkAllSplitPaid() {
-    const allPaid = state.splitSession.friends.every(f => f.status === 'paid');
+  async function checkAllSplitPaid() {
+    const allPaid = state.splitSession.members.every(m => m.status === 'paid');
     if (allPaid) {
       clearInterval(splitTimerInterval);
       disableSplitSimButtons();
       
-      setTimeout(() => {
+      setTimeout(async () => {
         alert('All friends paid! Group buy completed successfully. Adding tickets to wallet...');
         
-        // Add tickets to wallet
-        for (let i = 0; i < state.groupBuyCount; i++) {
-          createMockTicket(state.splitSession.event, state.splitSession.seat, true, i === 0 ? 'Organizer' : `Guest Friend ${i}`);
-        }
+        // Re-fetch tickets from DB
+        await fetchTickets();
         
         state.splitSession = null;
+        state.splitSessionId = null;
         navigateTo('ticket-screen');
       }, 1000);
     }

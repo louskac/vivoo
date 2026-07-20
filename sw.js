@@ -1,13 +1,13 @@
-const CACHE_NAME = 'vivoo-cache-v16';
+const CACHE_NAME = 'vivoo-cache-v18';
 const ASSETS = [
   './',
   './index.html',
-  './index.css?v=16',
+  './index.css?v=18',
   './app.js',
   './manifest.json',
-  './icon.svg?v=16',
-  './icon.png?v=16',
-  './apple-touch-icon.png?v=16'
+  './icon.svg?v=18',
+  './icon.png?v=18',
+  './apple-touch-icon.png?v=18'
 ];
 
 
@@ -43,6 +43,11 @@ self.addEventListener('activate', (e) => {
 // Fetch event: Network-first for static code files (PWA updates instantly), Cache-first for media assets
 self.addEventListener('fetch', (e) => {
   if (!e.request.url.startsWith('http')) return;
+
+  // Bypass service worker for all dynamic API calls
+  if (e.request.url.includes('/api/')) {
+    return;
+  }
 
   // Bypass service worker completely for CDN video streams and MP4s (ensures iOS Safari range requests work)
   if (e.request.url.includes('commondatastorage.googleapis.com') || e.request.url.endsWith('.mp4')) {
