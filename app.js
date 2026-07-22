@@ -91,12 +91,595 @@ document.addEventListener('DOMContentLoaded', () => {
         ...options.headers
       }
     };
-    const response = await fetch(endpoint, mergedOptions);
-    const data = await response.json();
-    if (!response.ok || data.success === false) {
-      throw new Error(data.error || `HTTP error ${response.status}`);
+    try {
+      const response = await fetch(endpoint, mergedOptions);
+      if (!response.ok) {
+        return await apiMockFallback(endpoint, options);
+      }
+      try {
+        const data = await response.json();
+        if (data.success === false) {
+          throw new Error(data.error || `HTTP error ${response.status}`);
+        }
+        return data;
+      } catch (jsonErr) {
+        // Response is not JSON, probably static hosting 404 HTML fallback
+        return await apiMockFallback(endpoint, options);
+      }
+    } catch (networkErr) {
+      // Network failure, endpoint blocked, or offline
+      return await apiMockFallback(endpoint, options);
     }
-    return data;
+  }
+
+  // Client-Side Mock Database Fallback for Static Hostings
+  const mockEventsList = [
+    {
+      id: 'derby',
+      title: 'Prague Football Derby: Sparta vs Slavia',
+      tag: 'Sport',
+      vibe: 'sport',
+      location: 'epet ARENA, Prague',
+      date: 'Saturday, Oct 14 • 18:00',
+      lineup: 'AC Sparta Praha vs SK Slavia Praha',
+      weather: { temp: '16°C', text: 'Clear Sky', icon: 'clear' },
+      videoUrl: './videos/derby.mp4',
+      bgImg: './images/derby.jpg',
+      priceMin: 350,
+      priceMax: 1100,
+      isFree: false,
+      sectors: [
+        { name: 'Sektor C (Upper Gallery)', price: 350, povType: 'far-stadium' },
+        { name: 'Sektor B (Mid Tier)', price: 650, povType: 'mid-stadium' },
+        { name: 'Sektor A (Lower Pitchside)', price: 1100, povType: 'near-stadium' }
+      ]
+    },
+    {
+      id: 'techno',
+      title: 'Basement Syndicate: Warehouse Techno Night',
+      tag: 'Music',
+      vibe: 'music',
+      location: 'Hala 13, Holešovice',
+      date: 'Friday, Oct 20 • 22:00',
+      lineup: 'Boris Brejcha, Amelie Lens, DJ Shadow, Charlotte de Witte',
+      weather: { temp: '18°C', text: 'Indoor Event', icon: 'indoor' },
+      videoUrl: './videos/techno.mp4',
+      bgImg: './images/techno.jpg',
+      priceMin: 450,
+      priceMax: 1500,
+      isFree: false,
+      sectors: [
+        { name: 'Warehouse General Admission', price: 450, povType: 'dancefloor-back' },
+        { name: 'VIP Boiler Deck', price: 850, povType: 'dancefloor-front' },
+        { name: 'Backstage Access Pass', price: 1500, povType: 'backstage' }
+      ]
+    },
+    {
+      id: 'basketball',
+      title: 'Red Bull Half Court Basketball Finals',
+      tag: 'Sport',
+      vibe: 'sport',
+      location: 'Riegrovy Sady, Prague',
+      date: 'Sunday, Oct 15 • 15:00',
+      lineup: 'Prague Streetball Elite & Guest Dunkers',
+      weather: { temp: '19°C', text: 'Sunny Day', icon: 'clear' },
+      videoUrl: './videos/basketball.mp4',
+      bgImg: './images/basketball.jpg',
+      priceMin: 0,
+      priceMax: 0,
+      isFree: true,
+      sectors: [
+        { name: 'General Admission Standing', price: 0, povType: 'dancefloor-back' }
+      ]
+    },
+    {
+      id: 'summerbeats',
+      title: 'Summer Beats Open Air Festival',
+      tag: 'Music',
+      vibe: 'music',
+      location: 'Žluté lázně, Prague',
+      date: 'Saturday, Aug 19 • 14:00',
+      lineup: 'Solomun, Tale of Us, Adriatique, Keinemusik',
+      weather: { temp: '26°C', text: 'Warm & Sunny', icon: 'clear' },
+      videoUrl: './videos/summerbeats.mp4',
+      bgImg: './images/summerbeats.jpg',
+      priceMin: 550,
+      priceMax: 1200,
+      isFree: false,
+      sectors: [
+        { name: 'General Admission Beach Area', price: 550, povType: 'dancefloor-back' },
+        { name: 'VIP Main Deck VIP Seating', price: 1200, povType: 'dancefloor-front' }
+      ]
+    },
+    {
+      id: 'ballet',
+      title: 'Magical Water Fountain Light Show',
+      tag: 'Culture',
+      vibe: 'culture',
+      location: 'Křižík Fountain, Exhibition Grounds',
+      date: 'Sunday, Oct 22 • 19:30',
+      lineup: 'Laterna Magika Dance Ensemble & Prague Symphony Orchestra',
+      weather: { temp: '14°C', text: 'Light Breeze', icon: 'windy' },
+      videoUrl: './videos/ballet.mp4',
+      bgImg: './images/ballet.jpg',
+      priceMin: 300,
+      priceMax: 850,
+      isFree: false,
+      sectors: [
+        { name: 'Grandstand Balcony C', price: 300, povType: 'fountain-far' },
+        { name: 'Premium Terrace B', price: 550, povType: 'fountain-mid' },
+        { name: 'Front VIP Row A', price: 850, povType: 'fountain-near' }
+      ]
+    },
+    {
+      id: 'flora',
+      title: 'Flora Acoustic: Garden Symphony Concert',
+      tag: 'Culture',
+      vibe: 'culture',
+      location: 'Flora Exhibition Grounds, Olomouc',
+      date: 'Saturday, Oct 28 • 16:00',
+      lineup: 'Olomouc Symphonic Soloists & Flora Acoustic Trio',
+      weather: { temp: '15°C', text: 'Sunny Day', icon: 'clear' },
+      videoUrl: './videos/flora.mp4',
+      bgImg: './images/flora.jpg',
+      priceMin: 0,
+      priceMax: 0,
+      isFree: true,
+      sectors: [
+        { name: 'General Admission Gardens', price: 0, povType: 'fountain-mid' }
+      ]
+    },
+    {
+      id: 'networking_meetup',
+      title: 'Prague Tech Founders Meetup',
+      tag: 'Networking',
+      vibe: 'networking',
+      location: 'Start-up Loft, Holešovice',
+      date: 'Thursday, Nov 9 • 19:00',
+      lineup: 'Keynote Panel & Investor Pitch Arena',
+      weather: { temp: '17°C', text: 'Indoor Loft', icon: 'indoor' },
+      videoUrl: './videos/techno.mp4',
+      bgImg: './images/networking.jpg',
+      priceMin: 0,
+      priceMax: 0,
+      isFree: true,
+      sectors: [
+        { name: 'Loft General Admission', price: 0, povType: 'dancefloor-back' }
+      ]
+    },
+    {
+      id: 'comedy_night',
+      title: 'English Comedy Night: Stands-ups live',
+      tag: 'Fun',
+      vibe: 'fun',
+      location: 'The Comedy Cellar, Prague',
+      date: 'Wednesday, Nov 15 • 20:30',
+      lineup: 'Toby Smith (UK) & Local Talent Showcase',
+      weather: { temp: '18°C', text: 'Comedy Cellar', icon: 'indoor' },
+      videoUrl: './videos/techno.mp4',
+      bgImg: './images/fun.jpg',
+      priceMin: 250,
+      priceMax: 250,
+      isFree: false,
+      sectors: [
+        { name: 'General Admission seating', price: 250, povType: 'dancefloor-back' }
+      ]
+    }
+  ];
+
+  async function apiMockFallback(endpoint, options = {}) {
+    console.log(`[API Fallback Mock] Intercepted request to: ${endpoint}`);
+    
+    let pathPart = endpoint.split('?')[0];
+    // Strip host if absolute URL
+    if (pathPart.startsWith('http')) {
+      const match = pathPart.match(/^https?:\/\/[^\/]+(\/.*)/);
+      if (match) pathPart = match[1];
+    }
+    
+    const method = options.method || 'GET';
+    const body = options.body ? JSON.parse(options.body) : {};
+    
+    // Helper to get authenticated user from Authorization header
+    const getAuthUserMock = () => {
+      const headers = options.headers || {};
+      const authHeader = headers['Authorization'] || getHeaders()['Authorization'];
+      if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+      const userId = parseInt(authHeader.split(' ')[1], 10);
+      const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+      return users.find(u => u.id === userId) || null;
+    };
+
+    // Helper to save a user
+    const saveUserMock = (user) => {
+      const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+      const idx = users.findIndex(u => u.id === user.id);
+      if (idx >= 0) users[idx] = user;
+      else users.push(user);
+      localStorage.setItem('mock_users', JSON.stringify(users));
+    };
+
+    // 1. APPLE BIOMETRIC SIGN-IN
+    if (pathPart === '/api/auth/apple' && method === 'POST') {
+      const randId = Math.floor(1000 + Math.random() * 9000);
+      const user = {
+        id: randId,
+        username: `apple_user_${randId}`,
+        full_name: `Apple User ${randId}`,
+        bio: 'Immersive events fan, authenticated via Apple ID.',
+        cashless_credit: 400
+      };
+      saveUserMock(user);
+      
+      const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const activities = JSON.parse(localStorage.getItem('mock_activities') || '[]');
+      activities.push({
+        user_id: user.id,
+        type: 'bonus',
+        title: 'Account Registration Bonus',
+        time: `Today, ${timeStr}`,
+        amount: 50
+      });
+      localStorage.setItem('mock_activities', JSON.stringify(activities));
+
+      return { success: true, user };
+    }
+
+    // 2. SEND OTP
+    if (pathPart === '/api/auth/otp/send' && method === 'POST') {
+      if (!body.identity) {
+        throw new Error('Email or Phone Number is required.');
+      }
+      return { success: true, message: 'Verification code sent. Use test code: 1234' };
+    }
+
+    // 2.5 VERIFY OTP & SIGN IN/UP
+    if (pathPart === '/api/auth/otp/verify' && method === 'POST') {
+      const { identity, code } = body;
+      if (!identity || !code) {
+        throw new Error('Identity and verification code are required.');
+      }
+      if (code !== '1234') {
+        throw new Error('Invalid verification code. Enter 1234 to verify.');
+      }
+
+      const cleanIdentity = identity.trim().toLowerCase();
+      const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+      let user = users.find(u => u.username === cleanIdentity);
+
+      if (!user) {
+        const randId = Math.floor(100000 + Math.random() * 900000);
+        let fullName = 'Viver User';
+        if (cleanIdentity.includes('@')) {
+          const part = cleanIdentity.split('@')[0];
+          fullName = part.charAt(0).toUpperCase() + part.slice(1);
+        } else {
+          fullName = 'Member ' + cleanIdentity.slice(-4);
+        }
+
+        user = {
+          id: randId,
+          username: cleanIdentity,
+          full_name: fullName,
+          bio: 'Verified event goer.',
+          cashless_credit: 400
+        };
+        saveUserMock(user);
+
+        const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const activities = JSON.parse(localStorage.getItem('mock_activities') || '[]');
+        activities.push({
+          user_id: user.id,
+          type: 'bonus',
+          title: 'Account Registration Bonus',
+          time: `Today, ${timeStr}`,
+          amount: 50
+        });
+        localStorage.setItem('mock_activities', JSON.stringify(activities));
+      }
+
+      return { success: true, user };
+    }
+
+    // 3. ME
+    if (pathPart === '/api/auth/me' && method === 'GET') {
+      const user = getAuthUserMock();
+      if (!user) throw new Error('Unauthorized');
+      return { success: true, user };
+    }
+
+    // 4. EVENTS
+    if (pathPart === '/api/events' && method === 'GET') {
+      return { success: true, events: mockEventsList };
+    }
+
+    // 5. TICKETS (GET)
+    if (pathPart === '/api/tickets' && method === 'GET') {
+      const user = getAuthUserMock();
+      if (!user) throw new Error('Unauthorized');
+
+      const tickets = JSON.parse(localStorage.getItem('mock_tickets') || '[]');
+      const userTickets = tickets.filter(t => t.user_id === user.id);
+      
+      const formattedTickets = userTickets.map(t => {
+        const event = mockEventsList.find(e => e.id === t.event_id);
+        return {
+          id: t.id,
+          event: {
+            id: t.event_id,
+            title: event ? event.title : 'Unknown Event',
+            location: event ? event.location : 'Unknown Location',
+            bgImg: event ? event.bgImg : '',
+            tag: event ? event.tag : ''
+          },
+          seat: {
+            name: t.sector_name,
+            price: t.price
+          },
+          holderName: t.holder_name,
+          isGroup: !!t.is_group,
+          isScanned: t.status === 'used'
+        };
+      });
+
+      return { success: true, tickets: formattedTickets };
+    }
+
+    // 6. TICKETS PURCHASE (POST)
+    if (pathPart === '/api/tickets/purchase' && method === 'POST') {
+      const user = getAuthUserMock();
+      if (!user) throw new Error('Unauthorized');
+
+      const { eventId, sectorName, price, holderName, isGroup } = body;
+      if (user.cashless_credit < price) {
+        throw new Error('Insufficient cashless credit. Please top up your wallet in the profile tab.');
+      }
+
+      user.cashless_credit -= price;
+      saveUserMock(user);
+
+      const ticketId = `TICK-${Math.floor(100000 + Math.random() * 900000)}`;
+      const tickets = JSON.parse(localStorage.getItem('mock_tickets') || '[]');
+      const newTicket = {
+        id: ticketId,
+        user_id: user.id,
+        event_id: eventId,
+        sector_name: sectorName,
+        price: price,
+        holder_name: holderName || user.full_name,
+        is_group: isGroup ? 1 : 0,
+        status: 'active'
+      };
+      tickets.push(newTicket);
+      localStorage.setItem('mock_tickets', JSON.stringify(tickets));
+
+      const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const activities = JSON.parse(localStorage.getItem('mock_activities') || '[]');
+      activities.push({
+        user_id: user.id,
+        type: 'purchase',
+        title: `Ticket Purchase - ${sectorName}`,
+        time: `Today, ${timeStr}`,
+        amount: -price
+      });
+      localStorage.setItem('mock_activities', JSON.stringify(activities));
+
+      const event = mockEventsList.find(e => e.id === eventId);
+
+      return {
+        success: true,
+        newCredit: user.cashless_credit,
+        ticket: {
+          id: ticketId,
+          event: {
+            id: eventId,
+            title: event ? event.title : 'Unknown Event',
+            location: event ? event.location : 'Unknown Location',
+            bgImg: event ? event.bgImg : ''
+          },
+          seat: {
+            name: sectorName,
+            price: price
+          },
+          holderName: holderName || user.full_name,
+          isGroup: !!isGroup,
+          isScanned: false
+        }
+      };
+    }
+
+    // 7. TICKETS SCAN (POST)
+    if (pathPart === '/api/tickets/scan' && method === 'POST') {
+      const user = getAuthUserMock();
+      if (!user) throw new Error('Unauthorized');
+
+      const tickets = JSON.parse(localStorage.getItem('mock_tickets') || '[]');
+      tickets.forEach(t => {
+        if (t.user_id === user.id) {
+          t.status = 'used';
+        }
+      });
+      localStorage.setItem('mock_tickets', JSON.stringify(tickets));
+      return { success: true };
+    }
+
+    // 8. WALLET UPDATE (POST)
+    if (pathPart === '/api/wallet/update' && method === 'POST') {
+      const user = getAuthUserMock();
+      if (!user) throw new Error('Unauthorized');
+
+      const { amount, title, type } = body;
+      user.cashless_credit += amount;
+      saveUserMock(user);
+
+      const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const activities = JSON.parse(localStorage.getItem('mock_activities') || '[]');
+      activities.push({
+        user_id: user.id,
+        type: type || 'reward',
+        title: title || 'Credits Adjustment',
+        time: `Today, ${timeStr}`,
+        amount: amount
+      });
+      localStorage.setItem('mock_activities', JSON.stringify(activities));
+
+      return { success: true, newCredit: user.cashless_credit };
+    }
+
+    // 9. WALLET ACTIVITIES (GET)
+    if (pathPart === '/api/wallet/activities' && method === 'GET') {
+      const user = getAuthUserMock();
+      if (!user) throw new Error('Unauthorized');
+
+      const activities = JSON.parse(localStorage.getItem('mock_activities') || '[]');
+      const userActivities = activities.filter(a => a.user_id === user.id).reverse();
+      return { success: true, activities: userActivities };
+    }
+
+    // 10. SPLIT CREATE (POST)
+    if (pathPart === '/api/split/create' && method === 'POST') {
+      const user = getAuthUserMock();
+      if (!user) throw new Error('Unauthorized');
+
+      const { eventId, sectorName, price, totalSeats } = body;
+      if (user.cashless_credit < price) {
+        throw new Error('Insufficient cashless credit. Please top up your wallet in the profile tab.');
+      }
+
+      user.cashless_credit -= price;
+      saveUserMock(user);
+
+      const sessionId = Math.random().toString(36).substring(2, 6).toLowerCase();
+      const sessions = JSON.parse(localStorage.getItem('mock_split_sessions') || '[]');
+      sessions.push({
+        id: sessionId,
+        host_user_id: user.id,
+        event_id: eventId,
+        sector_name: sectorName,
+        price: price,
+        total_seats: totalSeats,
+        paid_seats: 1,
+        created_at: Date.now(),
+        status: 'active'
+      });
+      localStorage.setItem('mock_split_sessions', JSON.stringify(sessions));
+
+      const members = JSON.parse(localStorage.getItem('mock_split_members') || '[]');
+      members.push({
+        id: Math.floor(Math.random() * 100000),
+        session_id: sessionId,
+        user_id: user.id,
+        name: user.full_name,
+        status: 'paid'
+      });
+
+      for (let i = 1; i < totalSeats; i++) {
+        const guestName = i === 1 ? 'Honza' : i === 2 ? 'Karel' : `Friend Guest ${i}`;
+        members.push({
+          id: Math.floor(Math.random() * 100000),
+          session_id: sessionId,
+          name: guestName,
+          status: 'pending'
+        });
+      }
+      localStorage.setItem('mock_split_members', JSON.stringify(members));
+
+      const ticketId = `TICK-${Math.floor(100000 + Math.random() * 900000)}`;
+      const tickets = JSON.parse(localStorage.getItem('mock_tickets') || '[]');
+      tickets.push({
+        id: ticketId,
+        user_id: user.id,
+        event_id: eventId,
+        sector_name: sectorName,
+        price: price,
+        holder_name: `${user.full_name} (Host)`,
+        is_group: 1,
+        status: 'active'
+      });
+      localStorage.setItem('mock_tickets', JSON.stringify(tickets));
+
+      const timeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const activities = JSON.parse(localStorage.getItem('mock_activities') || '[]');
+      activities.push({
+        user_id: user.id,
+        type: 'purchase',
+        title: `Group Booking Host - ${sectorName}`,
+        time: `Today, ${timeStr}`,
+        amount: -price
+      });
+      localStorage.setItem('mock_activities', JSON.stringify(activities));
+
+      return {
+        success: true,
+        sessionId,
+        newCredit: user.cashless_credit,
+        ticketId
+      };
+    }
+
+    // 11. SPLIT STATUS (GET)
+    if (pathPart === '/api/split/status' && method === 'GET') {
+      const urlObj = new URL(endpoint, window.location.origin);
+      const sessionId = urlObj.searchParams.get('sessionId');
+      if (!sessionId) throw new Error('Session ID required');
+
+      const sessions = JSON.parse(localStorage.getItem('mock_split_sessions') || '[]');
+      const session = sessions.find(s => s.id === sessionId);
+      if (!session) throw new Error('Session not found');
+
+      const members = JSON.parse(localStorage.getItem('mock_split_members') || '[]');
+      const sessionMembers = members.filter(m => m.session_id === sessionId);
+
+      const event = mockEventsList.find(e => e.id === session.event_id);
+
+      return {
+        success: true,
+        session: {
+          id: session.id,
+          eventId: session.event_id,
+          eventTitle: event ? event.title : 'Unknown Event',
+          eventLocation: event ? event.location : 'Unknown Location',
+          eventBgImg: event ? event.bgImg : '',
+          sectorName: session.sector_name,
+          price: session.price,
+          totalSeats: session.total_seats,
+          paidSeats: session.paid_seats,
+          createdAt: session.created_at,
+          status: session.status
+        },
+        members: sessionMembers
+      };
+    }
+
+    // 12. SPLIT PAY (POST)
+    if (pathPart === '/api/split/pay' && method === 'POST') {
+      const { sessionId, memberId } = body;
+
+      const sessions = JSON.parse(localStorage.getItem('mock_split_sessions') || '[]');
+      const session = sessions.find(s => s.id === sessionId);
+      if (!session) throw new Error('Session not found');
+
+      const members = JSON.parse(localStorage.getItem('mock_split_members') || '[]');
+      const member = members.find(m => m.id === memberId && m.session_id === sessionId);
+      if (!member) throw new Error('Member not found');
+
+      if (member.status === 'paid') {
+        return { success: true, message: 'Already paid' };
+      }
+
+      member.status = 'paid';
+      localStorage.setItem('mock_split_members', JSON.stringify(members));
+
+      session.paid_seats += 1;
+      if (session.paid_seats >= session.total_seats) {
+        session.status = 'completed';
+      }
+      localStorage.setItem('mock_split_sessions', JSON.stringify(sessions));
+
+      return { success: true, newPaidCount: session.paid_seats };
+    }
+
+    throw new Error(`API endpoint not found: ${pathPart}`);
   }
 
   // Modern Auth Screen Elements
