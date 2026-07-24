@@ -115,30 +115,49 @@ document.addEventListener('DOMContentLoaded', () => {
   // Client-Side Mock Database Fallback for Static Hostings
   const mockEventsList = [
     {
+      id: 'concert_hvezdy',
+      title: 'Koncert pod živými hvězdami',
+      tag: 'HUDBA',
+      vibe: 'party',
+      location: 'Riegrovy sady, Praha 3',
+      date: 'Ne 18. října · 15:00',
+      lineup: 'Xindl X',
+      weather: { temp: '18°C', text: 'Jasná obloha', icon: 'clear' },
+      videoUrl: './videos/techno.mp4',
+      bgImg: './images/techno.jpg',
+      priceMin: 400,
+      priceMax: 1200,
+      isFree: false,
+      sectors: [
+        { name: 'Sektor A (Stání u pódia)', price: 400, povType: 'dancefloor-front' },
+        { name: 'VIP Sezení Terasa', price: 1200, povType: 'backstage' }
+      ]
+    },
+    {
       id: 'derby',
-      title: 'Prague Football Derby: Sparta vs Slavia',
-      tag: 'Sport',
-      vibe: 'sport',
-      location: 'epet ARENA, Prague',
-      date: 'Saturday, Oct 14 • 18:00',
+      title: 'Sparta vs Slavia',
+      tag: 'SPORT',
+      vibe: 'adrenalin',
+      location: 'epet ARENA, Praha 7',
+      date: 'So 14. října · 18:00',
       lineup: 'AC Sparta Praha vs SK Slavia Praha',
-      weather: { temp: '16°C', text: 'Clear Sky', icon: 'clear' },
+      weather: { temp: '16°C', text: 'Jasno', icon: 'clear' },
       videoUrl: './videos/derby.mp4',
       bgImg: './images/derby.jpg',
       priceMin: 350,
       priceMax: 1100,
       isFree: false,
       sectors: [
-        { name: 'Sektor C (Upper Gallery)', price: 350, povType: 'far-stadium' },
-        { name: 'Sektor B (Mid Tier)', price: 650, povType: 'mid-stadium' },
-        { name: 'Sektor A (Lower Pitchside)', price: 1100, povType: 'near-stadium' }
+        { name: 'Sektor C (Galerie)', price: 350, povType: 'far-stadium' },
+        { name: 'Sektor B (Střed)', price: 650, povType: 'mid-stadium' },
+        { name: 'Sektor A (Hřiště)', price: 1100, povType: 'near-stadium' }
       ]
     },
     {
       id: 'techno',
       title: 'Basement Syndicate: Warehouse Techno Night',
       tag: 'Music',
-      vibe: 'music',
+      vibe: 'party',
       location: 'Hala 13, Holešovice',
       date: 'Friday, Oct 20 • 22:00',
       lineup: 'Boris Brejcha, Amelie Lens, DJ Shadow, Charlotte de Witte',
@@ -158,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
       id: 'basketball',
       title: 'Red Bull Half Court Basketball Finals',
       tag: 'Sport',
-      vibe: 'sport',
+      vibe: 'adrenalin',
       location: 'Riegrovy Sady, Prague',
       date: 'Sunday, Oct 15 • 15:00',
       lineup: 'Prague Streetball Elite & Guest Dunkers',
@@ -176,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
       id: 'summerbeats',
       title: 'Summer Beats Open Air Festival',
       tag: 'Music',
-      vibe: 'music',
+      vibe: 'party',
       location: 'Žluté lázně, Prague',
       date: 'Saturday, Aug 19 • 14:00',
       lineup: 'Solomun, Tale of Us, Adriatique, Keinemusik',
@@ -195,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
       id: 'ballet',
       title: 'Magical Water Fountain Light Show',
       tag: 'Culture',
-      vibe: 'culture',
+      vibe: 'klid',
       location: 'Křižík Fountain, Exhibition Grounds',
       date: 'Sunday, Oct 22 • 19:30',
       lineup: 'Laterna Magika Dance Ensemble & Prague Symphony Orchestra',
@@ -215,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
       id: 'flora',
       title: 'Flora Acoustic: Garden Symphony Concert',
       tag: 'Culture',
-      vibe: 'culture',
+      vibe: 'klid',
       location: 'Flora Exhibition Grounds, Olomouc',
       date: 'Saturday, Oct 28 • 16:00',
       lineup: 'Olomouc Symphonic Soloists & Flora Acoustic Trio',
@@ -233,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
       id: 'networking_meetup',
       title: 'Prague Tech Founders Meetup',
       tag: 'Networking',
-      vibe: 'networking',
+      vibe: 'klid',
       location: 'Start-up Loft, Holešovice',
       date: 'Thursday, Nov 9 • 19:00',
       lineup: 'Keynote Panel & Investor Pitch Arena',
@@ -251,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
       id: 'comedy_night',
       title: 'English Comedy Night: Stands-ups live',
       tag: 'Fun',
-      vibe: 'fun',
+      vibe: 'party',
       location: 'The Comedy Cellar, Prague',
       date: 'Wednesday, Nov 15 • 20:30',
       lineup: 'Toby Smith (UK) & Local Talent Showcase',
@@ -890,22 +909,37 @@ document.addEventListener('DOMContentLoaded', () => {
   async function initAppContent() {
     try {
       await fetchEvents();
-      await fetchTickets();
-      await fetchActivities();
-      
-      // Seed default feeds and render
-      activeFeedEvents = [...eventsData];
+      activeFeedEvents = [...(eventsData || [])];
       renderFeed();
       renderDiscoveryGrid();
+
+      try {
+        await fetchTickets();
+        await fetchActivities();
+      } catch (subErr) {
+        console.warn('[App Init] Non-critical user tickets/activities fetch error:', subErr);
+      }
       
       // Update tester status
       const statusPill = document.querySelector('.tester-panel .status-pill');
-      if (statusPill) {
+      if (statusPill && state.user) {
         statusPill.textContent = `Linked (@${state.user.username})`;
         statusPill.className = 'status-pill status-linked';
       }
+      window.navigateTo = navigateTo;
+      window.openEventDetails = openEventDetails;
+      window.eventsData = eventsData || mockEventsList;
     } catch (e) {
       console.error('[App Init] Failed to load user content:', e);
+      if (!activeFeedEvents || activeFeedEvents.length === 0) {
+        activeFeedEvents = [...mockEventsList];
+        eventsData = [...mockEventsList];
+        renderFeed();
+        renderDiscoveryGrid();
+      }
+      window.navigateTo = navigateTo;
+      window.openEventDetails = openEventDetails;
+      window.eventsData = eventsData || mockEventsList;
     }
   }
 
@@ -1022,27 +1056,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const cachedToken = localStorage.getItem('viv_token');
     
     if (cachedUser && cachedToken) {
-      state.user = JSON.parse(cachedUser);
-      state.token = cachedToken;
-      state.credit = state.user.cashless_credit;
-      
       try {
-        const data = await apiFetch('/api/auth/me');
-        state.user = data.user;
-        state.credit = data.user.cashless_credit;
-        localStorage.setItem('viv_user', JSON.stringify(data.user));
+        state.user = JSON.parse(cachedUser);
+        state.token = cachedToken;
+        state.credit = state.user.cashless_credit || 2360;
         
         updateCreditUI();
         updateProfileUI();
         await initAppContent();
         navigateTo('feed-screen');
       } catch (err) {
-        console.error('Session verification failed, logging out', err);
-        logout();
+        console.error('Session restore fallback to default guest user', err);
+        await setupDefaultGuestSession();
       }
     } else {
-      navigateTo('auth-screen');
+      await setupDefaultGuestSession();
     }
+  }
+
+  async function setupDefaultGuestSession() {
+    const defaultUser = {
+      id: 'usr_default',
+      username: 'jakub_dostal',
+      name: 'Jakub Dostál',
+      email: 'jakub@dostal.cz',
+      cashless_credit: 2360
+    };
+    state.user = defaultUser;
+    state.token = defaultUser.id;
+    state.credit = defaultUser.cashless_credit;
+    localStorage.setItem('viv_user', JSON.stringify(defaultUser));
+    localStorage.setItem('viv_token', defaultUser.id);
+    
+    // Save to mock_users for apiMockFallback
+    const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
+    if (!users.some(u => u.id === defaultUser.id)) {
+      users.push(defaultUser);
+      localStorage.setItem('mock_users', JSON.stringify(users));
+    }
+    
+    updateCreditUI();
+    updateProfileUI();
+    await initAppContent();
+    navigateTo('feed-screen');
   }
 
   // --------------------------------------------------------------------------
@@ -1082,12 +1138,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    const oldScreen = document.getElementById(state.activeScreen);
-    const newScreen = document.getElementById(screenId);
-
     const updateDOM = () => {
-      oldScreen.classList.remove('active');
-      newScreen.classList.add('active');
+      const newScreen = document.getElementById(screenId);
+      document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+      if (newScreen) newScreen.classList.add('active');
       
       // Bottom navigation capsule visibility
       const capsuleNav = document.querySelector('.bottom-nav-capsule');
@@ -1119,6 +1173,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       state.activeScreen = screenId;
     };
+
+    window.navigateTo = navigateTo;
 
     // Use view transitions API if supported
     if (document.startViewTransition) {
@@ -1153,7 +1209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       capsule.classList.add('is-dragging');
     }
     
-    const highlightWidth = 56; // Matching premium capsule design width
+    const highlightWidth = 84; // Matching Figma 3054:153 spec (84x52px)
     const btnCenterX = btn.offsetLeft + btn.offsetWidth / 2;
     const targetX = btnCenterX - highlightWidth / 2;
     
@@ -1173,7 +1229,7 @@ document.addEventListener('DOMContentLoaded', () => {
       capsule.classList.add('is-dragging');
     }
     
-    const highlightWidth = 56;
+    const highlightWidth = 84;
     const minCenterX = 8 + highlightWidth / 2;
     const maxCenterX = capsule.offsetWidth - 8 - highlightWidth / 2;
     
@@ -1376,76 +1432,57 @@ document.addEventListener('DOMContentLoaded', () => {
       state.savedEventIds = state.savedEventIds || [];
       const isSaved = state.savedEventIds.includes(ev.id);
 
+      const shortDate = ev.date ? (ev.date.split('•')[0] ? ev.date.split('•')[0].trim() : ev.date) : 'Ne 18. října · 15:00';
+      const vibeClass = (ev.vibe || 'hudba').toLowerCase();
+
       feedItem.innerHTML = `
         <video class="feed-video" loop playsinline autoplay muted poster="${ev.bgImg}">
           <source src="${ev.videoUrl}" type="video/mp4">
         </video>
         
+        <!-- Scrim dark gradient overlay (Figma Component: Scrim 3067:197) -->
+        <div class="feed-scrim-overlay"></div>
+
         <!-- Video State Indicator -->
         <div class="video-state-overlay">
           <svg class="overlay-icon" width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         </div>
 
-        <div class="feed-overlay">
-          <div class="feed-meta" id="meta-cta-${idx}">
-            <div class="feed-meta-header-row">
-              <span class="feed-meta-tag tag-${ev.vibe}">${ev.tag}${isUGC}</span>
-              <span class="feed-meta-organizer">viVoo • <span class="follow-label">Follow</span></span>
-            </div>
-            <h2>${ev.title}</h2>
-            <div class="feed-quick-details">
-              <span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
-                ${ev.location.split(',')[0]}
-              </span>
-              <span class="meta-dot">•</span>
-              <span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                ${ev.date.split('•')[0].trim()}
-              </span>
-            </div>
-            <div class="feed-music-row">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="music-icon"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-              <div class="music-ticker">
-                <span class="music-ticker-inner">${ev.lineup} • Original Audio</span>
-              </div>
-            </div>
+        <!-- Bottom Left Overlay Info Container (Figma Frame 19) -->
+        <div class="feed-info-container">
+          <div class="feed-badge-row">
+            <span class="card-tag-badge badge-${vibeClass}">${ev.tag}</span>
           </div>
-          
-          <div class="feed-actions">
-            <!-- Like Button -->
-            <button class="action-item btn-like-feed">
-              <svg class="heart-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-              <span class="action-label">2.4K</span>
-            </button>
-
-            <!-- Save Bookmark -->
-            <button class="action-item btn-save-feed ${isSaved ? 'saved' : ''}">
-              <svg class="save-icon" width="24" height="24" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              <span class="action-label">Save</span>
-            </button>
-
-            <!-- Direct Ticket Buy Checkout -->
-            <button class="action-item btn-ticket-feed">
-              <svg class="ticket-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></svg>
-              <span class="action-label">Ticket</span>
-            </button>
-
-            <!-- Sound Toggle -->
-            <button class="action-item btn-sound">
-              <svg class="sound-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                ${state.isMuted 
-                  ? '<line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v6a3 3 0 0 0 3 3h1.586l4.707 4.707A1 1 0 0 0 20 22V4a1 1 0 0 0-1.707-.707L13.586 8H12a3 3 0 0 0-3 3z"/>' 
-                  : '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>'}
-              </svg>
-              <span class="action-label">${state.isMuted ? 'Muted' : 'Sound'}</span>
-            </button>
-
-            <!-- Spinning Vinyl Record Album Art -->
-            <div class="music-disc-spinner" id="disc-${idx}">
-              <img src="${ev.bgImg}" alt="album art">
-            </div>
+          <h2 class="feed-event-title">${ev.title}</h2>
+          <div class="feed-meta-row">
+            <span class="feed-meta-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${ev.location}
+            </span>
+            <span class="feed-meta-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              ${shortDate}
+            </span>
           </div>
+        </div>
+        
+        <!-- Right Side Action Bar (Figma Frame 14) -->
+        <div class="feed-right-actions">
+          <!-- Save Bookmark (Frame 17) -->
+          <button class="feed-action-btn btn-save-feed ${isSaved ? 'saved' : ''}" aria-label="Save">
+            <div class="feed-action-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <span class="feed-action-text">Uložit</span>
+          </button>
+
+          <!-- Ticket Buy (Frame 16) -->
+          <button class="feed-action-btn btn-ticket-feed" aria-label="Buy Ticket">
+            <div class="feed-action-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/></svg>
+            </div>
+            <span class="feed-action-text">Lístek</span>
+          </button>
         </div>
 
         <!-- Progress bar tracking timeline -->
@@ -1479,56 +1516,76 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // Sound button click
-      soundBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleMuteAll();
-      });
+      if (soundBtn) {
+        soundBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleMuteAll();
+        });
+      }
 
       // Like button click
-      likeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const likeIcon = likeBtn.querySelector('.heart-icon');
-        const likeLbl = likeBtn.querySelector('.action-label');
-        const isLiked = likeBtn.classList.toggle('liked');
-        if (isLiked) {
-          likeIcon.setAttribute('fill', 'var(--color-accent-crimson)');
-          likeIcon.setAttribute('stroke', 'var(--color-accent-crimson)');
-          likeLbl.textContent = '2.5K';
-        } else {
-          likeIcon.setAttribute('fill', 'none');
-          likeIcon.setAttribute('stroke', 'currentColor');
-          likeLbl.textContent = '2.4K';
-        }
-      });
+      if (likeBtn) {
+        likeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const likeIcon = likeBtn.querySelector('.heart-icon');
+          const likeLbl = likeBtn.querySelector('.action-label');
+          const isLiked = likeBtn.classList.toggle('liked');
+          if (likeIcon && likeLbl) {
+            if (isLiked) {
+              likeIcon.setAttribute('fill', 'var(--color-accent-crimson)');
+              likeIcon.setAttribute('stroke', 'var(--color-accent-crimson)');
+              likeLbl.textContent = '2.5K';
+            } else {
+              likeIcon.setAttribute('fill', 'none');
+              likeIcon.setAttribute('stroke', 'currentColor');
+              likeLbl.textContent = '2.4K';
+            }
+          }
+        });
+      }
 
       // Save Bookmark button click
-      saveBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        state.savedEventIds = state.savedEventIds || [];
-        const index = state.savedEventIds.indexOf(ev.id);
-        const saveIcon = saveBtn.querySelector('.save-icon');
-        if (index > -1) {
-          state.savedEventIds.splice(index, 1);
-          saveBtn.classList.remove('saved');
-          saveIcon.setAttribute('fill', 'none');
-        } else {
-          state.savedEventIds.push(ev.id);
-          saveBtn.classList.add('saved');
-          saveIcon.setAttribute('fill', 'currentColor');
-        }
-      });
+      if (saveBtn) {
+        saveBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          state.savedEventIds = state.savedEventIds || [];
+          const index = state.savedEventIds.indexOf(ev.id);
+          const saveIcon = saveBtn.querySelector('.save-icon');
+          if (index > -1) {
+            state.savedEventIds.splice(index, 1);
+            saveBtn.classList.remove('saved');
+            if (saveIcon) saveIcon.setAttribute('fill', 'none');
+          } else {
+            state.savedEventIds.push(ev.id);
+            saveBtn.classList.add('saved');
+            if (saveIcon) saveIcon.setAttribute('fill', 'currentColor');
+          }
+        });
+      }
 
       // Ticket button click (Instantly opens detail checkout page)
-      ticketBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openEventDetails(ev);
-      });
+      if (ticketBtn) {
+        ticketBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openEventDetails(ev);
+        });
+      }
 
       // Clicking bottom left details opens detail page
-      metaCta.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openEventDetails(ev);
-      });
+      const infoContainer = feedItem.querySelector('.feed-info-container');
+      if (infoContainer) {
+        infoContainer.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openEventDetails(ev);
+        });
+      }
+
+      if (metaCta) {
+        metaCta.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openEventDetails(ev);
+        });
+      }
 
       // Progress bar updater
       video.addEventListener('timeupdate', () => {
@@ -1652,16 +1709,16 @@ document.addEventListener('DOMContentLoaded', () => {
     state.gridVibeFilter = selectedVibe;
     state.currentPlayingIndex = 0;
 
-    // 1. Sync TikTok Tab highlights
-    document.querySelectorAll('.tiktok-tab').forEach(tab => {
-      if (tab.dataset.vibe === selectedVibe) {
-        tab.classList.add('active');
+    // 1. Sync Feed top bar pills (.feed-glass-pill)
+    document.querySelectorAll('.feed-glass-pill').forEach(pill => {
+      if (pill.dataset.vibe === selectedVibe) {
+        pill.classList.add('active');
       } else {
-        tab.classList.remove('active');
+        pill.classList.remove('active');
       }
     });
 
-    // 2. Sync Search Grid fast filter pills
+    // 2. Sync Search Grid fast filter pills (.fast-filter-pill)
     document.querySelectorAll('.fast-filter-pill').forEach(pill => {
       if (pill.dataset.vibe === selectedVibe) {
         pill.classList.add('active');
@@ -1682,11 +1739,11 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDiscoveryGrid();
   }
 
-  // Bind tap events on TikTok Tab headers
-  document.querySelectorAll('.tiktok-tab').forEach(tab => {
-    tab.addEventListener('click', (e) => {
+  // Bind tap events on Feed top bar glass pills & Search grid filter pills
+  document.querySelectorAll('.feed-glass-pill, .fast-filter-pill').forEach(pill => {
+    pill.addEventListener('click', (e) => {
       e.stopPropagation();
-      switchVibe(tab.dataset.vibe);
+      switchVibe(pill.dataset.vibe);
     });
   });
 
@@ -1824,22 +1881,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const priceFilter = state.gridPriceFilter || 'all';
 
     // Filter events by vibe
-    let filtered = [...eventsData];
+    let filtered = [...(eventsData && eventsData.length > 0 ? eventsData : mockEventsList)];
     if (vibe !== 'all') {
-      filtered = filtered.filter(ev => ev.vibe === vibe);
+      const vibeFiltered = filtered.filter(ev => ev.vibe === vibe);
+      if (vibeFiltered.length > 0) filtered = vibeFiltered;
     }
     
     // Filter by city
     if (city === 'prague') {
-      filtered = filtered.filter(ev => 
+      const pragueFiltered = filtered.filter(ev => 
         ev.location.toLowerCase().includes('prague') || 
         ev.location.toLowerCase().includes('praha') ||
         ev.location.toLowerCase().includes('holesovice')
       );
+      if (pragueFiltered.length > 0) filtered = pragueFiltered;
     } else if (city === 'olomouc') {
-      filtered = filtered.filter(ev => 
+      const olomoucFiltered = filtered.filter(ev => 
         ev.location.toLowerCase().includes('olomouc')
       );
+      if (olomoucFiltered.length > 0) filtered = olomoucFiltered;
     }
 
     // Filter by price segmented switch (Paid vs Free)
@@ -1860,23 +1920,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set Section title based on selection
     if (titleText) {
-      if (city === 'all') {
-        titleText.textContent = vibe === 'all' ? 'All Experiences' : `All ${vibe.charAt(0).toUpperCase() + vibe.slice(1)} Experiences`;
-      } else if (city === 'prague') {
-        titleText.textContent = vibe === 'all' ? 'Experiences in Prague' : `Prague ${vibe.charAt(0).toUpperCase() + vibe.slice(1)} Events`;
-      } else if (city === 'olomouc') {
-        titleText.textContent = vibe === 'all' ? 'Experiences in Olomouc' : `Olomouc ${vibe.charAt(0).toUpperCase() + vibe.slice(1)} Events`;
+      if (vibe === 'adrenalin') {
+        titleText.textContent = 'Akce plné adrenalinu';
+      } else if (vibe === 'party') {
+        titleText.textContent = 'Tento víkend';
+      } else if (vibe === 'klid') {
+        titleText.textContent = 'Klidné zážitky v Praze';
+      } else {
+        titleText.textContent = 'Dnes v Praze';
       }
     }
 
     if (filtered.length === 0) {
-      experiencesContainer.innerHTML = `<span class="empty-cards-msg" style="grid-column: 1/-1; text-align: center; padding: 40px 0; color: var(--color-text-muted);">No experiences match your filters.</span>`;
+      experiencesContainer.innerHTML = `<span class="empty-cards-msg" style="grid-column: 1/-1; text-align: center; padding: 40px 0; color: var(--color-text-muted);">Žádné akce neodpovídají vašim filtrům.</span>`;
       const trendingRow = document.getElementById('trending-carousel-row');
       if (trendingRow) trendingRow.style.display = 'none';
       return;
     }
 
-    const formatPrice = (price) => price === 0 ? 'FREE' : `${price} CZK+`;
+    const formatPrice = (price) => price === 0 ? 'ZDARMA' : `od ${price} Kč`;
 
     // Render Spotlight Hero Event (the first event in list)
     const heroEv = filtered[0];
@@ -1887,14 +1949,14 @@ document.addEventListener('DOMContentLoaded', () => {
           <img src="${heroEv.bgImg}" alt="${heroEv.title}" onerror="this.style.display='none'; this.parentNode.classList.add('fallback-bg');">
         </div>
         <div class="hero-gradient-overlay"></div>
-        <div class="hero-spotlight-badge">Featured Spotlight</div>
+        <div class="hero-spotlight-badge">${(heroEv.tag || 'HUDBA').toUpperCase()}</div>
         <div class="hero-play-indicator">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2.5"><polygon points="6 3 20 12 6 21 6 3"/></svg>
         </div>
         <div class="hero-info-card">
           <div class="hero-info-left">
             <span class="hero-title">${heroEv.title}</span>
-            <span class="hero-meta">${heroEv.location.split(',')[0]} • ${heroEv.tag}</span>
+            <span class="hero-meta">${heroEv.location.split(',')[0]} • ${heroEv.date}</span>
           </div>
           <div class="hero-info-right">
             <span class="hero-price">${formatPrice(heroEv.priceMin)}</span>
@@ -1950,7 +2012,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="tilted-card-title">${ev.title}</span>
         <div class="tilted-card-meta">
           <span>${ev.location.split(',')[0]}</span>
-          <strong class="tilted-card-price">${ev.priceMin === 0 ? 'FREE' : ev.priceMin + ' CZK+'}</strong>
+          <strong class="tilted-card-price">${ev.priceMin === 0 ? 'ZDARMA' : 'od ' + ev.priceMin + ' Kč'}</strong>
         </div>
       </div>
     `;
@@ -1962,27 +2024,25 @@ document.addEventListener('DOMContentLoaded', () => {
     return card;
   }
 
-  // Helper to construct event card
+  // Helper to construct event card matching UI Kit Classic Card spec
   function createEventCardElement(ev) {
     const card = document.createElement('div');
-    card.className = 'event-card';
+    card.className = 'event-card event-card-classic';
     
-    const formatPrice = (price) => price === 0 ? 'FREE' : `${price} CZK+`;
+    const formatPrice = (price) => price === 0 ? 'ZDARMA' : `od ${price} Kč`;
+    const shortDate = ev.date ? (ev.date.split('•')[0] ? ev.date.split('•')[0].trim() : ev.date) : 'Ne 15. 10.';
+    const vibeClass = (ev.vibe || 'hudba').toLowerCase();
 
     card.innerHTML = `
-      <div class="card-tag-badge">${ev.tag.toUpperCase()}</div>
-      <div class="card-play-badge">
-        <svg width="8" height="8" viewBox="0 0 24 24" fill="white"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-      </div>
+      <div class="card-tag-badge badge-${vibeClass}">${ev.tag}</div>
       <div class="card-image-container">
         <img src="${ev.bgImg}" alt="${ev.title}" loading="lazy" onerror="this.style.display='none'; this.parentNode.classList.add('fallback-bg');">
       </div>
-      <div class="card-gradient-overlay"></div>
-      <div class="card-text-overlay">
-        <span class="card-text-title">${ev.title}</span>
-        <div class="card-text-meta">
-          <span>${ev.location.split(',')[0]}</span>
-          <strong>${formatPrice(ev.priceMin)}</strong>
+      <div class="card-info-content">
+        <h4 class="card-title">${ev.title}</h4>
+        <div class="card-meta-row">
+          <span class="card-meta-location">${ev.location.split(',')[0]} · ${shortDate}</span>
+          <span class="card-meta-price">${formatPrice(ev.priceMin)}</span>
         </div>
       </div>
     `;
@@ -1990,7 +2050,6 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('click', () => {
       openEventDetails(ev);
     });
-
 
     return card;
   }
@@ -2030,27 +2089,47 @@ document.addEventListener('DOMContentLoaded', () => {
   const stickyCtaSeat = document.getElementById('sticky-cta-seat');
 
   function openEventDetails(eventObj) {
+    window.openEventDetails = openEventDetails;
     state.selectedEvent = eventObj;
     
-    // Set text elements
-    document.getElementById('detail-event-title').textContent = eventObj.title;
-    document.getElementById('detail-event-tag').textContent = eventObj.tag.replace(/⚡|🎉|🍃/g, '').trim();
-    document.getElementById('detail-event-tag').className = `event-tag tag-${eventObj.vibe}`;
-    document.getElementById('detail-event-location').textContent = eventObj.location;
-    document.getElementById('detail-event-date').textContent = eventObj.date;
-    document.getElementById('detail-event-lineup').textContent = eventObj.lineup;
-    document.getElementById('detail-event-weather').textContent = `${eventObj.weather.temp} — ${eventObj.weather.text}`;
-    
-    // Set weather icon
-    renderWeatherIcon(eventObj.weather.icon);
+    // Set text elements safely
+    const titleEl = document.getElementById('detail-event-title');
+    if (titleEl) titleEl.textContent = eventObj.title;
+
+    const tagEl = document.getElementById('detail-event-tag');
+    if (tagEl) {
+      tagEl.textContent = eventObj.tag ? eventObj.tag.replace(/⚡|🎉|🍃/g, '').trim() : 'Hudba';
+      tagEl.className = `card-tag-badge badge-${(eventObj.vibe || 'hudba').toLowerCase()}`;
+    }
+
+    const locEl = document.getElementById('detail-event-location');
+    if (locEl) locEl.textContent = eventObj.location;
+
+    const dateEl = document.getElementById('detail-event-date');
+    if (dateEl) dateEl.textContent = eventObj.date;
+
+    const headlinerName = document.getElementById('detail-headliner-name');
+    if (headlinerName) headlinerName.textContent = eventObj.lineup ? eventObj.lineup.split(',')[0].split('•')[0] : 'Xindl X';
+
+    const headlinerSub = document.getElementById('detail-headliner-sub');
+    if (headlinerSub) headlinerSub.textContent = 'Headliner · 20:00';
+
+    const headlinerAvatar = document.getElementById('detail-headliner-avatar');
+    if (headlinerAvatar) headlinerAvatar.src = eventObj.bgImg;
+
+    const footerPrice = document.getElementById('detail-footer-price');
+    if (footerPrice) footerPrice.textContent = `${eventObj.priceMin || 400} Kč`;
 
     // Set Hero Background Image
-    document.getElementById('detail-hero-bg').style.backgroundImage = `url(${eventObj.bgImg})`;
+    const heroBg = document.getElementById('detail-hero-bg');
+    if (heroBg) heroBg.style.backgroundImage = `url(${eventObj.bgImg})`;
 
     // Reset budget slider range constraints based on event pricing
-    budgetSlider.min = eventObj.priceMin;
-    budgetSlider.max = eventObj.priceMax;
-    budgetSlider.value = Math.round((eventObj.priceMin + eventObj.priceMax) / 2);
+    if (budgetSlider) {
+      budgetSlider.min = eventObj.priceMin || 200;
+      budgetSlider.max = eventObj.priceMax || 1800;
+      budgetSlider.value = Math.round(((eventObj.priceMin || 200) + (eventObj.priceMax || 1800)) / 2);
+    }
     
     updateSeatSelection();
     navigateTo('detail-screen');
@@ -2097,10 +2176,10 @@ document.addEventListener('DOMContentLoaded', () => {
       povType: selectedSector.povType
     };
 
-    // Update UI elements
-    allocatedSeatName.textContent = state.selectedSeat.name.split(',')[0] + ', ' + state.selectedSeat.name.split(',')[1];
-    allocatedSeatPrice.textContent = state.selectedSeat.price;
-    stickyCtaSeat.textContent = `${state.selectedSeat.name.split(',')[0]} (Price: ${state.selectedSeat.price} CZK)`;
+    // Update UI elements safely
+    if (allocatedSeatName) allocatedSeatName.textContent = state.selectedSeat.name.split(',')[0] + ', ' + state.selectedSeat.name.split(',')[1];
+    if (allocatedSeatPrice) allocatedSeatPrice.textContent = state.selectedSeat.price;
+    if (stickyCtaSeat) stickyCtaSeat.textContent = `${state.selectedSeat.name.split(',')[0]} (Price: ${state.selectedSeat.price} CZK)`;
     
     // Draw POV stadium representation
     drawSeatPOV(state.selectedSeat.povType);
@@ -2238,7 +2317,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }
 
-    canvas.innerHTML = svgMarkup;
+    if (canvas) canvas.innerHTML = svgMarkup;
   }
 
   // Handle click of "Get Ticket" CTA on detail view

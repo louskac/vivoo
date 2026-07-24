@@ -78,7 +78,7 @@
         </div>
 
         <!-- 0. AUTHENTICATION SCREEN (Login/Registration) -->
-        <section id="auth-screen" class="app-screen active">
+        <section id="auth-screen" class="app-screen">
           <!-- Ambient Background Aurora Glows -->
           <div class="auth-aurora-glow glow-1"></div>
           <div class="auth-aurora-glow glow-2"></div>
@@ -175,19 +175,19 @@
           </div>
         </section>
 
-        <!-- 1. DISCOVERY FEED SCREEN (TikTok Reels View) -->
-        <section id="feed-screen" class="app-screen">
-          <!-- TikTok Style Header -->
-          <header class="feed-header">
-            <div class="tiktok-tabs-container">
-              <span class="tiktok-tab active" data-vibe="all">All</span>
-              <span class="tiktok-tab" data-vibe="sport">Sport</span>
-              <span class="tiktok-tab" data-vibe="culture">Culture</span>
-              <span class="tiktok-tab" data-vibe="fun">Fun</span>
-              <span class="tiktok-tab" data-vibe="networking">Networking</span>
-              <span class="tiktok-tab" data-vibe="music">Music</span>
+        <!-- 1. DISCOVERY FEED SCREEN (Figma TikTok Feed Spec 3056:83 & 3067:201) -->
+        <section id="feed-screen" class="app-screen active">
+          <!-- Top Glass Filter Bar (Figma Frame 21: 370x36px) -->
+          <div class="feed-top-bar">
+            <div class="feed-pills-row">
+              <button class="feed-glass-pill active" data-vibe="adrenalin">Adrenalin</button>
+              <button class="feed-glass-pill" data-vibe="party">Party</button>
+              <button class="feed-glass-pill" data-vibe="klid">Klid</button>
             </div>
-          </header>
+            <button class="feed-sound-btn" id="feed-global-sound-toggle" aria-label="Toggle Sound">
+              <svg class="sound-icon-muted" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            </button>
+          </div>
 
           <!-- Vertical Scroll Video Container -->
           <div class="video-feed-container" id="video-feed">
@@ -196,51 +196,45 @@
         </section>
 
         <!-- 2. GRID / SEARCH SCREEN (NEW - Redesigned Immersive Grid) -->
+        <!-- 2. GRID / SEARCH SCREEN (Figma Grid View Spec 3088:93) -->
         <section id="grid-screen" class="app-screen">
           <header class="grid-search-header">
-            <!-- Search & Location Row (Compact single row) -->
-            <div class="search-bar-row" style="position: relative;">
+            <!-- Search & Location Row (Figma Frame 25: 370x48px) -->
+            <div class="search-bar-row">
               <div class="search-input-wrapper">
-                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" id="grid-search-input" placeholder="Search events, lineups...">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="grid-search-input" placeholder="Hledej akce, interprety, místa">
               </div>
               <div class="location-pill-selector" id="grid-location-selector">
-                <svg class="location-pin-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
-                <span id="current-location-text">All</span>
-                <svg class="location-chevron-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                <svg class="location-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span id="current-location-text">Praha</span>
               </div>
 
               <!-- Location Dropdown Menu -->
               <div id="location-dropdown" class="location-dropdown">
                 <div class="location-dropdown-item selected" data-location="all">
-                  <span>All Cities</span>
-                  <svg class="location-check-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Všechna města</span>
                 </div>
                 <div class="location-dropdown-item" data-location="prague">
-                  <span>Prague</span>
-                  <svg class="location-check-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Praha</span>
                 </div>
                 <div class="location-dropdown-item" data-location="olomouc">
                   <span>Olomouc</span>
-                  <svg class="location-check-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
               </div>
             </div>
-            <!-- Price Segment Control Switch (Paid / Free Main Switch) -->
-            <div class="pricing-segment-switch">
-              <button class="pricing-switch-btn active" data-price-filter="all">All Entries</button>
-              <button class="pricing-switch-btn" data-price-filter="paid">Paid</button>
-              <button class="pricing-switch-btn" data-price-filter="free">Free</button>
-            </div>
 
-            <!-- Fast Filters Pill-row -->
+            <!-- Fast Filters Row (Figma Frame 21: Funnel button + Glass Pills) -->
             <div class="grid-fast-filters">
-              <button class="fast-filter-pill active" data-vibe="all">All</button>
-              <button class="fast-filter-pill" data-vibe="sport">Sport</button>
-              <button class="fast-filter-pill" data-vibe="culture">Culture</button>
-              <button class="fast-filter-pill" data-vibe="fun">Fun</button>
-              <button class="fast-filter-pill" data-vibe="networking">Networking</button>
-              <button class="fast-filter-pill" data-vibe="music">Music</button>
+              <button class="grid-funnel-btn" id="btn-grid-filter" aria-label="Filters">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              </button>
+              <div class="grid-pills-scroll">
+                <button class="fast-filter-pill active" data-vibe="all">Vše</button>
+                <button class="fast-filter-pill" data-vibe="adrenalin">Adrenalin</button>
+                <button class="fast-filter-pill" data-vibe="party">Party</button>
+                <button class="fast-filter-pill" data-vibe="klid">Klid</button>
+              </div>
             </div>
           </header>
 
@@ -268,119 +262,106 @@
           </div>
         </section>
 
+        <!-- 3. EVENT DETAIL SCREEN (Figma Detail akce Spec 3022:20581) -->
         <section id="detail-screen" class="app-screen">
-          <!-- Fixed Back Button -->
-          <button class="back-btn" id="detail-back-btn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          <!-- Floating 48x48px Glass Back Button -->
+          <button class="detail-back-btn-glass" id="detail-back-btn" aria-label="Go Back">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
 
           <div class="detail-container">
-            <!-- Event Hero Area -->
+            <!-- Event Hero Banner Header -->
             <div class="detail-hero" id="detail-hero-bg">
+              <div class="detail-hero-overlay"></div>
               <div class="detail-hero-content">
-                <span class="event-tag" id="detail-event-tag">Category</span>
-                <h1 class="event-title" id="detail-event-title">Event Name</h1>
+                <span class="card-tag-badge badge-hudba" id="detail-event-tag">Hudba</span>
+                <h1 class="detail-main-title" id="detail-event-title">Koncert pod živými hvězdami</h1>
               </div>
             </div>
 
-            <!-- Content Grid Layout -->
+            <!-- Content Body Layout -->
             <div class="detail-body">
-              <div class="info-grid">
-                <!-- Location Tile -->
-                <div class="grid-tile">
-                  <div class="tile-icon">
+              <!-- Location & Date Info Block (Figma Frame 9) -->
+              <div class="detail-info-block">
+                <div class="detail-info-row">
+                  <div class="detail-info-icon-box">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
                   </div>
-                  <div class="tile-content">
-                    <span class="tile-label">Location</span>
-                    <span class="tile-value" id="detail-event-location">Venue</span>
+                  <div class="detail-info-text">
+                    <span class="detail-info-label">Místo konání</span>
+                    <span class="detail-info-val" id="detail-event-location">Riegrovy sady, Praha 3</span>
                   </div>
                 </div>
 
-                <!-- Date Tile -->
-                <div class="grid-tile">
-                  <div class="tile-icon">
+                <div class="detail-info-row">
+                  <div class="detail-info-icon-box">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                   </div>
-                  <div class="tile-content">
-                    <span class="tile-label">Date & Time</span>
-                    <span class="tile-value" id="detail-event-date">Date info</span>
-                  </div>
-                </div>
-
-                <!-- Weather Tile -->
-                <div class="grid-tile">
-                  <div class="tile-icon" id="detail-weather-icon">
-                    <!-- Dynamic weather SVG -->
-                  </div>
-                  <div class="tile-content">
-                    <span class="tile-label">Weather Forecast</span>
-                    <span class="tile-value" id="detail-event-weather">Forecast details</span>
-                  </div>
-                </div>
-
-                <!-- Lineup Tile -->
-                <div class="grid-tile grid-tile-full">
-                  <div class="tile-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                  </div>
-                  <div class="tile-content">
-                    <span class="tile-label">Lineup / Teams</span>
-                    <span class="tile-value" id="detail-event-lineup">Lineup listings...</span>
+                  <div class="detail-info-text">
+                    <span class="detail-info-label">Datum a čas</span>
+                    <span class="detail-info-val" id="detail-event-date">Ne 18. října · 15:00</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Smart Seating Section -->
+              <!-- Headliner Performer Card (Figma Frame 12) -->
+              <div class="headliner-performer-card" id="detail-headliner-card">
+                <div class="headliner-avatar-wrap">
+                  <img src="images/techno.jpg" alt="Performer avatar" id="detail-headliner-avatar">
+                </div>
+                <div class="headliner-info-wrap">
+                  <h4 class="headliner-name" id="detail-headliner-name">Xindl X</h4>
+                  <span class="headliner-sub" id="detail-headliner-sub">Headliner · 20:00</span>
+                </div>
+              </div>
+
+              <!-- Event Description Block -->
+              <div class="detail-description-block">
+                <h3 class="detail-section-title">O akci</h3>
+                <p class="detail-desc-text" id="detail-event-desc">
+                  Zažijte jedinečnou atmosféru letního večera na open-air Koncertu pod živými hvězdami, kde pod širým nebem vystoupí oblíbený písničkář Xindl X. Připravte se na jeho největší hity v komorní atmosféře s výhledem na celé město.
+                </p>
+              </div>
+
+              <!-- Smart Seating Interactive Slider -->
               <div class="smart-seating-container">
-                <h3>Smart-Select Seating</h3>
-                <p class="section-desc">Drag the slider to match your budget. We will automatically assign you the best view coordinates.</p>
+                <h3 class="detail-section-title">Smart-Select Vstupenky</h3>
+                <p class="section-desc">Posuňte jezdec podle rozpočtu. Automaticky vám přiřadíme nejlepší sektor.</p>
                 
                 <div class="budget-control">
                   <div class="budget-info">
-                    <span>Budget Limit:</span>
-                    <strong class="budget-value"><span id="seating-budget-value">600</span> CZK</strong>
+                    <span>Váš rozpočet:</span>
+                    <strong class="budget-value"><span id="seating-budget-value">600</span> Kč</strong>
                   </div>
                   <input type="range" id="seating-budget-slider" min="200" max="1800" step="50" value="600" class="custom-slider">
-                  <div class="slider-labels">
-                    <span>200 CZK</span>
-                    <span>1800 CZK</span>
-                  </div>
                 </div>
 
-                <!-- Seat Allocation Details & Interactive SVG POV Preview -->
                 <div class="seat-allocation-card">
                   <div class="allocation-header">
                     <div>
-                      <span class="allocation-label">Assigned Location</span>
+                      <span class="allocation-label">Přiřazený sektor</span>
                       <h4 id="allocated-seat-name" class="allocation-title">Sektor A, Řada 12</h4>
                     </div>
                     <div>
-                      <span class="allocation-label">Ticket Price</span>
-                      <div class="allocation-price"><span id="allocated-seat-price">550</span> CZK</div>
+                      <span class="allocation-label">Cena lístku</span>
+                      <div class="allocation-price"><span id="allocated-seat-price">550</span> Kč</div>
                     </div>
-                  </div>
-
-                  <!-- Dynamic SVG POV View from Seat -->
-                  <div class="seat-view-preview">
-                    <div class="preview-overlay">Static POV View from Seat</div>
-                    <svg id="seat-pov-canvas" width="100%" height="160" viewBox="0 0 300 160">
-                      <!-- Rendered dynamically -->
-                    </svg>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
 
-          <!-- Sticky CTA Banner -->
-          <div class="sticky-cta">
-            <div class="cta-price-info">
-              <span>Selected:</span>
-              <span class="cta-seat" id="sticky-cta-seat">Sektor A, Seat 18</span>
+          <!-- Sticky Bottom CTA Banner (Figma Frame 11) -->
+          <div class="detail-sticky-footer">
+            <div class="detail-footer-price">
+              <span class="footer-price-label">Cena od</span>
+              <strong class="footer-price-val" id="detail-footer-price">400 Kč</strong>
             </div>
-            <button class="btn btn-primary btn-cta" id="detail-buy-btn">Get Ticket</button>
+            <button class="detail-buy-btn-primary" id="detail-buy-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/></svg>
+              <span>Koupit</span>
+            </button>
           </div>
         </section>
 
@@ -558,106 +539,73 @@
           </div>
         </section>
 
-        <!-- 7. PROFILE & CASHLESS WALLET SCREEN (NEW - Redesigned) -->
+        <!-- 7. PROFILE & CASHLESS WALLET SCREEN (Figma Profil Spec 3118:826) -->
         <section id="profile-screen" class="app-screen">
-          <!-- Floating top header with edit option -->
-          <div class="profile-top-floating-bar">
-            <span class="profile-top-title">My Profile</span>
-            <button class="profile-edit-btn" id="btn-sign-out">Sign Out</button>
+          <!-- Top Header Row (Figma Frame 37: 368x48px) -->
+          <div class="profile-top-header">
+            <h1 class="profile-header-title">Profil</h1>
+            <button class="profile-settings-btn-glass" id="btn-profile-settings" aria-label="Settings">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </button>
           </div>
 
           <div class="profile-scroll-container">
-            <!-- Transparent spacer to allow portrait viewing -->
-            <div class="profile-top-spacer"></div>
-
-            <!-- Floating Glassmorphic Details Card -->
-            <div class="profile-details-card">
-              <!-- Name & Username info -->
-              <div class="profile-header-main">
+            <!-- User Header Block (Figma Frame 41) -->
+            <div class="profile-user-card">
+              <div class="profile-avatar-circle">
+                <img src="images/techno.jpg" alt="Jakub Dostál">
+              </div>
+              <div class="profile-user-meta">
                 <h2>Jakub Dostál</h2>
-                <span class="profile-username">@jakub_dostal</span>
-                <p class="profile-bio">Lover of deep warehouse techno and electric football matches. Living for raw basslines and stadium flares in Prague.</p>
+                <span class="profile-handle">@jakub_dostal</span>
               </div>
+            </div>
 
-              <!-- Stats counters (Matches Oliver Bennet stats layout) -->
-              <div class="profile-stats-grid">
-                <div class="profile-stat-box">
-                  <span class="stat-num">12</span>
-                  <span class="stat-label">Events</span>
-                </div>
-                <div class="profile-stat-box">
-                  <span class="stat-num" id="profile-wallet-credit-stat">400</span>
-                  <span class="stat-label">CZK Wallet</span>
-                </div>
-                <div class="profile-stat-box">
-                  <span class="stat-num">3</span>
-                  <span class="stat-label">Rewards</span>
-                </div>
+            <!-- Cashless Wallet Card (Figma Frame 42: 370x358px) -->
+            <div class="cashless-wallet-card">
+              <span class="wallet-card-sub">Aktuální kredit</span>
+              <div class="wallet-card-amount"><span id="profile-wallet-credit-stat">2360</span> Kč</div>
+              <button class="wallet-topup-btn" id="btn-wallet-topup">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <span>Dobít kredit</span>
+              </button>
+
+              <div class="wallet-menu-divider"></div>
+              
+              <!-- Settings Menu Rows -->
+              <div class="wallet-menu-row">
+                <span>Notifikace</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
-
-              <!-- Action buttons row -->
-              <div class="profile-actions-row">
-                <button class="profile-btn-primary" id="btn-wallet-topup">
-                  <span>Top Up Cashless</span>
-                </button>
-                <button class="profile-btn-icon" id="btn-profile-settings">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                </button>
+              <div class="wallet-menu-divider"></div>
+              <div class="wallet-menu-row">
+                <span>Platební karty</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
-
-              <!-- Active passes list (Horizontal Carousel) -->
-              <div class="profile-section-title">Active Tickets</div>
-              <div class="profile-tickets-carousel">
-                <div class="mini-ticket-card">
-                  <div class="ticket-card-header">
-                    <span class="ticket-tag tag-adrenalin">Derby</span>
-                    <span class="ticket-date">14 Oct</span>
-                  </div>
-                  <h4 class="ticket-title">Sparta vs Slavia</h4>
-                  <p class="ticket-seat">Sektor A • Row 5</p>
-                </div>
-                <div class="mini-ticket-card">
-                  <div class="ticket-card-header">
-                    <span class="ticket-tag tag-party">Techno</span>
-                    <span class="ticket-date">20 Oct</span>
-                  </div>
-                  <h4 class="ticket-title">Basement Syndicate</h4>
-                  <p class="ticket-seat">VIP Boiler Deck</p>
-                </div>
+              <div class="wallet-menu-divider"></div>
+              <div class="wallet-menu-row">
+                <span>Pomoc a podpora</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
+            </div>
 
-              <!-- Transaction history list -->
-              <div class="profile-section-title" style="margin-top: 24px;">Activity & Rewards Log</div>
-              <div class="history-list">
-                <div class="history-item">
-                  <div class="history-icon reward">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <!-- Recent Activity List (Figma Frame 48 & Frame 49) -->
+            <div class="profile-activity-section">
+              <h3 class="activity-section-title">Poslední aktivita</h3>
+              <div class="activity-list">
+                <div class="activity-item-row">
+                  <div class="activity-item-text">
+                    <strong>Vrácení vstupenky</strong>
+                    <span>Dnes, 14:12</span>
                   </div>
-                  <div class="history-details">
-                    <span class="history-item-title">Memories Video Upload Reward</span>
-                    <span class="history-item-time">Today, 14:32</span>
-                  </div>
-                  <strong class="history-val positive">+100 CZK</strong>
+                  <strong class="activity-amount positive">+100 Kč</strong>
                 </div>
-                <div class="history-item">
-                  <div class="history-icon refund">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <div class="activity-item-row">
+                  <div class="activity-item-text">
+                    <strong>Video z akce</strong>
+                    <span>Úterý 12.2.</span>
                   </div>
-                  <div class="history-details">
-                    <span class="history-item-title">Prague Derby Resale Refund (80%)</span>
-                    <span class="history-item-time">Yesterday, 18:15</span>
-                  </div>
-                  <strong class="history-val positive">+360 CZK</strong>
-                </div>
-                <div class="history-item">
-                  <div class="history-icon bonus">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-                  </div>
-                  <div class="history-details">
-                    <span class="history-item-title">Account Registration Bonus</span>
-                    <span class="history-item-time">Oct 1, 2026</span>
-                  </div>
-                  <strong class="history-val positive">+50 CZK</strong>
+                  <strong class="activity-amount positive">+300 Kč</strong>
                 </div>
               </div>
             </div>
@@ -721,33 +669,29 @@
 
 
 
-        <!-- GLOBAL FLOATING MENU CAPSULE (Instagram Style) -->
-        <nav class="bottom-nav-capsule hidden">
+        <!-- GLOBAL FLOATING MENU CAPSULE (Figma UI Kit Spec: 366x64px Navigation Bar) -->
+        <nav class="bottom-nav-capsule">
           <!-- Drag highlight background capsule -->
           <div class="capsule-nav-highlight" id="capsule-nav-highlight"></div>
 
-          <!-- Reels / TikTok Feed Tab -->
-          <button class="capsule-nav-item active" id="btn-capsule-feed" data-screen="feed-screen">
-            <!-- Play icon (Instagram Reels style) -->
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/><polygon points="6 10 10 12 6 14 6 10"/></svg>
+          <!-- Home Feed Tab (house icon) -->
+          <button class="capsule-nav-item active" id="btn-capsule-feed" data-screen="feed-screen" aria-label="Home Feed">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </button>
           
-          <!-- Discovery Grid Search Tab -->
-          <button class="capsule-nav-item" id="btn-capsule-grid" data-screen="grid-screen">
-            <!-- Squares Grid icon -->
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <!-- Discovery Grid Search Tab (layout-grid icon) -->
+          <button class="capsule-nav-item" id="btn-capsule-grid" data-screen="grid-screen" aria-label="Discovery Grid">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           </button>
           
-          <!-- Wallet Ticket Tab -->
-          <button class="capsule-nav-item" id="btn-capsule-tickets" data-screen="ticket-screen">
-            <!-- Ticket icon -->
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></svg>
+          <!-- Wallet Ticket Tab (ticket icon) -->
+          <button class="capsule-nav-item" id="btn-capsule-tickets" data-screen="ticket-screen" aria-label="My Tickets">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/></svg>
           </button>
           
-          <!-- Cashless Profile Tab -->
-          <button class="capsule-nav-item" id="btn-capsule-profile" data-screen="profile-screen">
-            <!-- Profile User icon -->
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <!-- Profile Tab (user icon) -->
+          <button class="capsule-nav-item" id="btn-capsule-profile" data-screen="profile-screen" aria-label="Profile">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </button>
         </nav>
 
