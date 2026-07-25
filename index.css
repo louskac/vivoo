@@ -465,22 +465,22 @@ input[type="text"]:focus {
 .feed-glass-pill,
 .fast-filter-pill {
   height: 36px;
-  padding: 0 24px;
+  padding: 0 22px;
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(20, 20, 26, 0.40) 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.65) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.28) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.28) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(160, 170, 185, 0.20) 35%, rgba(40, 45, 55, 0.45) 100%);
+  border-top: 1.2px solid rgba(255, 255, 255, 0.85) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.50) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
   box-shadow: 
-    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.40),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.25),
-    0 4px 14px rgba(0, 0, 0, 0.25);
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.20),
+    0 4px 12px rgba(0, 0, 0, 0.15);
   color: #ffffff;
   font-family: var(--font-family-body);
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition-fast);
@@ -491,34 +491,34 @@ input[type="text"]:focus {
 
 .feed-glass-pill.active,
 .fast-filter-pill.active {
-  background: #f2efea !important;
+  background: #f4f2ee !important;
   color: #121217 !important;
   font-weight: 600 !important;
-  border-color: #f2efea !important;
-  padding: 0 24px !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  padding: 0 22px !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
 }
 
 .feed-glass-pill:hover:not(.active),
 .fast-filter-pill:hover:not(.active) {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(30, 30, 38, 0.50) 100%);
-  border-top-color: rgba(255, 255, 255, 0.85) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(180, 190, 205, 0.30) 35%, rgba(50, 55, 65, 0.55) 100%);
+  border-top-color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .feed-sound-btn {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(20, 20, 26, 0.40) 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.65) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.28) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.28) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(160, 170, 185, 0.20) 35%, rgba(40, 45, 55, 0.45) 100%);
+  border-top: 1.2px solid rgba(255, 255, 255, 0.85) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.50) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
   box-shadow: 
-    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.40),
-    0 4px 14px rgba(0, 0, 0, 0.25);
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.75),
+    0 4px 12px rgba(0, 0, 0, 0.15);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -528,8 +528,8 @@ input[type="text"]:focus {
 }
 
 .feed-sound-btn:hover {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(30, 30, 38, 0.50) 100%);
-  border-top-color: rgba(255, 255, 255, 0.85) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(180, 190, 205, 0.30) 35%, rgba(50, 55, 65, 0.55) 100%);
+  border-top-color: rgba(255, 255, 255, 0.95) !important;
 }
 
 /* Feed Scroller & Scrim */
