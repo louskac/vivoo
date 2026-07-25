@@ -443,10 +443,10 @@ input[type="text"]:focus {
   pointer-events: none;
 }
 
-/* /* Top Filter Bar (Figma Frame 21) */
+/* Top Filter Bar (Figma Frame 21 - Dynamic Island & Safe Area Compliant) */
 .feed-top-bar {
   position: absolute;
-  top: 52px;
+  top: max(68px, calc(env(safe-area-inset-top, 59px) + 10px)) !important;
   left: 16px;
   width: calc(100% - 32px);
   display: flex;
