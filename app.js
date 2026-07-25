@@ -1467,12 +1467,12 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
         
-        <!-- Right Side Action Bar (Figma Frame 14) -->
+        <!-- Right Side Action Bar (Figma Frame 14: y=320px) -->
         <div class="feed-right-actions">
           <!-- Save Bookmark (Frame 17) -->
           <button class="feed-action-btn btn-save-feed ${isSaved ? 'saved' : ''}" aria-label="Save">
             <div class="feed-action-icon-box">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              <svg width="24" height="28" viewBox="0 0 24 28" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 25l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </div>
             <span class="feed-action-text">Uložit</span>
           </button>
@@ -1480,7 +1480,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <!-- Ticket Buy (Frame 16) -->
           <button class="feed-action-btn btn-ticket-feed" aria-label="Buy Ticket">
             <div class="feed-action-icon-box">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/></svg>
+              <svg width="28" height="20" viewBox="0 0 28 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V5a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/><line x1="14" y1="3" x2="14" y2="17" stroke-dasharray="2 2"/></svg>
             </div>
             <span class="feed-action-text">Lístek</span>
           </button>
