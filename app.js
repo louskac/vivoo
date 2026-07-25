@@ -1448,7 +1448,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <svg class="overlay-icon" width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         </div>
 
-        <!-- Bottom Left Overlay Info Container (Figma Frame 19) -->
+        <!-- Bottom Left Overlay Info Container (Figma Frame 19: Full Width) -->
         <div class="feed-info-container">
           <div class="feed-badge-row">
             <span class="card-tag-badge badge-${vibeClass}">${ev.tag}</span>
@@ -1456,23 +1456,22 @@ document.addEventListener('DOMContentLoaded', () => {
           <h2 class="feed-event-title">${ev.title}</h2>
           <div class="feed-meta-row">
             <span class="feed-meta-item">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
               ${ev.location}
             </span>
-            <span class="feed-meta-bullet">•</span>
             <span class="feed-meta-item">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               ${shortDate}
             </span>
           </div>
         </div>
         
-        <!-- Right Side Action Bar (Figma Frame 14: y=320px) -->
+        <!-- Right Side Action Bar (Pushed UP above text, transparent floating icons) -->
         <div class="feed-right-actions">
           <!-- Save Bookmark (Frame 17) -->
           <button class="feed-action-btn btn-save-feed ${isSaved ? 'saved' : ''}" aria-label="Save">
             <div class="feed-action-icon-box">
-              <svg width="24" height="28" viewBox="0 0 24 28" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 25l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              <svg class="save-icon" width="24" height="26" viewBox="0 0 24 26" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 23l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             </div>
             <span class="feed-action-text">Uložit</span>
           </button>
@@ -1480,7 +1479,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <!-- Ticket Buy (Frame 16) -->
           <button class="feed-action-btn btn-ticket-feed" aria-label="Buy Ticket">
             <div class="feed-action-icon-box">
-              <svg width="28" height="20" viewBox="0 0 28 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V5a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/><line x1="14" y1="3" x2="14" y2="17" stroke-dasharray="2 2"/></svg>
+              <svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6a3 3 0 0 1 0 6v3a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-3a3 3 0 0 1 0-6V3a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v3z"/><line x1="13" y1="2" x2="13" y2="18" stroke-dasharray="2 2"/></svg>
             </div>
             <span class="feed-action-text">Lístek</span>
           </button>
