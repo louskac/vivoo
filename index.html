@@ -195,7 +195,6 @@
           </div>
         </section>
 
-        <!-- 2. GRID / SEARCH SCREEN (NEW - Redesigned Immersive Grid) -->
         <!-- 2. GRID / SEARCH SCREEN (Figma Grid View Spec 3088:93) -->
         <section id="grid-screen" class="app-screen">
           <header class="grid-search-header">
@@ -203,10 +202,10 @@
             <div class="search-bar-row">
               <div class="search-input-wrapper">
                 <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" id="grid-search-input" placeholder="Hledej akce, interprety, místa">
+                <input type="text" id="grid-search-input" placeholder="Hledej akce, interprety, města">
               </div>
               <div class="location-pill-selector" id="grid-location-selector">
-                <svg class="location-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                <svg class="location-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF2A4B" stroke-width="2.2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
                 <span id="current-location-text">Praha</span>
               </div>
 
@@ -223,88 +222,54 @@
                 </div>
               </div>
             </div>
-
-            <!-- Fast Filters Row (Figma Frame 21: Funnel button + Glass Pills) -->
-            <div class="grid-fast-filters">
-              <button class="grid-funnel-btn" id="btn-grid-filter" aria-label="Filters">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-              </button>
-              <div class="grid-pills-scroll">
-                <button class="fast-filter-pill active" data-vibe="all">Vše</button>
-                <button class="fast-filter-pill" data-vibe="adrenalin">Adrenalin</button>
-                <button class="fast-filter-pill" data-vibe="party">Party</button>
-                <button class="fast-filter-pill" data-vibe="klid">Klid</button>
-              </div>
-            </div>
           </header>
 
           <div class="grid-scroll-content">
-            <!-- Hero Spotlight Card -->
+            <!-- Hero Spotlight Card (Figma Top Featured Card) -->
             <div class="hero-spotlight-wrapper" id="grid-hero-spotlight">
               <!-- Injected in app.js -->
             </div>
 
-            <!-- Trending Tilted Card Carousel Section (Sidescroller) -->
-            <div class="trending-section-row" id="trending-carousel-row">
-              <h3 class="grid-section-title">Trending Now</h3>
-              <div class="trending-cards-sidescroller" id="trending-carousel-container">
-                <!-- Tilted Cards injected dynamically by JS -->
-              </div>
-            </div>
-
-            <!-- Redesigned experiences 2-column grid -->
-            <div class="grid-section-row">
-              <h3 class="grid-section-title" id="grid-section-title-text">All Experiences</h3>
-              <div class="experiences-grid-container" id="grid-experiences-container">
-                <!-- Injected in app.js -->
-              </div>
+            <!-- Redesigned experiences multi-category 2-column grids (Figma Spec) -->
+            <div class="grid-sections-container" id="grid-sections-container">
+              <!-- Injected dynamically in app.js -->
             </div>
           </div>
         </section>
 
         <!-- 3. EVENT DETAIL SCREEN (Figma Detail akce Spec 3022:20581) -->
         <section id="detail-screen" class="app-screen">
-          <!-- Floating 48x48px Glass Back Button -->
+          <!-- Floating 44x44px Glass Back Button -->
           <button class="detail-back-btn-glass" id="detail-back-btn" aria-label="Go Back">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
 
           <div class="detail-container">
-            <!-- Event Hero Banner Header -->
+            <!-- Event Hero Banner Header (55% Height Full Bleed) -->
             <div class="detail-hero" id="detail-hero-bg">
               <div class="detail-hero-overlay"></div>
               <div class="detail-hero-content">
-                <span class="card-tag-badge badge-hudba" id="detail-event-tag">Hudba</span>
+                <span class="detail-tag-badge badge-hudba" id="detail-event-tag">HUDBA</span>
                 <h1 class="detail-main-title" id="detail-event-title">Koncert pod živými hvězdami</h1>
               </div>
             </div>
 
             <!-- Content Body Layout -->
             <div class="detail-body">
-              <!-- Location & Date Info Block (Figma Frame 9) -->
+              <!-- Location & Date Info Block (Figma Spec: Clean Inline Icon Rows) -->
               <div class="detail-info-block">
                 <div class="detail-info-row">
-                  <div class="detail-info-icon-box">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
-                  </div>
-                  <div class="detail-info-text">
-                    <span class="detail-info-label">Místo konání</span>
-                    <span class="detail-info-val" id="detail-event-location">Riegrovy sady, Praha 3</span>
-                  </div>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A0A5B5" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span class="detail-info-val" id="detail-event-location">Riegrovy sady, Praha 3</span>
                 </div>
 
                 <div class="detail-info-row">
-                  <div class="detail-info-icon-box">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                  </div>
-                  <div class="detail-info-text">
-                    <span class="detail-info-label">Datum a čas</span>
-                    <span class="detail-info-val" id="detail-event-date">Ne 18. října · 15:00</span>
-                  </div>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A0A5B5" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span class="detail-info-val" id="detail-event-date">Ne 18. října · 15:00</span>
                 </div>
               </div>
 
-              <!-- Headliner Performer Card (Figma Frame 12) -->
+              <!-- Headliner Performer Card (Figma Spec) -->
               <div class="headliner-performer-card" id="detail-headliner-card">
                 <div class="headliner-avatar-wrap">
                   <img src="images/techno.jpg" alt="Performer avatar" id="detail-headliner-avatar">
@@ -317,49 +282,19 @@
 
               <!-- Event Description Block -->
               <div class="detail-description-block">
-                <h3 class="detail-section-title">O akci</h3>
                 <p class="detail-desc-text" id="detail-event-desc">
-                  Zažijte jedinečnou atmosféru letního večera na open-air Koncertu pod živými hvězdami, kde pod širým nebem vystoupí oblíbený písničkář Xindl X. Připravte se na jeho největší hity v komorní atmosféře s výhledem na celé město.
+                  Zažijte jedinečnou atmosféru letního večera na open-air Koncertu pod živými hvězdami, kde pod širým nebem vystoupí oblíbený písničkář Xindl X. Připravte se na jeho největší hity v komorní atmosféře s výhledem na celé město. <span class="desc-more">...více</span>
                 </p>
-              </div>
-
-              <!-- Smart Seating Interactive Slider -->
-              <div class="smart-seating-container">
-                <h3 class="detail-section-title">Smart-Select Vstupenky</h3>
-                <p class="section-desc">Posuňte jezdec podle rozpočtu. Automaticky vám přiřadíme nejlepší sektor.</p>
-                
-                <div class="budget-control">
-                  <div class="budget-info">
-                    <span>Váš rozpočet:</span>
-                    <strong class="budget-value"><span id="seating-budget-value">600</span> Kč</strong>
-                  </div>
-                  <input type="range" id="seating-budget-slider" min="200" max="1800" step="50" value="600" class="custom-slider">
-                </div>
-
-                <div class="seat-allocation-card">
-                  <div class="allocation-header">
-                    <div>
-                      <span class="allocation-label">Přiřazený sektor</span>
-                      <h4 id="allocated-seat-name" class="allocation-title">Sektor A, Řada 12</h4>
-                    </div>
-                    <div>
-                      <span class="allocation-label">Cena lístku</span>
-                      <div class="allocation-price"><span id="allocated-seat-price">550</span> Kč</div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
 
-          <!-- Sticky Bottom CTA Banner (Figma Frame 11) -->
+          <!-- Sticky Bottom CTA Banner (Figma Frame Spec) -->
           <div class="detail-sticky-footer">
             <div class="detail-footer-price">
-              <span class="footer-price-label">Cena od</span>
-              <strong class="footer-price-val" id="detail-footer-price">400 Kč</strong>
+              <strong class="footer-price-val" id="detail-footer-price">od 400 Kč</strong>
             </div>
             <button class="detail-buy-btn-primary" id="detail-buy-btn">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/></svg>
               <span>Koupit</span>
             </button>
           </div>
@@ -541,51 +476,81 @@
 
         <!-- 7. PROFILE & CASHLESS WALLET SCREEN (Figma Profil Spec 3118:826) -->
         <section id="profile-screen" class="app-screen">
-          <!-- Top Header Row (Figma Frame 37: 368x48px) -->
+          <!-- Top Header Row (Figma Spec) -->
           <div class="profile-top-header">
             <h1 class="profile-header-title">Profil</h1>
             <button class="profile-settings-btn-glass" id="btn-profile-settings" aria-label="Settings">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06-.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </button>
           </div>
 
           <div class="profile-scroll-container">
-            <!-- User Header Block (Figma Frame 41) -->
+            <!-- User Identity Header (Figma Spec: Clean, Un-boxed Avatar & Name) -->
             <div class="profile-user-card">
               <div class="profile-avatar-circle">
-                <img src="images/techno.jpg" alt="Jakub Dostál">
+                <img src="images/profile_bg.jpg" alt="Jan Novák">
               </div>
               <div class="profile-user-meta">
-                <h2>Jakub Dostál</h2>
-                <span class="profile-handle">@jakub_dostal</span>
+                <h2>Jan Novák</h2>
+                <span class="profile-handle">@novakjan</span>
               </div>
             </div>
 
-            <!-- Cashless Wallet Card (Figma Frame 42: 370x358px) -->
-            <div class="cashless-wallet-card">
+            <!-- Cashless Credit Section (Figma Spec) -->
+            <div class="cashless-wallet-section">
               <span class="wallet-card-sub">Aktuální kredit</span>
               <div class="wallet-card-amount"><span id="profile-wallet-credit-stat">2360</span> Kč</div>
               <button class="wallet-topup-btn" id="btn-wallet-topup">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                 <span>Dobít kredit</span>
               </button>
+            </div>
 
-              <div class="wallet-menu-divider"></div>
-              
-              <!-- Settings Menu Rows -->
-              <div class="wallet-menu-row">
-                <span>Notifikace</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            <!-- Navigation Menu Rows (Figma profil.png Spec: Uložené akce, Moje videa, Odměny, Historie transakcí) -->
+            <div class="profile-menu-list">
+              <div class="profile-menu-row" data-action="saved">
+                <div class="menu-row-left">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                  <span>Uložené akce</span>
+                </div>
+                <div class="menu-row-right">
+                  <span class="menu-badge">2</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
               </div>
-              <div class="wallet-menu-divider"></div>
-              <div class="wallet-menu-row">
-                <span>Platební karty</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              <div class="profile-menu-divider"></div>
+
+              <div class="profile-menu-row" data-action="videos">
+                <div class="menu-row-left">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                  <span>Moje videa</span>
+                </div>
+                <div class="menu-row-right">
+                  <span class="menu-badge">8</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
               </div>
-              <div class="wallet-menu-divider"></div>
-              <div class="wallet-menu-row">
-                <span>Pomoc a podpora</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              <div class="profile-menu-divider"></div>
+
+              <div class="profile-menu-row" data-action="rewards">
+                <div class="menu-row-left">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                  <span>Odměny</span>
+                </div>
+                <div class="menu-row-right">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+              </div>
+              <div class="profile-menu-divider"></div>
+
+              <div class="profile-menu-row" data-action="history">
+                <div class="menu-row-left">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span>Historie transakcí</span>
+                </div>
+                <div class="menu-row-right">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
               </div>
             </div>
 

@@ -1862,15 +1862,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Render Discovery Grid lists (Spotlight Banner + 2-Column Grid)
+  // Render Discovery Grid (Hero Card + Multi-category 2-Column Grids matching Figma Spec)
   function renderDiscoveryGrid() {
     const heroSpotlight = document.getElementById('grid-hero-spotlight');
-    const experiencesContainer = document.getElementById('grid-experiences-container');
-    const titleText = document.getElementById('grid-section-title-text');
+    const sectionsContainer = document.getElementById('grid-sections-container');
     
-    if (!experiencesContainer) return;
+    if (!sectionsContainer) return;
+    sectionsContainer.innerHTML = '';
 
-    experiencesContainer.innerHTML = '';
     if (heroSpotlight) {
       heroSpotlight.innerHTML = '';
       heroSpotlight.style.display = 'none';
@@ -1878,76 +1877,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const query = (state.gridSearchQuery || '').toLowerCase().trim();
     const vibe = state.gridVibeFilter || 'all';
-    const city = state.gridCityFilter || 'all';
-    const priceFilter = state.gridPriceFilter || 'all';
 
-    // Filter events by vibe
-    let filtered = [...(eventsData && eventsData.length > 0 ? eventsData : mockEventsList)];
-    if (vibe !== 'all') {
-      const vibeFiltered = filtered.filter(ev => ev.vibe === vibe);
-      if (vibeFiltered.length > 0) filtered = vibeFiltered;
-    }
+    let events = [...(eventsData && eventsData.length > 0 ? eventsData : mockEventsList)];
     
-    // Filter by city
-    if (city === 'prague') {
-      const pragueFiltered = filtered.filter(ev => 
-        ev.location.toLowerCase().includes('prague') || 
-        ev.location.toLowerCase().includes('praha') ||
-        ev.location.toLowerCase().includes('holesovice')
-      );
-      if (pragueFiltered.length > 0) filtered = pragueFiltered;
-    } else if (city === 'olomouc') {
-      const olomoucFiltered = filtered.filter(ev => 
-        ev.location.toLowerCase().includes('olomouc')
-      );
-      if (olomoucFiltered.length > 0) filtered = olomoucFiltered;
+    if (vibe !== 'all') {
+      const vibeFiltered = events.filter(ev => ev.vibe === vibe);
+      if (vibeFiltered.length > 0) events = vibeFiltered;
     }
 
-    // Filter by price segmented switch (Paid vs Free)
-    if (priceFilter === 'paid') {
-      filtered = filtered.filter(ev => !ev.isFree);
-    } else if (priceFilter === 'free') {
-      filtered = filtered.filter(ev => ev.isFree);
-    }
-
-    // Filter by search query
     if (query) {
-      filtered = filtered.filter(ev => 
+      events = events.filter(ev => 
         ev.title.toLowerCase().includes(query) || 
         ev.lineup.toLowerCase().includes(query) ||
         ev.location.toLowerCase().includes(query)
       );
     }
 
-    // Set Section title based on selection
-    if (titleText) {
-      if (vibe === 'adrenalin') {
-        titleText.textContent = 'Akce plné adrenalinu';
-      } else if (vibe === 'party') {
-        titleText.textContent = 'Tento víkend';
-      } else if (vibe === 'klid') {
-        titleText.textContent = 'Klidné zážitky v Praze';
-      } else {
-        titleText.textContent = 'Dnes v Praze';
-      }
-    }
-
-    if (filtered.length === 0) {
-      experiencesContainer.innerHTML = `<span class="empty-cards-msg" style="grid-column: 1/-1; text-align: center; padding: 40px 0; color: var(--color-text-muted);">Žádné akce neodpovídají vašim filtrům.</span>`;
-      const trendingRow = document.getElementById('trending-carousel-row');
-      if (trendingRow) trendingRow.style.display = 'none';
+    if (events.length === 0) {
+      sectionsContainer.innerHTML = `<span class="empty-cards-msg" style="text-align: center; padding: 40px 0; color: var(--color-text-muted);">Žádné akce neodpovídají vašim filtrům.</span>`;
       return;
     }
 
     const formatPrice = (price) => price === 0 ? 'ZDARMA' : `od ${price} Kč`;
 
-    // Render Spotlight Hero Event (the first event in list)
-    const heroEv = filtered[0];
+    // Render Hero Card (first event)
+    const heroEv = events[0];
     if (heroSpotlight && heroEv) {
       heroSpotlight.style.display = 'block';
       heroSpotlight.innerHTML = `
         <div class="hero-bg-container">
-          <img src="${heroEv.bgImg}" alt="${heroEv.title}" onerror="this.style.display='none'; this.parentNode.classList.add('fallback-bg');">
+          <img src="${heroEv.bgImg}" alt="${heroEv.title}">
         </div>
         <div class="hero-gradient-overlay"></div>
         <div class="hero-spotlight-badge">${(heroEv.tag || 'HUDBA').toUpperCase()}</div>
@@ -1964,36 +1923,79 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       `;
-      heroSpotlight.onclick = () => {
-        openEventDetails(heroEv);
-      };
+      heroSpotlight.onclick = () => openEventDetails(heroEv);
     }
 
-    // Populate Trending Carousel Row (Horizontal Tilted Cards)
-    const trendingContainer = document.getElementById('trending-carousel-container');
-    const trendingRow = document.getElementById('trending-carousel-row');
-    if (trendingContainer) {
-      trendingContainer.innerHTML = '';
-      if (filtered.length > 1) {
-        if (trendingRow) trendingRow.style.display = 'block';
-        const trendingEvents = filtered.slice(1, 5); // Up to 4 events
-        trendingEvents.forEach(ev => {
-          trendingContainer.appendChild(createTiltedCardElement(ev));
-        });
-      } else {
-        if (trendingRow) trendingRow.style.display = 'none';
+    // Define Figma 2-Column Sections
+    const sections = [
+      {
+        title: 'Dnes v Praze',
+        items: [
+          { title: 'Coachella 2025', loc: 'Indio, California', price: '$499', badge: 'SOLD OUT', img: 'images/techno.jpg', ev: events[0] },
+          { title: 'Tomorrowland', loc: 'Boom, Belgium', price: '$299', badge: 'VIP', img: 'images/summerbeats.jpg', ev: events[1] || events[0] },
+          { title: 'Lollapalooza', loc: 'Grant Park, Chicago', price: '$450', badge: 'EARLY BIRD', img: 'images/derby.jpg', ev: events[2] || events[0] },
+          { title: 'Rolling Loud', loc: 'Miami, Florida', price: '$199', badge: 'LIMITED', img: 'images/ballet.jpg', ev: events[3] || events[0] }
+        ]
+      },
+      {
+        title: 'Tento víkend',
+        items: [
+          { title: 'Glastonbury', loc: 'Pilton, Somerset', price: '$350', badge: 'FESTIVAL', img: 'images/flora.jpg', ev: events[4] || events[0] },
+          { title: 'Electric Daisy Carnival', loc: 'Las Vegas, Nevada', price: '$450', badge: 'FESTIVAL', img: 'images/fun.jpg', ev: events[1] || events[0] },
+          { title: 'Primavera Sound', loc: 'Parc del Fòrum', price: '$280', badge: 'HUDBA', img: 'images/techno.jpg', ev: events[2] || events[0] },
+          { title: 'Austin City Limits', loc: 'Zilker Park', price: '$325', badge: 'FESTIVAL', img: 'images/summerbeats.jpg', ev: events[3] || events[0] }
+        ]
+      },
+      {
+        title: 'Akce plné adrenalinu',
+        items: [
+          { title: 'Bonnaroo', loc: 'Great Stage Park', price: '$380', badge: 'HUDBA', img: 'images/derby.jpg', ev: events[1] || events[0] },
+          { title: 'Sonar Festival', loc: 'Fira Barcelona', price: '$240', badge: 'FESTIVAL', img: 'images/ballet.jpg', ev: events[2] || events[0] },
+          { title: 'Ultra Music Festival', loc: 'Bayfront Park', price: '$399', badge: 'FESTIVAL', img: 'images/techno.jpg', ev: events[3] || events[0] },
+          { title: 'Rock in Rio', loc: 'Parque Olímpico', price: '$550', badge: 'FESTIVAL', img: 'images/summerbeats.jpg', ev: events[0] }
+        ]
       }
-    }
+    ];
 
-    // Populate Experiences Grid
-    const gridEvents = filtered.slice(1);
-    if (gridEvents.length === 0) {
-      experiencesContainer.appendChild(createEventCardElement(heroEv));
-    } else {
-      gridEvents.forEach(ev => {
-        experiencesContainer.appendChild(createEventCardElement(ev));
+    sections.forEach(sec => {
+      const secWrapper = document.createElement('div');
+      secWrapper.className = 'grid-section-block';
+
+      const secTitle = document.createElement('h3');
+      secTitle.className = 'grid-section-title';
+      secTitle.textContent = sec.title;
+      secWrapper.appendChild(secTitle);
+
+      const gridRow = document.createElement('div');
+      gridRow.className = 'figma-2col-grid';
+
+      sec.items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'figma-grid-card';
+        
+        let badgeStyle = 'badge-red';
+        if (item.badge === 'VIP') badgeStyle = 'badge-gold';
+        if (item.badge === 'EARLY BIRD' || item.badge === 'LIMITED') badgeStyle = 'badge-dark';
+
+        card.innerHTML = `
+          <div class="figma-card-image-wrap">
+            <span class="figma-card-badge ${badgeStyle}">${item.badge}</span>
+            <img src="${item.img}" alt="${item.title}" loading="lazy">
+          </div>
+          <div class="figma-card-meta">
+            <h4 class="figma-card-title">${item.title}</h4>
+            <p class="figma-card-sub">${item.loc}</p>
+            <span class="figma-card-price">${item.price}</span>
+          </div>
+        `;
+
+        card.addEventListener('click', () => openEventDetails(item.ev));
+        gridRow.appendChild(card);
       });
-    }
+
+      secWrapper.appendChild(gridRow);
+      sectionsContainer.appendChild(secWrapper);
+    });
   }
 
   // Helper to construct tilted event card
