@@ -23,7 +23,7 @@ if (!fs.existsSync(outDir)) {
 
   const url = 'http://localhost:3010';
   console.log(`Navigating to ${url}...`);
-  await page.goto(url, { waitUntil: 'networkidle0' });
+  await page.goto('http://localhost:3010', { waitUntil: 'domcontentloaded' });
 
   // 1. Feed screen
   console.log('Capturing Next.js Feed screen...');

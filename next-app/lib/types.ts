@@ -6,15 +6,18 @@ export interface EventItem {
   location: string;
   date: string;
   priceMin: number;
+  priceMax?: number;
   bgImg: string;
   videoUrl: string;
   tag: string;
   vibe: VibeCategory;
   lineup: string;
-  promoter: string;
-  description: string;
+  promoter?: string;
+  description?: string;
   isFree?: boolean;
   badge?: 'SOLD OUT' | 'VIP' | 'EARLY BIRD' | 'LIMITED' | 'FESTIVAL' | 'HUDBA';
+  weather?: { temp: string; text: string; icon: string };
+  sectors?: { name: string; price: number; povType: string }[];
 }
 
 export interface ActivityItem {

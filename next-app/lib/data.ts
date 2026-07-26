@@ -1,97 +1,130 @@
 import { EventItem, ActivityItem } from './types';
 
-export const mockEvents: EventItem[] = [
+export const MOCK_EVENTS: EventItem[] = [
   {
-    id: 'ev-1',
+    id: 'metronome_festival',
     title: 'Metronome Festival Prague 2026',
-    location: 'Výstaviště Praha, Praha 7',
-    date: 'Čt 18. – So 20. června 2026',
-    priceMin: 1890,
-    bgImg: '/images/summerbeats.jpg',
-    videoUrl: '/videos/metronome_festival.mp4',
     tag: 'FESTIVAL',
     vibe: 'festivaly',
+    location: 'Výstaviště Praha, Praha 7',
+    date: 'Čt 18. – So 20. června 2026',
     lineup: 'Raye, Milky Chance, Michael Kiwanuka',
     promoter: 'Metronome Production',
-    description: 'Největší pražský hudební festival přímo v srdci parkového areálu Výstaviště Holešovice. Tři dny plné mezinárodních hvězd, špičkového zvuku a letní atmosféry s jídlem z nejlepších bistra.',
-    badge: 'FESTIVAL'
+    weather: { temp: '24°C', text: 'Letní slunečno', icon: 'clear' },
+    videoUrl: '/videos/metronome_festival.mp4',
+    bgImg: '/images/metronome_festival.jpg',
+    priceMin: 1890,
+    priceMax: 3490,
+    isFree: false,
+    sectors: [
+      { name: '3-Day Pass General Admission', price: 1890, povType: 'dancefloor-back' },
+      { name: 'VIP Platform Lounge', price: 3490, povType: 'dancefloor-front' }
+    ]
   },
   {
-    id: 'ev-2',
-    title: 'Koncert pod živými hvězdami',
-    location: 'Riegrovy sady, Praha 3',
-    date: 'Ne 18. října 2026 · 15:00',
-    priceMin: 400,
-    bgImg: '/images/techno.jpg',
-    videoUrl: '/videos/xindl_live.mp4',
+    id: 'concert_hvezdy',
+    title: 'Xindl X – Koncert pod živými hvězdami',
     tag: 'HUDBA',
     vibe: 'koncerty',
+    location: 'Riegrovy sady, Praha 3',
+    date: 'Ne 18. října 2026 · 15:00',
     lineup: 'Xindl X, Pokáč',
     promoter: 'BrainZone Live',
-    description: 'Zažijte jedinečnou atmosféru letního večera na open-air Koncertu pod živými hvězdami, kde pod širým nebem vystoupí oblíbený písničkář Xindl X a speciální host Pokáč.',
-    badge: 'HUDBA'
+    weather: { temp: '18°C', text: 'Jasná obloha', icon: 'clear' },
+    videoUrl: '/videos/xindl_live.mp4',
+    bgImg: '/images/xindl_live.jpg',
+    priceMin: 400,
+    priceMax: 1200,
+    isFree: false,
+    sectors: [
+      { name: 'Sektor A (Stání u pódia)', price: 400, povType: 'dancefloor-front' },
+      { name: 'VIP Sezení Terasa', price: 1200, povType: 'backstage' }
+    ]
   },
   {
-    id: 'ev-3',
-    title: 'AC Sparta Praha vs SK Slavia Praha',
+    id: 'derby',
+    title: 'AC Sparta Praha vs SK Slavia Praha – 312. Derby',
+    tag: 'SPORT',
+    vibe: 'sport',
     location: 'epet ARENA, Praha 7',
     date: 'So 12. října 2026 · 18:00',
-    priceMin: 390,
-    bgImg: '/images/derby.jpg',
-    videoUrl: '/videos/prague_derby.mp4',
-    tag: 'SPORT',
-    vibe: 'sport',
-    lineup: '312. Pražské Derby · Chance Liga',
+    lineup: 'AC Sparta Praha vs SK Slavia Praha',
     promoter: 'AC Sparta Praha',
-    description: 'Tradiční a nejemotivnější fotbalové střetnutí v České republice. 312. vydání pražského derby mezi AC Sparta Praha a SK Slavia Praha v bojích o čelo tabulky.',
-    badge: 'LIMITED'
+    weather: { temp: '16°C', text: 'Jasno', icon: 'clear' },
+    videoUrl: '/videos/prague_derby.mp4',
+    bgImg: '/images/prague_derby.jpg',
+    priceMin: 390,
+    priceMax: 1100,
+    isFree: false,
+    sectors: [
+      { name: 'Sektor C (Galerie)', price: 390, povType: 'far-stadium' },
+      { name: 'Sektor B (Střed)', price: 650, povType: 'mid-stadium' },
+      { name: 'Sektor A (Hřiště)', price: 1100, povType: 'near-stadium' }
+    ]
   },
   {
-    id: 'ev-4',
+    id: 'beats_for_love',
     title: 'Beats for Love 2026',
-    location: 'Dolní Vítkovice, Ostrava',
-    date: 'St 1. – So 4. července 2026',
-    priceMin: 1490,
-    bgImg: '/images/flora.jpg',
-    videoUrl: '/videos/beats_for_love.mp4',
     tag: 'FESTIVAL',
     vibe: 'party',
+    location: 'Dolní Vítkovice, Ostrava',
+    date: 'St 1. – So 4. července 2026',
     lineup: 'Armin van Buuren, Lost Frequencies, Sub Focus',
     promoter: 'Beats for Love s.r.o.',
-    description: 'Největší taneční festival v srdci Evropy v unikátním industriálním prostředí Dolních Vítkovic. Více než 400 DJů na 15 žánrových pódiích.',
-    badge: 'EARLY BIRD'
+    weather: { temp: '26°C', text: 'Jasno', icon: 'clear' },
+    videoUrl: '/videos/beats_for_love.mp4',
+    bgImg: '/images/beats_for_love.jpg',
+    priceMin: 1490,
+    priceMax: 2990,
+    isFree: false,
+    sectors: [
+      { name: 'Celofestivalová vstupenka GA', price: 1490, povType: 'dancefloor-back' },
+      { name: 'VIP Deck Pass', price: 2990, povType: 'dancefloor-front' }
+    ]
   },
   {
-    id: 'ev-5',
+    id: 'ballet',
     title: 'Labutí jezero – Balet ND',
-    location: 'Národní divadlo, Praha 1',
-    date: 'Pá 27. listopadu 2026 · 19:00',
-    priceMin: 790,
-    bgImg: '/images/ballet.jpg',
-    videoUrl: '/videos/labuti_jezero.mp4',
     tag: 'DIVADLO',
     vibe: 'divadlo',
+    location: 'Národní divadlo, Praha 1',
+    date: 'Pá 27. listopadu 2026 · 19:00',
     lineup: 'Orchestr & Balet Národního divadla',
     promoter: 'Národní divadlo Praha',
-    description: 'Kanonické dílo světového baletního repertoáru na scéně historické budovy Národního divadla. Slavná hudba P. I. Čajkovského v podání orchestru ND.',
-    badge: 'VIP'
+    weather: { temp: '14°C', text: 'Chladno', icon: 'indoor' },
+    videoUrl: '/videos/labuti_jezero.mp4',
+    bgImg: '/images/labuti_jezero.jpg',
+    priceMin: 790,
+    priceMax: 1850,
+    isFree: false,
+    sectors: [
+      { name: 'Balkón 2. pořadí', price: 790, povType: 'fountain-far' },
+      { name: 'Přízemí Lóže', price: 1850, povType: 'fountain-near' }
+    ]
   },
   {
-    id: 'ev-6',
+    id: 'basketball',
     title: 'NBL All-Star Game 2026',
-    location: 'UNYP Arena, Praha 9',
-    date: 'Ne 14. února 2027 · 17:00',
-    priceMin: 290,
-    bgImg: '/images/basketball.jpg',
-    videoUrl: '/videos/allstar_game.mp4',
     tag: 'SPORT',
     vibe: 'sport',
+    location: 'UNYP Arena, Praha 9',
+    date: 'Ne 14. února 2027 · 17:00',
     lineup: 'Slam Dunk Contest & 3pt Shooting Show',
     promoter: 'Česká basketbalová federace',
-    description: 'Basketbalová show roku! Nejlepší hráči Kooperativa NBL v nekompromisním souboji Východ vs. Západ, doprovázeni soutěží ve smečování a střelbě trojek.',
-    badge: 'HUDBA'
+    weather: { temp: '19°C', text: 'Hala', icon: 'indoor' },
+    videoUrl: '/videos/allstar_game.mp4',
+    bgImg: '/images/allstar_game.jpg',
+    priceMin: 290,
+    priceMax: 690,
+    isFree: false,
+    sectors: [
+      { name: 'Stání Fanzóna', price: 290, povType: 'dancefloor-back' },
+      { name: 'Sezení Palubovka', price: 690, povType: 'dancefloor-front' }
+    ]
   }
 ];
+
+export const mockEvents = MOCK_EVENTS;
 
 export const mockActivities: ActivityItem[] = [
   {
