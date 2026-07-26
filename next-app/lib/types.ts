@@ -1,4 +1,4 @@
-export type VibeCategory = 'all' | 'adrenalin' | 'party' | 'klid';
+export type VibeCategory = 'vse' | 'koncerty' | 'festivaly' | 'sport' | 'divadlo' | 'party' | 'standup';
 
 export interface EventItem {
   id: string;
@@ -7,10 +7,12 @@ export interface EventItem {
   date: string;
   priceMin: number;
   bgImg: string;
-  videoUrl?: string;
+  videoUrl: string;
   tag: string;
   vibe: VibeCategory;
   lineup: string;
+  promoter: string;
+  description: string;
   isFree?: boolean;
   badge?: 'SOLD OUT' | 'VIP' | 'EARLY BIRD' | 'LIMITED' | 'FESTIVAL' | 'HUDBA';
 }

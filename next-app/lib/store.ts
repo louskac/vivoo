@@ -54,7 +54,7 @@ export const useAppStore = create<AppStore>()(
       userBalance: 2360,
       topupBalance: (amount) => set((state) => ({ userBalance: state.userBalance + amount })),
       
-      gridVibeFilter: 'all',
+      gridVibeFilter: 'vse',
       setGridVibeFilter: (vibe) => set({ gridVibeFilter: vibe }),
       
       gridCityFilter: 'all',
