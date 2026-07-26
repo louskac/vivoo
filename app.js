@@ -59,7 +59,50 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedSeat: null,
     groupBuyCount: 3,
     splitSession: null,
-    tickets: [], // Purchased tickets from DB
+    tickets: [
+      {
+        id: 'TICK-984210',
+        code: 'VVO-METRONOME-VIP',
+        event: {
+          id: 'metronome',
+          title: 'Metronome Festival Prague 2026',
+          tag: 'FESTIVAL',
+          vibe: 'festivaly',
+          location: 'Výstaviště Praha, Praha 7',
+          date: 'Čt 18. – So 20. června 2026',
+          bgImg: './images/metronome_festival.jpg'
+        },
+        seat: {
+          name: '3-Day VIP Platform Lounge',
+          price: 1890
+        },
+        holderName: 'Jan Novák',
+        gate: 'GATE A (VIP PLATFORM)',
+        seatNum: 'ZONE 1 - SEAT 42',
+        isScanned: false
+      },
+      {
+        id: 'TICK-312004',
+        code: 'VVO-DERBY-SPARTA',
+        event: {
+          id: 'derby',
+          title: 'AC Sparta Praha vs SK Slavia Praha',
+          tag: 'SPORT',
+          vibe: 'sport',
+          location: 'epet ARENA, Praha 7',
+          date: 'So 12. října 2026 · 18:00',
+          bgImg: './images/prague_derby.jpg'
+        },
+        seat: {
+          name: 'Sektor A (Dolní Hřiště)',
+          price: 390
+        },
+        holderName: 'Jan Novák',
+        gate: 'GATE C (MAIN ENTRY)',
+        seatNum: 'ROW 12 - SEAT 104',
+        isScanned: false
+      }
+    ],
     isMuted: true,
     gridCityFilter: 'all',
     gridPriceFilter: 'all',

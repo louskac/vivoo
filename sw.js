@@ -1,13 +1,13 @@
-const CACHE_NAME = 'vivoo-cache-v24';
+const CACHE_NAME = 'vivoo-cache-v25';
 const ASSETS = [
   './',
   './index.html',
-  './index.css?v=24',
-  './app.js?v=24',
+  './index.css?v=25',
+  './app.js?v=25',
   './manifest.json',
-  './icon.svg?v=24',
-  './icon.png?v=24',
-  './apple-touch-icon.png?v=24'
+  './icon.svg?v=25',
+  './icon.png?v=25',
+  './apple-touch-icon.png?v=25'
 ];
 
 
