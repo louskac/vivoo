@@ -641,6 +641,35 @@ async function handleApiRequest(req, res) {
   }
 }
 
+const NEXTJS_PORT = 3010;
+
+function proxyToNextJs(req, res) {
+  const options = {
+    hostname: '127.0.0.1',
+    port: NEXTJS_PORT,
+    path: req.url,
+    method: req.method,
+    headers: { ...req.headers, host: `127.0.0.1:${NEXTJS_PORT}` }
+  };
+
+  const proxyReq = http.request(options, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode, proxyRes.headers);
+    proxyRes.pipe(res, { end: true });
+  });
+
+  proxyReq.on('error', () => {
+    // Fallback to local static file serving if Next.js is offline
+    let urlPath = req.url.split('?')[0];
+    if (urlPath === '/' || urlPath === '') {
+      urlPath = '/index.html';
+    }
+    const filePath = path.join(__dirname, '..', urlPath);
+    serveFile(filePath, req, res);
+  });
+
+  req.pipe(proxyReq, { end: true });
+}
+
 const requestHandler = (req, res) => {
   console.log(`[HTTPS Server] ${req.method} ${req.url}`);
   
@@ -651,12 +680,7 @@ const requestHandler = (req, res) => {
     return;
   }
 
-  if (urlPath === '/' || urlPath === '') {
-    urlPath = '/index.html';
-  }
-
-  const filePath = path.join(__dirname, '..', urlPath);
-  serveFile(filePath, req, res);
+  proxyToNextJs(req, res);
 };
 
 // 4. START HTTPS SERVER
