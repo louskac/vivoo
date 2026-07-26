@@ -11,6 +11,7 @@ if (!fs.existsSync(outDir)) {
   console.log('Launching browser for Next.js app screenshot capture...');
   const browser = await puppeteer.launch({
     headless: true,
+    ignoreHTTPSErrors: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   });
 
@@ -21,9 +22,9 @@ if (!fs.existsSync(outDir)) {
     deviceScaleFactor: 2
   });
 
-  const url = 'http://localhost:3010';
+  const url = 'https://localhost:8443';
   console.log(`Navigating to ${url}...`);
-  await page.goto('http://localhost:3010', { waitUntil: 'domcontentloaded' });
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'domcontentloaded' });
 
