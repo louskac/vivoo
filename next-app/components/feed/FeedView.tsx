@@ -26,6 +26,19 @@ export const FeedView: React.FC = () => {
 
   const isSaved = savedEventIds.includes(currentEvent.id);
 
+  const handleToggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleMute();
+    const video = document.querySelector('video');
+    if (video) {
+      const nextMuted = !isMuted;
+      video.muted = nextMuted;
+      if (!nextMuted) {
+        video.play().catch((err) => console.log('[FeedView] Unmute error:', err));
+      }
+    }
+  };
+
   const handleNextVideo = () => {
     setCurrentIndex((prev) => (prev + 1) % filteredEvents.length);
   };
@@ -51,17 +64,18 @@ export const FeedView: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 pointer-events-none" />
 
       {/* Top Header Controls */}
-      <div className="absolute top-12 left-4 right-4 z-20 flex items-center justify-between">
+      <div className="absolute top-12 left-4 right-4 z-20 flex items-center justify-between pointer-events-auto">
         {/* Vibe Category Topics Switcher */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 pr-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 pr-2 max-w-[calc(100%-48px)] flex-nowrap shrink">
           {vibes.map((vibe) => (
             <button
               key={vibe.id}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 setActiveVibe(vibe.id);
                 setCurrentIndex(0);
               }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-300 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap shrink-0 transition-all duration-300 ${
                 activeVibe === vibe.id
                   ? 'bg-white text-black shadow-lg scale-105'
                   : 'bg-white/10 text-white backdrop-blur-md hover:bg-white/20'
@@ -74,8 +88,8 @@ export const FeedView: React.FC = () => {
 
         {/* Mute Button (38px glass circle matching Figma point 1) */}
         <button
-          onClick={toggleMute}
-          className="w-[38px] h-[38px] shrink-0 rounded-full bg-white/20 border border-white/15 backdrop-blur-md flex items-center justify-center text-white active:scale-95 transition-all shadow-none ml-2"
+          onClick={handleToggleMute}
+          className="w-[38px] h-[38px] shrink-0 rounded-full bg-white/20 border border-white/15 backdrop-blur-md flex items-center justify-center text-white active:scale-95 transition-all shadow-none ml-2 cursor-pointer"
           aria-label="Sound toggle"
         >
           {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -104,22 +118,29 @@ export const FeedView: React.FC = () => {
       <div className="absolute right-4 bottom-32 z-20 flex flex-col items-center gap-5">
         {/* Uložit Button */}
         <button
-          onClick={() => toggleSaveEvent(currentEvent.id)}
-          className="flex flex-col items-center gap-1 text-white group"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleSaveEvent(currentEvent.id);
+          }}
+          className="flex flex-col items-center gap-1 text-white group cursor-pointer active:scale-95 transition-transform"
         >
-          <div className="w-11 h-11 flex items-center justify-center">
-            <Bookmark className={`w-7 h-7 stroke-[2.2] ${isSaved ? 'fill-red-500 stroke-red-500' : 'stroke-white'}`} />
+          <div className="w-11 h-11 flex items-center justify-center bg-black/40 border border-white/15 rounded-full backdrop-blur-md">
+            <Bookmark className={`w-6 h-6 stroke-[2.2] ${isSaved ? 'fill-red-500 stroke-red-500' : 'stroke-white'}`} />
           </div>
           <span className="text-[0.72rem] font-semibold text-white drop-shadow">Uložit</span>
         </button>
 
         {/* Lístek Button */}
         <button
-          onClick={() => setSelectedEvent(currentEvent)}
-          className="flex flex-col items-center gap-1 text-white group"
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedEvent(currentEvent);
+          }}
+          className="flex flex-col items-center gap-1 text-white group cursor-pointer active:scale-95 transition-transform"
+          aria-label="Lístek"
         >
-          <div className="w-11 h-11 flex items-center justify-center">
-            <Ticket className="w-7 h-7 stroke-[2.2] stroke-white" />
+          <div className="w-11 h-11 flex items-center justify-center bg-black/40 border border-white/15 rounded-full backdrop-blur-md">
+            <Ticket className="w-6 h-6 stroke-[2.2] stroke-white" />
           </div>
           <span className="text-[0.72rem] font-semibold text-white drop-shadow">Lístek</span>
         </button>

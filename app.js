@@ -1693,6 +1693,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Bind top bar global sound toggle
+  const globalSoundToggle = document.getElementById('feed-global-sound-toggle');
+  if (globalSoundToggle) {
+    globalSoundToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMuteAll();
+    });
+  }
+
   // Bind swipe gestures on the vertical feed container
   if (videoFeedContainer) {
     let touchStartX = 0;
