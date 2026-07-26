@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-main: #0A0B0E;
+    --accent-red: #DE1D3E;
+    --accent-gold: #EAB308;
+    --text-muted: #A0A5B5;
+    --glass-surface: rgba(255, 255, 255, 0.07);
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: #ffffff;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-capsule {
+  background: rgba(18, 20, 29, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+}
+
+/* Badge Styles */
+.badge-red {
+  background-color: #DE1D3E !important;
+  color: #ffffff !important;
+}
+
+.badge-gold {
+  background-color: #EAB308 !important;
+  color: #000000 !important;
+}
+
+.badge-dark {
+  background-color: rgba(15, 17, 23, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Scrollbar Hide */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
