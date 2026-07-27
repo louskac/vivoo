@@ -6,7 +6,9 @@ import { QrCode, Ticket as TicketIcon, Sparkles, CreditCard, ChevronRight, Shiel
 import { Badge } from '@/components/ui/Badge';
 
 export const TicketsView: React.FC = () => {
-  const { userBalance, setActiveTab, setSelectedEvent } = useAppStore();
+  const userBalance = useAppStore((state) => state.userBalance);
+  const setActiveTab = useAppStore((state) => state.setActiveTab);
+  const setSelectedEvent = useAppStore((state) => state.setSelectedEvent);
   const [activeTicketTab, setActiveTicketTab] = useState<'active' | 'past'>('active');
 
   const sampleTickets = [

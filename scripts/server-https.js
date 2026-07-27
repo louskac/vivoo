@@ -3,7 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { execSync } = require('child_process');
+const { execSync, spawn } = require('child_process');
 const crypto = require('crypto');
 const db = require('./database');
 
@@ -139,13 +139,18 @@ function serveFile(filePath, req, res) {
     } else {
       // Standard static file response
       const noCacheExtensions = ['.html', '.css', '.js', '.json'];
+      const isNoCache = noCacheExtensions.includes(ext);
       const headers = {
         'Content-Type': contentType,
-        'Cache-Control': noCacheExtensions.includes(ext)
-          ? 'no-cache, no-store, must-revalidate'
+        'Cache-Control': isNoCache
+          ? 'no-cache, no-store, must-revalidate, max-age=0, post-check=0, pre-check=0'
           : 'public, max-age=3600',
+        'Pragma': isNoCache ? 'no-cache' : 'public',
         'Access-Control-Allow-Origin': '*'
       };
+      if (isNoCache) {
+        headers['Expires'] = '0';
+      }
 
       res.writeHead(200, headers);
       fs.createReadStream(filePath).pipe(res);
@@ -642,6 +647,29 @@ async function handleApiRequest(req, res) {
 }
 
 const NEXTJS_PORT = 3010;
+let nextJsChildProc = null;
+
+function startNextJsDevServer() {
+  const nextAppDir = path.join(__dirname, '..', 'next-app');
+  console.log(`[HTTPS Server] Launching Next.js dev server on port ${NEXTJS_PORT}...`);
+  
+  nextJsChildProc = spawn('npx', ['next', 'dev', '-p', String(NEXTJS_PORT)], {
+    cwd: nextAppDir,
+    stdio: 'inherit',
+    shell: true
+  });
+
+  nextJsChildProc.on('error', (err) => {
+    console.error('[HTTPS Server] Failed to launch Next.js dev server:', err.message);
+  });
+}
+
+// Auto-start Next.js dev server
+startNextJsDevServer();
+
+process.on('exit', () => { if (nextJsChildProc) nextJsChildProc.kill(); });
+process.on('SIGINT', () => { if (nextJsChildProc) nextJsChildProc.kill(); process.exit(); });
+process.on('SIGTERM', () => { if (nextJsChildProc) nextJsChildProc.kill(); process.exit(); });
 
 function proxyToNextJs(req, res) {
   const options = {
@@ -657,14 +685,22 @@ function proxyToNextJs(req, res) {
     proxyRes.pipe(res, { end: true });
   });
 
-  proxyReq.on('error', () => {
-    // Fallback to local static file serving if Next.js is offline
-    let urlPath = req.url.split('?')[0];
-    if (urlPath === '/' || urlPath === '') {
-      urlPath = '/index.html';
-    }
-    const filePath = path.join(__dirname, '..', urlPath);
-    serveFile(filePath, req, res);
+  proxyReq.on('error', (err) => {
+    console.error(`[HTTPS Server] Proxy error: Next.js dev server on port ${NEXTJS_PORT} is unreachable. (${err.message})`);
+    res.writeHead(502, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(`
+      <!DOCTYPE html>
+      <html>
+        <head><title>502 - Next.js Server Offline</title></head>
+        <body style="background:#09090d;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;padding:20px;text-align:center;">
+          <h1 style="color:#ff2a54;margin-bottom:8px;">502 Bad Gateway</h1>
+          <p style="color:#aaa;max-width:500px;">Next.js development server is currently offline on port ${NEXTJS_PORT}.</p>
+          <p style="background:#181820;padding:12px 20px;border-radius:8px;font-family:monospace;color:#00ffaa;margin-top:16px;">
+            cd next-app && npm run dev
+          </p>
+        </body>
+      </html>
+    `);
   });
 
   req.pipe(proxyReq, { end: true });
@@ -690,6 +726,34 @@ const options = {
 };
 
 const secureServer = https.createServer(options, requestHandler);
+
+// Forward WebSocket / HMR connections to Next.js
+secureServer.on('upgrade', (req, socket, head) => {
+  const options = {
+    hostname: '127.0.0.1',
+    port: NEXTJS_PORT,
+    path: req.url,
+    method: req.method,
+    headers: { ...req.headers, host: `127.0.0.1:${NEXTJS_PORT}` }
+  };
+
+  const proxyReq = http.request(options);
+  proxyReq.on('upgrade', (proxyRes, proxySocket, proxyHead) => {
+    const rawHeaders = Object.keys(proxyRes.headers)
+      .map(k => `${k}: ${proxyRes.headers[k]}`)
+      .join('\r\n');
+    socket.write(`HTTP/1.1 101 Switching Protocols\r\n${rawHeaders}\r\n\r\n`);
+    if (proxyHead && proxyHead.length) socket.write(proxyHead);
+    proxySocket.pipe(socket);
+    socket.pipe(proxySocket);
+  });
+
+  proxyReq.on('error', () => {
+    socket.destroy();
+  });
+
+  proxyReq.end();
+});
 
 secureServer.listen(HTTPS_PORT, () => {
   const localIps = getLocalIps();

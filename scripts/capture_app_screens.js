@@ -21,7 +21,7 @@ if (!fs.existsSync(outDir)) {
     deviceScaleFactor: 2
   });
 
-  const indexPath = 'file:///Users/jakub/Projects/ViVoo/index.html';
+  const indexPath = 'https://localhost:8443';
   console.log(`Navigating to ${indexPath}...`);
   await page.goto(indexPath, { waitUntil: 'networkidle0' });
 

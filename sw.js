@@ -1,13 +1,10 @@
-const CACHE_NAME = 'vivoo-cache-v25';
+const CACHE_NAME = 'vivoo-cache-v30';
 const ASSETS = [
   './',
-  './index.html',
-  './index.css?v=25',
-  './app.js?v=25',
   './manifest.json',
-  './icon.svg?v=25',
-  './icon.png?v=25',
-  './apple-touch-icon.png?v=25'
+  './icon.svg',
+  './icon.png',
+  './apple-touch-icon.png'
 ];
 
 
@@ -54,11 +51,8 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Network-First files (HTML, CSS, JS, manifest)
+  // Network-First files (manifest, HTML pages)
   const isCodeAsset = e.request.url.endsWith('/') || 
-                      e.request.url.includes('index.html') || 
-                      e.request.url.includes('index.css') || 
-                      e.request.url.includes('app.js') || 
                       e.request.url.includes('manifest.json');
 
   if (isCodeAsset) {
@@ -76,10 +70,6 @@ self.addEventListener('fetch', (e) => {
         // Return cached version if offline
         return caches.match(e.request).then((cachedResponse) => {
           if (cachedResponse) return cachedResponse;
-          // Fallback to cached index.html for navigation requests
-          if (e.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
         });
       })
     );

@@ -1,20 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAppStore } from '@/lib/store';
 import { mockEvents } from '@/lib/data';
 import { Badge } from '@/components/ui/Badge';
-import { Volume2, VolumeX, Bookmark, Ticket, MapPin, Calendar, ChevronUp, ChevronDown } from 'lucide-react';
-import { VibeCategory } from '@/lib/types';
+import { Volume2, VolumeX, Bookmark, Ticket, MapPin, Calendar } from 'lucide-react';
+import { VibeCategory, EventItem } from '@/lib/types';
 
 export const FeedView: React.FC = () => {
-  const { isMuted, toggleMute, savedEventIds, toggleSaveEvent, setSelectedEvent } = useAppStore();
+  const isMuted = useAppStore((state) => state.isMuted);
+  const toggleMute = useAppStore((state) => state.toggleMute);
+  const savedEventIds = useAppStore((state) => state.savedEventIds);
+  const toggleSaveEvent = useAppStore((state) => state.toggleSaveEvent);
+  const setSelectedEvent = useAppStore((state) => state.setSelectedEvent);
+
   const [activeVibe, setActiveVibe] = useState<VibeCategory>('vse');
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [playingIndex, setPlayingIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Filter events by selected category topic
   const filteredEvents = mockEvents.filter((ev) => activeVibe === 'vse' || ev.vibe === activeVibe);
-  const currentEvent = filteredEvents[currentIndex % filteredEvents.length] || mockEvents[0];
 
   const vibes: { id: VibeCategory; label: string }[] = [
     { id: 'vse', label: 'Vše' },
@@ -24,158 +29,182 @@ export const FeedView: React.FC = () => {
     { id: 'party', label: 'Party' },
   ];
 
-  const isSaved = savedEventIds.includes(currentEvent.id);
-
   const handleToggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
     toggleMute();
-    const video = document.querySelector('video');
-    if (video) {
-      const nextMuted = !isMuted;
-      video.muted = nextMuted;
-      if (!nextMuted) {
-        video.play().catch((err) => console.log('[FeedView] Unmute error:', err));
+  };
+
+  const handleScrollToNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!containerRef.current) return;
+    const nextIdx = (playingIndex + 1) % filteredEvents.length;
+    containerRef.current.scrollTo({
+      top: nextIdx * containerRef.current.clientHeight,
+      behavior: 'smooth'
+    });
+    setPlayingIndex(nextIdx);
+  };
+
+  const handleScrollToPrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!containerRef.current) return;
+    const prevIdx = (playingIndex - 1 + filteredEvents.length) % filteredEvents.length;
+    containerRef.current.scrollTo({
+      top: prevIdx * containerRef.current.clientHeight,
+      behavior: 'smooth'
+    });
+    setPlayingIndex(prevIdx);
+  };
+
+  const handleScroll = () => {
+    if (!containerRef.current) return;
+    const itemHeight = containerRef.current.clientHeight;
+    if (itemHeight > 0) {
+      const idx = Math.round(containerRef.current.scrollTop / itemHeight);
+      if (idx !== playingIndex && idx >= 0 && idx < filteredEvents.length) {
+        setPlayingIndex(idx);
       }
     }
   };
 
-  const handleNextVideo = () => {
-    setCurrentIndex((prev) => (prev + 1) % filteredEvents.length);
-  };
-
-  const handlePrevVideo = () => {
-    setCurrentIndex((prev) => (prev - 1 + filteredEvents.length) % filteredEvents.length);
-  };
+  const currentEvent = filteredEvents[playingIndex % filteredEvents.length] || mockEvents[0];
+  const isSaved = currentEvent ? savedEventIds.includes(currentEvent.id) : false;
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black text-white select-none">
-      {/* Background Video */}
-      <video
-        key={currentEvent.id}
-        autoPlay
-        loop
-        muted={isMuted}
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-        src={currentEvent.videoUrl}
-      />
-
-      {/* Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 pointer-events-none" />
-
-      {/* Top Header Controls */}
-      <div className="absolute top-12 left-4 right-4 z-20 flex items-center justify-between pointer-events-auto">
+    <div className="relative w-full h-screen bg-black text-white select-none overflow-hidden">
+      {/* Top Header Controls (Fixed above all videos) */}
+      <div className="fixed top-12 left-4 right-4 z-30 flex items-center justify-between pointer-events-auto">
         {/* Vibe Category Topics Switcher */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 pr-2 max-w-[calc(100%-48px)] flex-nowrap shrink">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 pr-2 max-w-[calc(100%-48px)] flex-nowrap shrink">
           {vibes.map((vibe) => (
             <button
               key={vibe.id}
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveVibe(vibe.id);
-                setCurrentIndex(0);
+                setPlayingIndex(0);
+                if (containerRef.current) {
+                  containerRef.current.scrollTop = 0;
+                }
               }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap shrink-0 transition-all duration-300 ${
-                activeVibe === vibe.id
-                  ? 'bg-white text-black shadow-lg scale-105'
-                  : 'bg-white/10 text-white backdrop-blur-md hover:bg-white/20'
-              }`}
+              className={`feed-glass-pill ${activeVibe === vibe.id ? 'active' : ''}`}
             >
               {vibe.label}
             </button>
           ))}
         </div>
 
-        {/* Mute Button (38px glass circle matching Figma point 1) */}
+        {/* Mute Button */}
         <button
           onClick={handleToggleMute}
-          className="w-[38px] h-[38px] shrink-0 rounded-full bg-white/20 border border-white/15 backdrop-blur-md flex items-center justify-center text-white active:scale-95 transition-all shadow-none ml-2 cursor-pointer"
+          className="feed-sound-btn shrink-0 ml-2"
           aria-label="Sound toggle"
         >
           {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
         </button>
       </div>
 
-      {/* Vertical Swipe Navigation Navigators */}
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2">
-        <button
-          onClick={handlePrevVideo}
-          className="w-9 h-9 rounded-full bg-black/40 border border-white/15 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all"
-          aria-label="Previous event video"
-        >
-          <ChevronUp className="w-5 h-5" />
-        </button>
-        <button
-          onClick={handleNextVideo}
-          className="w-9 h-9 rounded-full bg-black/40 border border-white/15 backdrop-blur-md flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all"
-          aria-label="Next event video"
-        >
-          <ChevronDown className="w-5 h-5" />
-        </button>
-      </div>
+      {/* Static Fixed Action Column (Positioned away from right edge & balanced above content metadata section) */}
+      {currentEvent && (
+        <div className="fixed right-6 bottom-[calc(245px+env(safe-area-inset-bottom,0px))] z-30 flex flex-col items-center gap-5 pointer-events-auto">
+          {/* Uložit Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleSaveEvent(currentEvent.id);
+            }}
+            className="flex flex-col items-center gap-1 text-white group cursor-pointer active:scale-95 transition-transform"
+          >
+            <div className="w-9 h-9 flex items-center justify-center text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              <Bookmark className={`w-6 h-6 stroke-[2.2] ${isSaved ? 'fill-red-500 stroke-red-500' : 'stroke-white'}`} />
+            </div>
+            <span className="text-[0.72rem] font-semibold text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">Uložit</span>
+          </button>
 
-      {/* Right Side Action Buttons (Uložit & Lístek matching Figma point 3) */}
-      <div className="absolute right-4 bottom-32 z-20 flex flex-col items-center gap-5">
-        {/* Uložit Button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleSaveEvent(currentEvent.id);
-          }}
-          className="flex flex-col items-center gap-1 text-white group cursor-pointer active:scale-95 transition-transform"
-        >
-          <div className="w-11 h-11 flex items-center justify-center bg-black/40 border border-white/15 rounded-full backdrop-blur-md">
-            <Bookmark className={`w-6 h-6 stroke-[2.2] ${isSaved ? 'fill-red-500 stroke-red-500' : 'stroke-white'}`} />
-          </div>
-          <span className="text-[0.72rem] font-semibold text-white drop-shadow">Uložit</span>
-        </button>
-
-        {/* Lístek Button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setSelectedEvent(currentEvent);
-          }}
-          className="flex flex-col items-center gap-1 text-white group cursor-pointer active:scale-95 transition-transform"
-          aria-label="Lístek"
-        >
-          <div className="w-11 h-11 flex items-center justify-center bg-black/40 border border-white/15 rounded-full backdrop-blur-md">
-            <Ticket className="w-6 h-6 stroke-[2.2] stroke-white" />
-          </div>
-          <span className="text-[0.72rem] font-semibold text-white drop-shadow">Lístek</span>
-        </button>
-      </div>
-
-      {/* Bottom Event Meta Details */}
-      <div className="absolute left-5 right-20 bottom-24 z-20 flex flex-col items-start gap-2">
-        {/* Enigoo Tag & Promoter */}
-        <div className="flex items-center gap-2">
-          <Badge text={currentEvent.tag} variant="red" />
-          <span className="text-[0.68rem] text-white/80 font-bold tracking-wider uppercase bg-black/50 px-2 py-0.5 rounded-md border border-white/10">
-            {currentEvent.promoter}
-          </span>
+          {/* Lístek Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedEvent(currentEvent);
+            }}
+            className="flex flex-col items-center gap-1 text-white group cursor-pointer active:scale-95 transition-transform"
+            aria-label="Lístek"
+          >
+            <div className="w-9 h-9 flex items-center justify-center text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              <Ticket className="w-6 h-6 stroke-[2.2] stroke-white" />
+            </div>
+            <span className="text-[0.72rem] font-semibold text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">Lístek</span>
+          </button>
         </div>
+      )}
 
-        {/* Title */}
-        <h1
-          onClick={() => setSelectedEvent(currentEvent)}
-          className="text-2xl font-black text-white leading-tight cursor-pointer hover:underline"
-        >
-          {currentEvent.title}
-        </h1>
+      {/* Native Vertical Scroll-Snap Feed Container */}
+      <div
+        ref={containerRef}
+        onScroll={handleScroll}
+        className="w-full h-full overflow-y-scroll snap-y snap-mandatory no-scrollbar"
+      >
+        {filteredEvents.map((ev: EventItem, idx: number) => {
+          const isCurrent = idx === playingIndex;
 
-        {/* Inline Location & Date */}
-        <div className="flex items-center gap-3 text-xs text-white/90 font-medium">
-          <span className="flex items-center gap-1">
-            <MapPin className="w-3.5 h-3.5 text-white/80" />
-            {currentEvent.location}
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1">
-            <Calendar className="w-3.5 h-3.5 text-white/80" />
-            {currentEvent.date}
-          </span>
-        </div>
+          return (
+            <div
+              key={ev.id}
+              className="relative w-full h-screen snap-start snap-always shrink-0 overflow-hidden bg-black cursor-pointer"
+            >
+              {/* Background Video */}
+              <video
+                autoPlay={isCurrent}
+                loop
+                muted={isMuted}
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+                src={ev.videoUrl}
+                poster={ev.bgImg}
+              />
+
+              {/* Scrim Dark Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 pointer-events-none" />
+
+              {/* Bottom Event Meta Details (Positioned with 20px responsive margin above floating nav capsule) */}
+              <div className="absolute left-4 right-4 bottom-[calc(108px+env(safe-area-inset-bottom,0px))] z-20 flex flex-col items-start gap-1.5 pointer-events-auto">
+                {/* Enigoo Tag & Promoter */}
+                <div className="flex items-center gap-2">
+                  <Badge text={ev.tag} variant="red" />
+                  {ev.promoter && (
+                    <span className="text-[0.68rem] text-white/90 font-extrabold tracking-wider uppercase bg-black/40 border border-white/20 backdrop-blur-md px-3 py-1 rounded-full">
+                      {ev.promoter}
+                    </span>
+                  )}
+                </div>
+
+                {/* Title */}
+                <h1
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedEvent(ev);
+                  }}
+                  className="text-2xl font-black text-white leading-tight cursor-pointer hover:underline drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]"
+                >
+                  {ev.title}
+                </h1>
+
+                {/* Clean Location & Datetime Row */}
+                <div className="flex items-center gap-x-2 gap-y-0.5 text-[0.75rem] text-white/95 font-medium flex-wrap drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                  <span className="flex items-center gap-1 shrink-0">
+                    <MapPin className="w-3.5 h-3.5 stroke-[1.8] text-white shrink-0" />
+                    {ev.location}
+                  </span>
+                  <span className="text-white/60">•</span>
+                  <span className="flex items-center gap-1 shrink-0">
+                    <Calendar className="w-3.5 h-3.5 stroke-[1.8] text-white shrink-0" />
+                    {ev.date}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

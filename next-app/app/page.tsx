@@ -10,12 +10,7 @@ import { EventDetailModal } from '@/components/detail/EventDetailModal';
 import { FloatingNavCapsule } from '@/components/ui/FloatingNavCapsule';
 
 export default function Home() {
-  const { activeTab } = useAppStore();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const activeTab = useAppStore((state) => state.activeTab);
 
   return (
     <main className="relative min-h-screen bg-[#0A0B0E] text-white">
