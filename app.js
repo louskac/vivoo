@@ -49,6 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. DATABASE & AUTHENTICATION STATE MANAGEMENT
   // --------------------------------------------------------------------------
   
+  // Global timer & animation frame references
+  let ticketCountdownInterval = null;
+  let hologramAnimFrame = null;
+
   // Global App State
   const state = {
     credit: 0, 
@@ -1376,9 +1380,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Back button routing
-  document.getElementById('detail-back-btn').addEventListener('click', () => navigateBack());
-  document.getElementById('checkout-back-btn').addEventListener('click', () => navigateBack());
-  document.getElementById('ugc-back-btn').addEventListener('click', () => navigateBack());
+  const detailBackBtn = document.getElementById('detail-back-btn');
+  if (detailBackBtn) detailBackBtn.addEventListener('click', () => navigateBack());
+  const checkoutBackBtn = document.getElementById('checkout-back-btn');
+  if (checkoutBackBtn) checkoutBackBtn.addEventListener('click', () => navigateBack());
+  const ugcBackBtn = document.getElementById('ugc-back-btn');
+  if (ugcBackBtn) ugcBackBtn.addEventListener('click', () => navigateBack());
 
   // Global bottom nav capsule click bindings
   document.querySelectorAll('.capsule-nav-item').forEach(btn => {
@@ -2185,7 +2192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     drawSeatPOV(state.selectedSeat.povType);
   }
 
-  budgetSlider.addEventListener('input', updateSeatSelection);
+  if (budgetSlider) budgetSlider.addEventListener('input', updateSeatSelection);
 
   // SVG POV visual stadium generator
   function drawSeatPOV(povType) {
@@ -2321,7 +2328,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Handle click of "Get Ticket" CTA on detail view
-  document.getElementById('detail-buy-btn').addEventListener('click', () => {
+  const detailBuyBtn = document.getElementById('detail-buy-btn');
+  if (detailBuyBtn) detailBuyBtn.addEventListener('click', () => {
     if (!state.selectedEvent || !state.selectedSeat) return;
 
     // Populate checkout screen text elements
@@ -2693,10 +2701,10 @@ document.addEventListener('DOMContentLoaded', () => {
     state.tickets.push(newTicket);
   }
 
-  let ticketCountdownInterval = null;
+  ticketCountdownInterval = null;
   let ticketCountdownTime = 60;
   let ticketQrState = 0;
-  let hologramAnimFrame = null;
+  hologramAnimFrame = null;
 
   function renderTicketsList() {
     const wrapper = document.getElementById('tickets-list-wrapper');
