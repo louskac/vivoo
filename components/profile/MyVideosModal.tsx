@@ -1,28 +1,42 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
-import { X, Video, Eye, Heart, Plus } from 'lucide-react';
+import { useUser } from '@/context/UserContext';
+import { X, Video, Eye, Heart, Plus, UploadCloud } from 'lucide-react';
 
 export const MyVideosModal: React.FC = () => {
   const { activeModal, setActiveModal } = useAppStore();
+  const { userVideos, addUserVideo } = useUser();
+  const [isAdding, setIsAdding] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
 
   if (activeModal !== 'my_videos') return null;
 
-  const userVideos = [
-    { id: 'v-1', title: 'Metronome Open Air Crowd', views: '2.4k', likes: '318', img: '/images/metronome_festival.jpg' },
-    { id: 'v-2', title: 'Xindl X Live Front Row', views: '5.1k', likes: '890', img: '/images/xindl_live.jpg' },
-    { id: 'v-3', title: 'Derby Atmosphere Smoke', views: '1.2k', likes: '142', img: '/images/prague_derby.jpg' },
-    { id: 'v-4', title: 'Beats For Love Main Stage', views: '8.9k', likes: '1.5k', img: '/images/beats_for_love.jpg' },
-  ];
+  const handleAddSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTitle.trim()) return;
+
+    await addUserVideo({
+      title: newTitle.trim(),
+      img: '/images/metronome_festival.jpg',
+      videoUrl: '/videos/metronome_festival.mp4'
+    });
+
+    setNewTitle('');
+    setIsAdding(false);
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
       <div className="w-full max-w-lg bg-[#0F1117] border border-white/15 rounded-t-3xl sm:rounded-3xl max-h-[85vh] overflow-y-auto p-6 text-white shadow-2xl relative animate-slide-up">
         {/* Close Button */}
         <button
-          onClick={() => setActiveModal(null)}
-          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-neutral-400 hover:text-white transition-all"
+          onClick={() => {
+            setIsAdding(false);
+            setActiveModal(null);
+          }}
+          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-neutral-400 hover:text-white transition-all cursor-pointer z-10"
         >
           <X className="w-5 h-5" />
         </button>
@@ -39,11 +53,36 @@ export const MyVideosModal: React.FC = () => {
             </div>
           </div>
 
-          <button className="bg-[#DE1D3E] text-white p-2.5 rounded-full flex items-center gap-1.5 text-xs font-bold shadow-lg shadow-red-600/30 hover:bg-red-600 active:scale-95 transition-all">
+          <button
+            onClick={() => setIsAdding(!isAdding)}
+            className="bg-[#DE1D3E] text-white px-3.5 py-2 rounded-full flex items-center gap-1.5 text-xs font-bold shadow-lg shadow-red-600/30 hover:bg-red-600 active:scale-95 transition-all cursor-pointer"
+          >
             <Plus className="w-4 h-4" />
-            Přidat
+            {isAdding ? 'Zrušit' : 'Přidat'}
           </button>
         </div>
+
+        {/* Add Video Form */}
+        {isAdding && (
+          <form onSubmit={handleAddSubmit} className="mb-6 p-4 rounded-2xl bg-white/5 border border-white/10 flex flex-col gap-3 animate-fade-in">
+            <h4 className="text-xs font-bold text-[#DE1D3E] uppercase tracking-wider">Nahrát nové video</h4>
+            <input
+              type="text"
+              placeholder="Název momentky / akce..."
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              className="w-full bg-white/10 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-neutral-400 focus:outline-none focus:border-white/30"
+              required
+            />
+            <button
+              type="submit"
+              className="w-full py-2.5 rounded-xl bg-[#DE1D3E] text-white font-extrabold text-xs flex items-center justify-center gap-2 hover:bg-red-600 active:scale-95 transition-all cursor-pointer shadow"
+            >
+              <UploadCloud className="w-4 h-4" />
+              Zveřejnit video moment
+            </button>
+          </form>
+        )}
 
         {/* Video Grid */}
         <div className="grid grid-cols-2 gap-3">
@@ -71,3 +110,4 @@ export const MyVideosModal: React.FC = () => {
     </div>
   );
 };
+

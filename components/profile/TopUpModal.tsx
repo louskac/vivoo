@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
+import { useUser } from '@/context/UserContext';
 import { X, CreditCard, Apple, CheckCircle2, Sparkles, ShieldCheck } from 'lucide-react';
 
 export const TopUpModal: React.FC = () => {
-  const { activeModal, setActiveModal, userBalance, topupBalance } = useAppStore();
+  const { activeModal, setActiveModal } = useAppStore();
+  const { user, topupBalance } = useUser();
   const [selectedAmount, setSelectedAmount] = useState<number>(500);
   const [customAmount, setCustomAmount] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<'apple_pay' | 'card' | 'benefits'>('apple_pay');
@@ -15,11 +17,11 @@ export const TopUpModal: React.FC = () => {
 
   const presets = [200, 500, 1000, 2000];
 
-  const handleTopUp = () => {
+  const handleTopUp = async () => {
     const finalAmount = customAmount ? parseInt(customAmount, 10) : selectedAmount;
     if (!finalAmount || finalAmount <= 0) return;
 
-    topupBalance(finalAmount);
+    await topupBalance(finalAmount, paymentMethod);
     setIsSuccess(true);
     setTimeout(() => {
       setIsSuccess(false);
@@ -44,7 +46,7 @@ export const TopUpModal: React.FC = () => {
             <CheckCircle2 className="w-20 h-20 text-emerald-400 animate-bounce" />
             <h2 className="text-2xl font-black text-white">Kredit dobito!</h2>
             <p className="text-sm text-neutral-400">
-              Váš nový zůstatek je <strong className="text-white">{userBalance} Kč</strong>.
+              Váš nový zůstatek je <strong className="text-white">{user.cashlessCredit.toLocaleString('cs-CZ')} Kč</strong>.
             </p>
           </div>
         ) : (
@@ -57,7 +59,7 @@ export const TopUpModal: React.FC = () => {
               </div>
               <h2 className="text-2xl font-extrabold text-white mt-1">Dobít kredit</h2>
               <p className="text-xs text-neutral-400 mt-1">
-                Aktuální zůstatek: <strong className="text-white">{userBalance} Kč</strong>
+                Aktuální zůstatek: <strong className="text-white">{user.cashlessCredit.toLocaleString('cs-CZ')} Kč</strong>
               </p>
             </div>
 

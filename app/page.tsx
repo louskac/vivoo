@@ -16,6 +16,7 @@ import { TicketQrModal } from '@/components/detail/TicketQrModal';
 import { CitySelectorModal } from '@/components/discover/CitySelectorModal';
 import { TransactionHistoryModal } from '@/components/profile/TransactionHistoryModal';
 import { SettingsModal } from '@/components/profile/SettingsModal';
+import { AuthModal } from '@/components/auth/AuthModal';
 import { FloatingNavCapsule } from '@/components/ui/FloatingNavCapsule';
 import { usePrecacheAppAssets } from '@/lib/precache';
 
@@ -52,6 +53,7 @@ export default function Home() {
       <CitySelectorModal />
       <TransactionHistoryModal />
       <SettingsModal />
+      <AuthModal />
 
       {/* Global Floating Navigation Capsule */}
       <FloatingNavCapsule />

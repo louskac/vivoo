@@ -70,5 +70,6 @@ export type ActiveModal =
   | 'ticket_qr'
   | 'settings'
   | 'ticket_transfer'
+  | 'auth'
   | null;
 

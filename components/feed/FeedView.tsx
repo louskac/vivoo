@@ -2,35 +2,25 @@
 
 import React, { useState, useRef } from 'react';
 import { useAppStore } from '@/lib/store';
+import { useUser } from '@/context/UserContext';
 import { mockEvents } from '@/lib/data';
 import { Badge } from '@/components/ui/Badge';
-import { Volume2, VolumeX, Bookmark, Ticket, MapPin, Calendar, Share2, Heart, MessageCircle } from 'lucide-react';
+import { Volume2, VolumeX, Bookmark, Ticket, MapPin, Calendar, Share2, Heart } from 'lucide-react';
 import { VibeCategory, EventItem } from '@/lib/types';
 
 export const FeedView: React.FC = () => {
   const isMuted = useAppStore((state) => state.isMuted);
   const toggleMute = useAppStore((state) => state.toggleMute);
-  const savedEventIds = useAppStore((state) => state.savedEventIds);
-  const toggleSaveEvent = useAppStore((state) => state.toggleSaveEvent);
   const setSelectedEvent = useAppStore((state) => state.setSelectedEvent);
+
+  const { likedVideoIds, savedEventIds, videoStats, toggleLike, toggleSave } = useUser();
 
   const [activeVibe, setActiveVibe] = useState<VibeCategory>('vse');
   const [playingIndex, setPlayingIndex] = useState(0);
-  const [liked, setLiked] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showHeartPop, setShowHeartPop] = useState(false);
   const lastTapRef = useRef<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleDoubleTapLike = () => {
-    const now = Date.now();
-    if (now - lastTapRef.current < 300) {
-      setLiked(true);
-      setShowHeartPop(true);
-      setTimeout(() => setShowHeartPop(false), 900);
-    }
-    lastTapRef.current = now;
-  };
 
   // Filter events by selected category topic
   const filteredEvents = mockEvents.filter((ev) => activeVibe === 'vse' || ev.vibe === activeVibe);
@@ -43,9 +33,28 @@ export const FeedView: React.FC = () => {
     { id: 'party', label: 'Party' },
   ];
 
+  const currentEvent = filteredEvents[playingIndex % filteredEvents.length] || mockEvents[0];
+  const isLiked = currentEvent ? likedVideoIds.includes(currentEvent.id) : false;
+  const isSaved = currentEvent ? savedEventIds.includes(currentEvent.id) : false;
+  
+  const rawLikeCount = currentEvent ? (videoStats[currentEvent.id]?.likesCount ?? 1420) : 1420;
+  const formattedLikeCount = rawLikeCount >= 1000 ? `${(rawLikeCount / 1000).toFixed(1)}k` : `${rawLikeCount}`;
+
+  const handleDoubleTapLike = () => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 300) {
+      if (currentEvent) {
+        toggleLike(currentEvent.id);
+      }
+      setShowHeartPop(true);
+      setTimeout(() => setShowHeartPop(false), 900);
+    }
+    lastTapRef.current = now;
+  };
+
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (navigator.share) {
+    if (navigator.share && currentEvent) {
       navigator.share({
         title: currentEvent.title,
         url: window.location.href
@@ -61,28 +70,6 @@ export const FeedView: React.FC = () => {
     toggleMute();
   };
 
-  const handleScrollToNext = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!containerRef.current) return;
-    const nextIdx = (playingIndex + 1) % filteredEvents.length;
-    containerRef.current.scrollTo({
-      top: nextIdx * containerRef.current.clientHeight,
-      behavior: 'smooth'
-    });
-    setPlayingIndex(nextIdx);
-  };
-
-  const handleScrollToPrev = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!containerRef.current) return;
-    const prevIdx = (playingIndex - 1 + filteredEvents.length) % filteredEvents.length;
-    containerRef.current.scrollTo({
-      top: prevIdx * containerRef.current.clientHeight,
-      behavior: 'smooth'
-    });
-    setPlayingIndex(prevIdx);
-  };
-
   const handleScroll = () => {
     if (!containerRef.current) return;
     const itemHeight = containerRef.current.clientHeight;
@@ -93,9 +80,6 @@ export const FeedView: React.FC = () => {
       }
     }
   };
-
-  const currentEvent = filteredEvents[playingIndex % filteredEvents.length] || mockEvents[0];
-  const isSaved = currentEvent ? savedEventIds.includes(currentEvent.id) : false;
 
   return (
     <div className="relative w-full h-screen bg-black text-white select-none overflow-hidden">
@@ -146,15 +130,15 @@ export const FeedView: React.FC = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setLiked(!liked);
+              toggleLike(currentEvent.id);
             }}
             className="flex flex-col items-center gap-0.5 text-white group cursor-pointer active:scale-95 transition-transform"
           >
             <div className="w-9 h-9 flex items-center justify-center text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-              <Heart className={`w-6 h-6 stroke-[2.2] ${liked ? 'fill-red-500 stroke-red-500' : 'stroke-white'}`} />
+              <Heart className={`w-6 h-6 stroke-[2.2] ${isLiked ? 'fill-red-500 stroke-red-500 text-red-500 animate-pulse' : 'stroke-white'}`} />
             </div>
             <span className="text-[0.68rem] font-semibold text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
-              {liked ? '1.4k' : '1.4k'}
+              {formattedLikeCount}
             </span>
           </button>
 
@@ -162,7 +146,7 @@ export const FeedView: React.FC = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              toggleSaveEvent(currentEvent.id);
+              toggleSave(currentEvent.id);
             }}
             className="flex flex-col items-center gap-0.5 text-white group cursor-pointer active:scale-95 transition-transform"
           >

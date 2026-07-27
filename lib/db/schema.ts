@@ -1,10 +1,14 @@
 export interface UserDbModel {
-  id: number;
+  id: string;
   username: string;
-  passwordHash: string;
+  handle: string;
   fullName: string;
+  avatarUrl: string;
   bio?: string;
+  memberTier: string;
   cashlessCredit: number;
+  isGuest?: boolean;
+  phoneNumber?: string;
 }
 
 export interface EventDbModel {
@@ -24,19 +28,69 @@ export interface EventDbModel {
 
 export interface TicketDbModel {
   id: string;
-  userId: number;
+  userId: string;
   eventId: string;
-  sectorName: string;
-  price: number;
-  holderName: string;
+  eventTitle: string;
+  location: string;
+  date: string;
+  bgImg: string;
+  tier: string;
+  quantity: number;
+  totalPrice: number;
+  sectorName?: string;
+  qrCode: string;
   status: 'active' | 'used' | 'refunded';
+  createdAt: string;
 }
 
-export interface ActivityDbModel {
-  id: number;
-  userId: number;
-  type: string;
+export interface TransactionDbModel {
+  id: string;
+  userId: string;
   title: string;
-  time: string;
+  type: 'topup' | 'ticket' | 'nfc';
+  dateStr: string;
   amount: number;
+  isPositive: boolean;
+  status: string;
+  timestamp: string;
 }
+
+export interface UserLikeDbModel {
+  userId: string;
+  videoId: string;
+  createdAt: string;
+}
+
+export interface UserSavedDbModel {
+  userId: string;
+  eventId: string;
+  createdAt: string;
+}
+
+export interface UserVideoDbModel {
+  id: string;
+  userId: string;
+  title: string;
+  views: string;
+  likes: number;
+  img: string;
+  videoUrl?: string;
+  createdAt: string;
+}
+
+export interface VideoStatsDbModel {
+  videoId: string;
+  likesCount: number;
+  viewsCount: number;
+}
+
+export interface ViVooDatabaseSchema {
+  user: UserDbModel;
+  likes: UserLikeDbModel[];
+  savedEvents: UserSavedDbModel[];
+  tickets: TicketDbModel[];
+  transactions: TransactionDbModel[];
+  userVideos: UserVideoDbModel[];
+  videoStats: Record<string, VideoStatsDbModel>;
+}
+

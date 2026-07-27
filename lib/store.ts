@@ -36,6 +36,8 @@ interface AppStore {
   
   gridSearchQuery: string;
   setGridSearchQuery: (query: string) => void;
+
+  syncFromContext?: (data: { userBalance?: number; savedEventIds?: string[]; tickets?: any[] }) => void;
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -105,6 +107,12 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setGridCityFilter: (city) => set({ gridCityFilter: city }),
   
   gridSearchQuery: '',
-  setGridSearchQuery: (query) => set({ gridSearchQuery: query })
-}));
+  setGridSearchQuery: (query: string) => set({ gridSearchQuery: query }),
 
+  syncFromContext: (data) =>
+    set((state) => ({
+      userBalance: data.userBalance !== undefined ? data.userBalance : state.userBalance,
+      savedEventIds: data.savedEventIds !== undefined ? data.savedEventIds : state.savedEventIds,
+      purchasedTickets: data.tickets !== undefined ? data.tickets : state.purchasedTickets
+    }))
+}));

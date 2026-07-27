@@ -2,15 +2,15 @@
 
 import React from 'react';
 import { useAppStore } from '@/lib/store';
+import { useUser } from '@/context/UserContext';
 import { mockEvents } from '@/lib/data';
 import { X, Bookmark, Trash2, Calendar, MapPin, Ticket } from 'lucide-react';
 
 export const SavedEventsModal: React.FC = () => {
   const activeModal = useAppStore((state) => state.activeModal);
   const setActiveModal = useAppStore((state) => state.setActiveModal);
-  const savedEventIds = useAppStore((state) => state.savedEventIds);
-  const toggleSaveEvent = useAppStore((state) => state.toggleSaveEvent);
   const setSelectedEvent = useAppStore((state) => state.setSelectedEvent);
+  const { savedEventIds, toggleSave } = useUser();
 
   if (activeModal !== 'saved_events') return null;
 
@@ -89,7 +89,7 @@ export const SavedEventsModal: React.FC = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleSaveEvent(ev.id);
+                      toggleSave(ev.id);
                     }}
                     className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-neutral-400 hover:text-red-400 transition-all"
                     aria-label="Remove saved"

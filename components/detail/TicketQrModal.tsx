@@ -2,12 +2,14 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
+import { useUser } from '@/context/UserContext';
 import { X, ShieldCheck, Share2, Wallet, Check } from 'lucide-react';
 
 export const TicketQrModal: React.FC = () => {
   const activeModal = useAppStore((state) => state.activeModal);
   const selectedTicket = useAppStore((state) => state.selectedTicket);
   const setSelectedTicket = useAppStore((state) => state.setSelectedTicket);
+  const { user } = useUser();
   const [transferred, setTransferred] = useState(false);
   const [walletAdded, setWalletAdded] = useState(false);
 
@@ -51,7 +53,7 @@ export const TicketQrModal: React.FC = () => {
           </div>
           <div className="flex items-center justify-between text-xs">
             <span className="text-neutral-400">Držitel:</span>
-            <span className="font-bold text-white">Jan Novák</span>
+            <span className="font-bold text-white">{user.fullName}</span>
           </div>
           <div className="flex items-center justify-between text-xs pt-2 border-t border-white/10">
             <span className="text-neutral-400">Stav:</span>

@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
-import { X, Settings, Bell, Moon, Globe, LogOut, ShieldCheck } from 'lucide-react';
+import { useUser } from '@/context/UserContext';
+import { X, Settings, Bell, Moon, Globe, LogOut, ShieldCheck, UserCheck } from 'lucide-react';
 
 export const SettingsModal: React.FC = () => {
   const activeModal = useAppStore((state) => state.activeModal);
   const setActiveModal = useAppStore((state) => state.setActiveModal);
+  const { isGuest, logoutToGuest } = useUser();
   const [notifications, setNotifications] = useState(true);
 
   if (activeModal !== 'settings') return null;
@@ -73,14 +75,30 @@ export const SettingsModal: React.FC = () => {
           </div>
         </div>
 
-        <button
-          onClick={() => setActiveModal(null)}
-          className="w-full py-3.5 rounded-full bg-red-600/20 border border-red-500/30 text-red-400 font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-red-600/30 transition-all cursor-pointer"
-        >
-          <LogOut className="w-4 h-4" />
-          Odhlásit se
-        </button>
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => setActiveModal('auth')}
+            className="w-full py-3 rounded-full bg-white/10 border border-white/15 text-white font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-white/20 transition-all cursor-pointer"
+          >
+            <UserCheck className="w-4 h-4 text-emerald-400" />
+            Přepnout účet / Registrovat
+          </button>
+
+          {!isGuest && (
+            <button
+              onClick={async () => {
+                await logoutToGuest();
+                setActiveModal(null);
+              }}
+              className="w-full py-3 rounded-full bg-red-600/20 border border-red-500/30 text-red-400 font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-red-600/30 transition-all cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+              Odhlásit se do Guest Mode
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 };
+

@@ -2,62 +2,15 @@
 
 import React from 'react';
 import { useAppStore } from '@/lib/store';
-import { X, History, ArrowUpRight, ArrowDownLeft, Ticket, CreditCard, Download } from 'lucide-react';
-
-interface TransactionItem {
-  id: string;
-  title: string;
-  type: 'topup' | 'ticket' | 'nfc';
-  date: string;
-  amount: number;
-  isPositive: boolean;
-  status: string;
-}
+import { useUser } from '@/context/UserContext';
+import { X, History, ArrowDownLeft, Ticket, CreditCard, Download } from 'lucide-react';
 
 export const TransactionHistoryModal: React.FC = () => {
   const activeModal = useAppStore((state) => state.activeModal);
   const setActiveModal = useAppStore((state) => state.setActiveModal);
+  const { transactions } = useUser();
 
   if (activeModal !== 'transaction_receipt') return null;
-
-  const transactions: TransactionItem[] = [
-    {
-      id: 'tx-101',
-      title: 'Dobití NFC Kredit - Apple Pay',
-      type: 'topup',
-      date: '27. čvc 2026 · 12:45',
-      amount: 1000,
-      isPositive: true,
-      status: 'Dokončeno'
-    },
-    {
-      id: 'tx-102',
-      title: 'Vstupenky: Metronome Festival 2026',
-      type: 'ticket',
-      date: '25. čvc 2026 · 18:20',
-      amount: 1200,
-      isPositive: false,
-      status: 'Schváleno'
-    },
-    {
-      id: 'tx-103',
-      title: 'NFC Nápojový Bar · Riegrovy Sady',
-      type: 'nfc',
-      date: '20. čvc 2026 · 21:14',
-      amount: 240,
-      isPositive: false,
-      status: 'Zúčtováno'
-    },
-    {
-      id: 'tx-104',
-      title: 'Dobití NFC Kredit - Kartou *4920',
-      type: 'topup',
-      date: '15. čvc 2026 · 14:02',
-      amount: 2000,
-      isPositive: true,
-      status: 'Dokončeno'
-    }
-  ];
 
   return (
     <div className="fixed inset-0 z-[1000] bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
@@ -100,7 +53,7 @@ export const TransactionHistoryModal: React.FC = () => {
 
               <div className="flex-1 min-w-0">
                 <h4 className="text-xs font-bold text-white truncate">{tx.title}</h4>
-                <span className="text-[11px] text-neutral-400 block mt-0.5">{tx.date}</span>
+                <span className="text-[11px] text-neutral-400 block mt-0.5">{tx.dateStr || tx.timestamp}</span>
               </div>
 
               <div className="text-right shrink-0">

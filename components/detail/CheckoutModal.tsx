@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
-import { TicketTier, PurchasedTicket } from '@/lib/types';
+import { useUser } from '@/context/UserContext';
+import { TicketTier } from '@/lib/types';
 import { X, Minus, Plus, Users, CreditCard, CheckCircle2 } from 'lucide-react';
 
 export const CheckoutModal: React.FC = () => {
-  const { selectedEvent, activeModal, setActiveModal, userBalance, deductBalance, addPurchasedTicket, setActiveTab, setSelectedEvent } = useAppStore();
+  const { selectedEvent, activeModal, setActiveModal, setActiveTab, setSelectedEvent } = useAppStore();
+  const { user, purchaseTicket } = useUser();
   
   const [selectedTier, setSelectedTier] = useState<TicketTier>('standard');
   const [quantity, setQuantity] = useState<number>(1);
@@ -29,23 +31,20 @@ export const CheckoutModal: React.FC = () => {
   const totalPrice = subtotal + serviceFee;
   const perPersonPrice = isSplitPayment ? Math.round(totalPrice / 2) : totalPrice;
 
-  const handlePay = () => {
-    const success = deductBalance(perPersonPrice);
-    if (success) {
-      const newTicket: PurchasedTicket = {
-        id: `tkt-${Date.now()}`,
-        eventId: selectedEvent.id,
-        eventTitle: selectedEvent.title,
-        location: selectedEvent.location,
-        date: selectedEvent.date,
-        bgImg: selectedEvent.bgImg,
-        tier: selectedTier,
-        quantity: quantity,
-        totalPrice: perPersonPrice,
-        sectorName: selectedSector,
-        qrCode: `VIVOO-${selectedEvent.id.toUpperCase()}-${Math.floor(10000 + Math.random() * 90000)}`
-      };
-      addPurchasedTicket(newTicket);
+  const handlePay = async () => {
+    const res = await purchaseTicket({
+      eventId: selectedEvent.id,
+      eventTitle: selectedEvent.title,
+      location: selectedEvent.location,
+      date: selectedEvent.date,
+      bgImg: selectedEvent.bgImg,
+      tier: selectedTier,
+      quantity,
+      totalPrice: perPersonPrice,
+      sectorName: selectedSector
+    });
+
+    if (res.success) {
       setIsSuccess(true);
       setTimeout(() => {
         setIsSuccess(false);
@@ -54,7 +53,7 @@ export const CheckoutModal: React.FC = () => {
         setActiveTab('tickets');
       }, 1800);
     } else {
-      alert('Nedostatečný zůstatek na účtu ViVoo. Prosím dobijte si kredit v Profilu.');
+      alert(res.error || 'Nedostatečný zůstatek na účtu ViVoo. Prosím dobijte si kredit v Profilu.');
     }
   };
 
@@ -175,7 +174,7 @@ export const CheckoutModal: React.FC = () => {
             {/* User Balance Info */}
             <div className="flex items-center justify-between text-xs text-neutral-400 bg-white/5 p-3 rounded-xl">
               <span>Váš kreditní zůstatek:</span>
-              <span className="font-bold text-white">{userBalance} Kč</span>
+              <span className="font-bold text-white">{user.cashlessCredit.toLocaleString('cs-CZ')} Kč</span>
             </div>
 
             {/* Pay Button */}

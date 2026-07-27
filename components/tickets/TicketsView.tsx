@@ -2,15 +2,26 @@
 
 import React from 'react';
 import { useAppStore } from '@/lib/store';
+import { useUser } from '@/context/UserContext';
 import { Badge } from '@/components/ui/Badge';
 import { TicketDetailSpec } from '@/lib/types';
 import { ChevronRight } from 'lucide-react';
 
 export const TicketsView: React.FC = () => {
-  const purchasedTickets = useAppStore((state) => state.purchasedTickets);
   const setSelectedTicket = useAppStore((state) => state.setSelectedTicket);
+  const { tickets: dbTickets } = useUser();
 
-  // Map dynamic purchased tickets + default Figma design tickets
+  const userTicketsFormatted: TicketDetailSpec[] = dbTickets.map((t) => ({
+    id: t.id,
+    title: t.eventTitle,
+    date: t.date,
+    location: t.location,
+    seatDetail: `${t.sectorName || 'Standard'} · ${t.quantity}x (Sedadlo 24)`,
+    bgImg: t.bgImg,
+    qrCode: t.qrCode
+  }));
+
+  // Map dynamic purchased tickets + default tickets
   const upcomingTickets: TicketDetailSpec[] = [
     {
       id: 'tkt-hero-1',
@@ -22,15 +33,7 @@ export const TicketsView: React.FC = () => {
       badge: 'DNES',
       qrCode: 'VIVOO-HVEZDY-881920'
     },
-    ...purchasedTickets.map((t) => ({
-      id: t.id,
-      title: t.eventTitle,
-      date: `${t.date}`,
-      location: t.location,
-      seatDetail: `${t.sectorName || 'Standard'} · ${t.quantity}x (Sedadlo 24)`,
-      bgImg: t.bgImg,
-      qrCode: t.qrCode
-    })),
+    ...userTicketsFormatted,
     {
       id: 'tkt-sparta-1',
       title: 'Sparta x Slavia',
