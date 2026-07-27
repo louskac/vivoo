@@ -1,21 +1,30 @@
 {
-  "name": "vivoo-client",
-  "version": "1.0.0",
-  "description": "Immersive event ticketing client prototype with PWA and local HTTPS hosting.",
-  "main": "scripts/server-https.js",
+  "name": "vivoo",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "start": "node scripts/server-https.js",
-    "dev": "node scripts/server-https.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
   },
-  "keywords": [
-    "pwa",
-    "https",
-    "event",
-    "ticketing"
-  ],
-  "author": "Antigravity",
-  "license": "ISC",
   "dependencies": {
-    "puppeteer": "^25.3.0"
+    "framer-motion": "^12.42.2",
+    "lucide-react": "^1.27.0",
+    "next": "16.2.12",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.12",
+    "puppeteer": "^25.3.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
