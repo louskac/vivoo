@@ -2,26 +2,26 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
-import { QrCode, Ticket as TicketIcon, Sparkles, CreditCard, ChevronRight, ShieldCheck } from 'lucide-react';
+import { Ticket as TicketIcon, Sparkles, CreditCard, ChevronRight, ShieldCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 
 export const TicketsView: React.FC = () => {
   const userBalance = useAppStore((state) => state.userBalance);
   const setActiveTab = useAppStore((state) => state.setActiveTab);
-  const setSelectedEvent = useAppStore((state) => state.setSelectedEvent);
+  const purchasedTickets = useAppStore((state) => state.purchasedTickets);
   const [activeTicketTab, setActiveTicketTab] = useState<'active' | 'past'>('active');
 
-  const sampleTickets = [
-    {
-      id: 'TICK-984210',
-      title: 'Metronome Festival Prague 2026',
-      date: 'Čt 18. – So 20. června 2026',
-      location: 'Výstaviště Praha, Praha 7',
-      sector: '3-Day VIP Platform Lounge',
+  const allTickets = [
+    ...purchasedTickets.map((t) => ({
+      id: t.id,
+      title: t.eventTitle,
+      date: t.date,
+      location: t.location,
+      sector: `${t.tier.toUpperCase()} · ${t.quantity}x (${t.sectorName || 'Standard'})`,
       holder: 'Jan Novák',
-      qrCode: 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=METRONOME-VIP-984210',
-      badge: 'VIP' as const
-    },
+      qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${t.qrCode}`,
+      badge: (t.tier === 'vip' ? 'VIP' : 'HUDBA') as any
+    })),
     {
       id: 'TICK-312004',
       title: 'AC Sparta Praha vs SK Slavia Praha',
@@ -39,7 +39,7 @@ export const TicketsView: React.FC = () => {
       {/* Top Wallet Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Moje Vstupenky</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight text-white">Moje Vstupenky</h1>
           <p className="text-xs text-neutral-400">Digitální lístky & NFC Cashless Peněženka</p>
         </div>
         <div className="flex items-center gap-2 bg-neutral-900/80 border border-white/10 px-3.5 py-1.5 rounded-full backdrop-blur-md">
@@ -58,7 +58,7 @@ export const TicketsView: React.FC = () => {
               : 'text-neutral-400 hover:text-white'
           }`}
         >
-          Aktivní (2)
+          Aktivní ({allTickets.length})
         </button>
         <button
           onClick={() => setActiveTicketTab('past')}
@@ -74,7 +74,7 @@ export const TicketsView: React.FC = () => {
 
       {activeTicketTab === 'active' ? (
         <div className="flex flex-col gap-5">
-          {sampleTickets.map((ticket) => (
+          {allTickets.map((ticket) => (
             <div
               key={ticket.id}
               className="glass-panel p-5 rounded-2xl border border-white/10 bg-gradient-to-br from-neutral-900/90 to-neutral-950 flex flex-col gap-4 relative overflow-hidden group shadow-xl"
@@ -116,6 +116,7 @@ export const TicketsView: React.FC = () => {
           <p className="text-xs text-neutral-500">Vaše navštívené události a vzpomínkové fotky se zobrazí zde.</p>
         </div>
       )}
+
 
       {/* Discovery CTA Banner */}
       <div className="mt-8 glass-panel p-4 rounded-2xl border border-white/10 bg-gradient-to-r from-rose-900/30 via-neutral-900 to-neutral-900 flex items-center justify-between">

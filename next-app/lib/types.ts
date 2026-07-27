@@ -29,3 +29,31 @@ export interface ActivityItem {
 }
 
 export type TabId = 'feed' | 'discover' | 'tickets' | 'profile';
+
+export type TicketTier = 'standard' | 'vip' | 'early_bird' | 'student';
+
+export interface PurchasedTicket {
+  id: string;
+  eventId: string;
+  eventTitle: string;
+  location: string;
+  date: string;
+  bgImg: string;
+  tier: TicketTier;
+  quantity: number;
+  totalPrice: number;
+  sectorName?: string;
+  qrCode: string;
+}
+
+export type ActiveModal =
+  | 'checkout'
+  | 'topup'
+  | 'saved_events'
+  | 'rewards'
+  | 'my_videos'
+  | 'transaction_receipt'
+  | 'city_selector'
+  | 'filter_drawer'
+  | null;
+

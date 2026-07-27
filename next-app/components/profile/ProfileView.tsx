@@ -3,17 +3,19 @@
 import React from 'react';
 import { useAppStore } from '@/lib/store';
 import { mockActivities } from '@/lib/data';
+import { ActiveModal } from '@/lib/types';
 import { Settings, Bookmark, Video, Gift, History, ChevronRight, CreditCard } from 'lucide-react';
 
 export const ProfileView: React.FC = () => {
   const userBalance = useAppStore((state) => state.userBalance);
-  const topupBalance = useAppStore((state) => state.topupBalance);
+  const setActiveModal = useAppStore((state) => state.setActiveModal);
+  const savedEventIds = useAppStore((state) => state.savedEventIds);
 
-  const menuRows = [
-    { id: 'saved', label: 'Uložené akce', count: '2', icon: <Bookmark className="w-5 h-5" /> },
-    { id: 'videos', label: 'Moje videa', count: '8', icon: <Video className="w-5 h-5" /> },
-    { id: 'rewards', label: 'Odměny', count: '', icon: <Gift className="w-5 h-5" /> },
-    { id: 'history', label: 'Historie transakcí', count: '', icon: <History className="w-5 h-5" /> },
+  const menuRows: { id: ActiveModal; label: string; count?: string; icon: React.ReactNode }[] = [
+    { id: 'saved_events', label: 'Uložené akce', count: savedEventIds.length.toString(), icon: <Bookmark className="w-5 h-5" /> },
+    { id: 'my_videos', label: 'Moje videa', count: '4', icon: <Video className="w-5 h-5" /> },
+    { id: 'rewards', label: 'Odměny', count: 'VIP', icon: <Gift className="w-5 h-5" /> },
+    { id: 'transaction_receipt', label: 'Historie transakcí', count: '', icon: <History className="w-5 h-5" /> },
   ];
 
   return (
@@ -33,7 +35,7 @@ export const ProfileView: React.FC = () => {
         </div>
         <div>
           <h2 className="text-xl font-extrabold text-white mb-0.5">Jan Novák</h2>
-          <p className="text-xs text-neutral-400 font-medium">@novakjan</p>
+          <p className="text-xs text-neutral-400 font-medium">@novakjan · VIP Gold</p>
         </div>
       </div>
 
@@ -42,18 +44,22 @@ export const ProfileView: React.FC = () => {
         <span className="text-xs text-neutral-400 font-bold tracking-wider uppercase">NFC Cashless Kredit</span>
         <div className="text-4xl font-black text-white tracking-tight">{userBalance.toLocaleString()} Kč</div>
         <button
-          onClick={() => topupBalance(500)}
+          onClick={() => setActiveModal('topup')}
           className="mt-3 w-full h-12 rounded-full bg-[#DE1D3E] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-red-600/30 active:scale-95 hover:bg-red-600 transition-all cursor-pointer"
         >
           <CreditCard className="w-4 h-4" />
-          Dobít kredit +500 Kč
+          Dobít kredit
         </button>
       </div>
 
       {/* 4 Figma Menu Rows */}
       <div className="flex flex-col divide-y divide-white/10 border-t border-b border-white/10 my-6">
         {menuRows.map((row) => (
-          <div key={row.id} className="flex items-center justify-between py-4 cursor-pointer group hover:opacity-80 transition-opacity">
+          <div
+            key={row.id}
+            onClick={() => row.id && setActiveModal(row.id)}
+            className="flex items-center justify-between py-4 cursor-pointer group hover:opacity-80 transition-opacity"
+          >
             <div className="flex items-center gap-3 text-sm font-medium text-white">
               <span className="text-neutral-400 group-hover:text-red-400 transition-colors">{row.icon}</span>
               <span>{row.label}</span>
@@ -71,7 +77,11 @@ export const ProfileView: React.FC = () => {
         <h3 className="text-lg font-extrabold text-white">Poslední aktivita</h3>
         <div className="flex flex-col gap-3">
           {mockActivities.map((act) => (
-            <div key={act.id} className="flex items-center justify-between py-3 px-4 glass-panel rounded-xl border border-white/5">
+            <div
+              key={act.id}
+              onClick={() => setActiveModal('transaction_receipt')}
+              className="flex items-center justify-between py-3 px-4 glass-panel rounded-xl border border-white/5 cursor-pointer hover:border-white/20 transition-all"
+            >
               <div>
                 <h4 className="text-sm font-bold text-white">{act.title}</h4>
                 <p className="text-xs text-neutral-400">{act.dateStr}</p>
@@ -86,3 +96,4 @@ export const ProfileView: React.FC = () => {
     </div>
   );
 };
+

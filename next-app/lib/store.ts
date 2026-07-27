@@ -1,12 +1,14 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { TabId, EventItem, VibeCategory } from './types';
+import { TabId, EventItem, VibeCategory, ActiveModal, PurchasedTicket } from './types';
 import { mockEvents } from './data';
 
 interface AppStore {
   activeTab: TabId;
   setActiveTab: (tab: TabId) => void;
   
+  activeModal: ActiveModal;
+  setActiveModal: (modal: ActiveModal) => void;
+
   isMuted: boolean;
   toggleMute: () => void;
   
@@ -18,7 +20,11 @@ interface AppStore {
   
   userBalance: number;
   topupBalance: (amount: number) => void;
+  deductBalance: (amount: number) => boolean;
   
+  purchasedTickets: PurchasedTicket[];
+  addPurchasedTicket: (ticket: PurchasedTicket) => void;
+
   gridVibeFilter: VibeCategory;
   setGridVibeFilter: (vibe: VibeCategory) => void;
   
@@ -29,17 +35,20 @@ interface AppStore {
   setGridSearchQuery: (query: string) => void;
 }
 
-export const useAppStore = create<AppStore>((set) => ({
+export const useAppStore = create<AppStore>((set, get) => ({
   activeTab: 'feed',
   setActiveTab: (tab) => {
     console.log('[AppStore] setActiveTab:', tab);
     set({ activeTab: tab });
   },
+
+  activeModal: null,
+  setActiveModal: (modal) => set({ activeModal: modal }),
   
   isMuted: true,
   toggleMute: () => set((state) => ({ isMuted: !state.isMuted })),
   
-  savedEventIds: ['ev-1'],
+  savedEventIds: ['ev-1', 'ev-2'],
   toggleSaveEvent: (id) => set((state) => {
     const exists = state.savedEventIds.includes(id);
     return {
@@ -54,6 +63,31 @@ export const useAppStore = create<AppStore>((set) => ({
   
   userBalance: 2360,
   topupBalance: (amount) => set((state) => ({ userBalance: state.userBalance + amount })),
+  deductBalance: (amount) => {
+    const current = get().userBalance;
+    if (current >= amount) {
+      set({ userBalance: current - amount });
+      return true;
+    }
+    return false;
+  },
+
+  purchasedTickets: [
+    {
+      id: 'tkt-1',
+      eventId: 'ev-1',
+      eventTitle: 'Metronome Festival 2026',
+      location: 'Výstaviště Praha',
+      date: 'So 20. června · 16:00',
+      bgImg: '/images/metronome_festival.jpg',
+      tier: 'standard',
+      quantity: 2,
+      totalPrice: 1200,
+      qrCode: 'VIVOO-METRONOME-89214'
+    }
+  ],
+  addPurchasedTicket: (ticket) =>
+    set((state) => ({ purchasedTickets: [ticket, ...state.purchasedTickets] })),
   
   gridVibeFilter: 'vse',
   setGridVibeFilter: (vibe) => set({ gridVibeFilter: vibe }),
@@ -64,3 +98,4 @@ export const useAppStore = create<AppStore>((set) => ({
   gridSearchQuery: '',
   setGridSearchQuery: (query) => set({ gridSearchQuery: query })
 }));
+
