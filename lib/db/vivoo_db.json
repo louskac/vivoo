@@ -6,7 +6,7 @@
     "fullName": "Passkey Uživatel",
     "avatarUrl": "/images/avatar.jpg",
     "memberTier": "VIP Member",
-    "cashlessCredit": 500,
+    "cashlessCredit": 180,
     "isGuest": false
   },
   "likes": [
@@ -34,6 +34,22 @@
     }
   ],
   "tickets": [
+    {
+      "id": "tkt-1785235454485",
+      "userId": "usr-pk-1785162158439",
+      "eventId": "pardubice_hokej",
+      "eventTitle": "HC Dynamo Pardubice vs HC Sparta Praha",
+      "location": "Enteria Arena, Pardubice",
+      "date": "Pá 23. října 2026 · 18:00",
+      "bgImg": "/images/pardubice_hokej.jpg",
+      "tier": "standard",
+      "quantity": 1,
+      "totalPrice": 320,
+      "sectorName": "Stání u pódia",
+      "qrCode": "VIVOO-PARDUBICE_HOKEJ-94909",
+      "status": "active",
+      "createdAt": "2026-07-28T10:44:14.486Z"
+    },
     {
       "id": "tkt-hero-1",
       "userId": "usr-1",
@@ -68,6 +84,17 @@
     }
   ],
   "transactions": [
+    {
+      "id": "tx-1785235454486",
+      "userId": "usr-pk-1785162158439",
+      "title": "Nákup Vstupenky: HC Dynamo Pardubice vs HC Sparta Praha",
+      "type": "ticket",
+      "dateStr": "Dnes, 12:44",
+      "amount": 320,
+      "isPositive": false,
+      "status": "Dokončeno",
+      "timestamp": "2026-07-28T10:44:14.486Z"
+    },
     {
       "id": "tx-101",
       "userId": "usr-1",

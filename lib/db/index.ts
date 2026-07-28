@@ -136,8 +136,10 @@ const DEFAULT_DB: ViVooDatabaseSchema = {
     beats_for_love: { videoId: 'beats_for_love', likesCount: 4500, viewsCount: 18900 },
     ballet: { videoId: 'ballet', likesCount: 630, viewsCount: 2100 },
     basketball: { videoId: 'basketball', likesCount: 410, viewsCount: 1800 }
-  }
+  },
+  expressOrders: []
 };
+
 
 let inMemoryDb: ViVooDatabaseSchema | null = null;
 

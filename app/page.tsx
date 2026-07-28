@@ -19,6 +19,9 @@ import { TransactionHistoryModal } from '@/components/profile/TransactionHistory
 import { SettingsModal } from '@/components/profile/SettingsModal';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
+import { LiveAmbientBanner } from '@/components/live/LiveAmbientBanner';
+import { LiveModeModal } from '@/components/live/LiveModeModal';
+import { LightshowOverlay } from '@/components/live/LightshowOverlay';
 import { FloatingNavCapsule } from '@/components/ui/FloatingNavCapsule';
 import { usePrecacheAppAssets } from '@/lib/precache';
 
@@ -28,6 +31,9 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen bg-[#0A0B0E] text-white">
+      {/* Context-Aware Live Ambient Top Banner */}
+      <LiveAmbientBanner />
+
       {/* Screen Views (Display Toggled for Instant 0ms Navigation) */}
       <div className={activeTab === 'feed' ? 'block' : 'hidden'}>
         <FeedView />
@@ -59,9 +65,14 @@ export default function Home() {
       <AuthModal />
       <EditProfileModal />
 
+      {/* Live Event Mode Overlay & Strobe Lightshow */}
+      <LiveModeModal />
+      <LightshowOverlay />
+
       {/* Global Floating Navigation Capsule */}
       <FloatingNavCapsule />
     </main>
   );
 }
+
 

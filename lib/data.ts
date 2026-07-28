@@ -1,6 +1,146 @@
 import { EventItem, ActivityItem } from './types';
 
 export const MOCK_EVENTS: EventItem[] = [
+
+  {
+    id: 'hradec_pardubice',
+    title: 'FC Hradec Králové vs FK Pardubice – Východočeské Derby',
+    tag: 'FOTBAL',
+    vibe: 'fotbal',
+    location: 'Malšovická Aréna, Hradec Králové',
+    date: 'Ne 26. července 2026 · 17:00',
+    lineup: 'FC Hradec Králové vs FK Pardubice',
+    promoter: 'FC Hradec Králové',
+    weather: { temp: '22°C', text: 'Jasno', icon: 'clear' },
+    videoUrl: '/videos/prague_derby.mp4',
+    bgImg: '/images/prague_derby.jpg',
+    priceMin: 250,
+    priceMax: 750,
+    isFree: false,
+    badge: 'SOLD OUT',
+    description: 'Východočeské derby 1. kola Chance Ligy! Souboj v vyprodané Malšovické Aréně.',
+    sectors: [
+      { name: 'Sektor G Fanklub', price: 250, povType: 'dancefloor-back' },
+      { name: 'Sektor B Hlavní Tribuna', price: 450, povType: 'mid-stadium' },
+      { name: 'VIP Malšovická Lounge', price: 750, povType: 'near-stadium' }
+    ],
+    liveConfig: {
+      enabled: true,
+      eventCategoryType: 'sports',
+      activeModules: ['timeline', 'crowd_pulse', 'express_bar', 'venue_map'],
+      statusHeader: 'Konec Utkání • (FCHK 2 : 1 PCE)',
+      statusBadge: 'KONEČNÝ VÝSLEDEK',
+      timeline: [
+        { id: 'hp-1', time: '17:00', title: 'Zahájení Východočeského derby', status: 'past' },
+        { id: 'hp-2', time: '17:44', title: 'GÓL! Mick van Buren (1:0)', subtitle: 'Vedení Hradce těsně před přestávkou', status: 'past', badge: 'GÓL' },
+        { id: 'hp-3', time: '17:56', title: 'GÓL! František Čech (2:0)', subtitle: 'Asistence: D. Horák', status: 'past', badge: 'GÓL' },
+        { id: 'hp-4', time: '18:00', title: 'GÓL! Tobias Boledovič (2:1)', subtitle: 'Pardubické snížení • Asistence: K. Trédl', status: 'past', badge: 'GÓL' },
+        { id: 'hp-5', time: '18:50', title: 'Konec Zápasu • Vítězství Hradce Králové 2:1!', status: 'live', badge: 'KONEČNÝ VÝSLEDEK' }
+      ],
+      polls: [
+        {
+          id: 'poll-derby-mvp',
+          question: 'Hlasování: Kdo byl Hráčem Utkání (MVP) Derby?',
+          totalVotes: 2380,
+          isActive: true,
+          options: [
+            { id: 'opt-buren', label: 'Mick van Buren (Hradec • Gól)', votes: 1420 },
+            { id: 'opt-cech', label: 'František Čech (Hradec • Gól)', votes: 680 },
+            { id: 'opt-boledovic', label: 'Tobias Boledovič (Pardubice • Gól)', votes: 280 }
+          ]
+        }
+      ],
+      pois: [
+        { id: 'poi-hp1', name: 'NFC Malšovický Bar', category: 'bar', locationDetail: 'Tribuna B • Přízemí', queueLevel: 'low', waitTimeMinutes: 2 },
+        { id: 'poi-hp2', name: 'WC Sektor Sever', category: 'wc', locationDetail: 'Chodba 2', queueLevel: 'med', waitTimeMinutes: 4 },
+        { id: 'poi-hp3', name: 'FanShop Východní Čechy', category: 'merch', locationDetail: 'Hlavní Brána', queueLevel: 'high', waitTimeMinutes: 10 }
+      ],
+      expressMenu: [
+        { id: 'hex-1', name: 'Radegast 12° 0.5L', category: 'pivo', price: 65, volumeOrSize: '0.5l', icon: 'beer' },
+        { id: 'hex-2', name: 'Kofola Čepovaná 0.5L', category: 'nealko', price: 50, volumeOrSize: '0.5l', icon: 'cup' },
+        { id: 'hex-3', name: 'Grilovaná Klobása Hradec', category: 'snack', price: 110, volumeOrSize: '200g', icon: 'food' },
+        { id: 'hex-4', name: 'Šála Východočeské Derby', category: 'merch', price: 350, volumeOrSize: '1ks', icon: 'shirt' }
+      ],
+      lightshowPresets: [
+        { id: 'ls-hradec', name: 'Černo-bílé Oslavy', colors: ['#FFFFFF', '#000000', '#DC2626'] }
+      ],
+      matchMomentum: {
+        homeScore: 2,
+        awayScore: 1,
+        homeTeamName: 'FC Hradec Králové',
+        awayTeamName: 'FK Pardubice',
+        homeTeamLogo: 'https://images.fotmob.com/image_resources/logo/teamlogo/1712.png',
+        awayTeamLogo: 'https://images.fotmob.com/image_resources/logo/teamlogo/2406.png',
+        homePossessionPct: 54,
+        awayPossessionPct: 46,
+        homeShotsOnTarget: 7,
+        awayShotsOnTarget: 4,
+        homeDangerousAttacks: 42,
+        awayDangerousAttacks: 31,
+        momentumGraph: [35, 60, -25, 45, 80, -40, 85, -20, 30, 65, -55, 75, 40, -15, 60, 90, -30, 20]
+      },
+      homeLineup: [
+        { id: 'hp-p1', name: 'Adam Zadražil', lastName: 'Zadražil', number: 12, position: 'GK', rating: 7.1, xPct: 50, yPct: 9, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1398355.png' },
+        { id: 'hp-p2', name: 'Karel Uhrinčať', lastName: 'Uhrinčať', number: 7, position: 'DEF', rating: 7.3, xPct: 20, yPct: 20, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1382975.png' },
+        { id: 'hp-p3', name: 'Filip Čihák', lastName: 'Čihák', number: 5, position: 'DEF', rating: 7.2, xPct: 50, yPct: 20, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/941552.png' },
+        { id: 'hp-p4', name: 'František Čech', lastName: 'Čech', number: 25, position: 'DEF', rating: 7.9, goals: 1, xPct: 80, yPct: 20, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/846315.png' },
+        { id: 'hp-p5', name: 'Tomáš Wiesner', lastName: 'Wiesner', number: 21, position: 'MID', rating: 5.9, yellowCards: 1, xPct: 14, yPct: 32, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/865046.png' },
+        { id: 'hp-p6', name: 'Vladimír Darida', lastName: 'Darida', number: 16, position: 'MID', rating: 6.9, xPct: 38, yPct: 32, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/196311.png' },
+        { id: 'hp-p7', name: 'Samuel Dancák', lastName: 'Dancák', number: 11, position: 'MID', rating: 6.6, yellowCards: 1, xPct: 62, yPct: 32, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/933789.png' },
+        { id: 'hp-p8', name: 'Daniel Horák', lastName: 'Horák', number: 26, position: 'MID', rating: 7.5, assists: 1, xPct: 86, yPct: 32, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1132554.png' },
+        { id: 'hp-p9', name: 'Mick van Buren', lastName: 'van Buren', number: 10, position: 'FWD', rating: 7.8, goals: 1, isCaptain: true, xPct: 28, yPct: 43, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/279110.png' },
+        { id: 'hp-p10', name: 'Tom Slončík', lastName: 'Slončík', number: 19, position: 'FWD', rating: 6.7, xPct: 72, yPct: 43, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1435935.png' },
+        { id: 'hp-p11', name: 'Ondřej Mihálik', lastName: 'Mihálik', number: 17, position: 'FWD', rating: 6.5, xPct: 50, yPct: 48, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/591775.png' }
+      ],
+      awayLineup: [
+        { id: 'ap-p1', name: 'Vojtěch Patrák', lastName: 'Patrák', number: 10, position: 'MID', rating: 6.4, yellowCards: 1, xPct: 50, yPct: 56, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1163500.png' },
+        { id: 'ap-p2', name: 'Václav Drchal', lastName: 'Drchal', number: 17, position: 'FWD', rating: 6.0, xPct: 28, yPct: 65, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/924667.png' },
+        { id: 'ap-p3', name: 'Abdullahi Tanko', lastName: 'Tanko', number: 20, position: 'FWD', rating: 5.7, xPct: 72, yPct: 65, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1079839.png' },
+        { id: 'ap-p4', name: 'Tobias Boledovič', lastName: 'Boledovič', number: 40, position: 'MID', rating: 7.1, goals: 1, xPct: 14, yPct: 75, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1791353.png' },
+        { id: 'ap-p5', name: 'Samuel Šimek', lastName: 'Šimek', number: 8, position: 'MID', rating: 6.4, yellowCards: 1, xPct: 38, yPct: 75, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1180771.png' },
+        { id: 'ap-p6', name: 'Michal Hlavatý', lastName: 'Hlavatý', number: 19, position: 'MID', rating: 6.5, isCaptain: true, xPct: 62, yPct: 75, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/740676.png' },
+        { id: 'ap-p7', name: 'Nosa Godwin', lastName: 'Godwin', number: 15, position: 'MID', rating: 6.4, xPct: 86, yPct: 75, avatarUrl: '/api/player-avatar?name=Nosa+Godwin' },
+        { id: 'ap-p8', name: 'Karel Trédl', lastName: 'Trédl', number: 2, position: 'DEF', rating: 6.8, assists: 1, xPct: 20, yPct: 85, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1354447.png' },
+        { id: 'ap-p9', name: 'Jason Noslin', lastName: 'Noslin', number: 4, position: 'DEF', rating: 6.2, xPct: 40, yPct: 85, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1379398.png' },
+        { id: 'ap-p10', name: 'Ondřej Kukučka', lastName: 'Kukučka', number: 5, position: 'DEF', rating: 6.1, xPct: 60, yPct: 85, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/1225873.png' },
+        { id: 'ap-p11', name: 'Eldar Šehić', lastName: 'Šehić', number: 14, position: 'DEF', rating: 6.3, xPct: 80, yPct: 85, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/951807.png' },
+        { id: 'ap-p12', name: 'Viktor Budinský', lastName: 'Budinský', number: 1, position: 'GK', rating: 6.2, xPct: 50, yPct: 93, avatarUrl: 'https://images.fotmob.com/image_resources/playerimages/319888.png' }
+      ],
+
+
+
+
+
+      jerseyRaffle: {
+        title: 'Vyhraj originální podepsaný dres MVP Micka van Burena!',
+        playerName: 'Mick van Buren',
+        playerNumber: 9,
+        totalEntries: 2190
+      },
+      nextGoalTeamPoll: {
+        id: 'poll-next-goal-team',
+        question: 'Kdo vstřelil rozhodující gól derby?',
+        totalVotes: 2150,
+        isActive: true,
+        options: [
+          { id: 'opt-hkr', label: 'FC Hradec Králové (František Čech)', votes: 1420 },
+          { id: 'opt-pce', label: 'FK Pardubice (Tobias Boledovič)', votes: 730 }
+        ]
+      },
+      nextGoalScorerPoll: {
+        id: 'poll-next-goal-scorer',
+        question: 'Kdo byl střelcem úvodního gólu zápasu?',
+        totalVotes: 1980,
+        isActive: true,
+        options: [
+          { id: 'opt-buren-first', label: 'Mick van Buren (44. min • Gól)', votes: 1540 },
+          { id: 'opt-sloncik-first', label: 'Tom Slončík (Hradec)', votes: 310 },
+          { id: 'opt-tanko-first', label: 'Abdullahi Tanko (Pardubice)', votes: 130 }
+        ]
+      }
+    }
+  },
+
   {
     id: 'pardubice_hokej',
     title: 'HC Dynamo Pardubice vs HC Sparta Praha',
@@ -45,8 +185,119 @@ export const MOCK_EVENTS: EventItem[] = [
       { name: 'Sektor C (Galerie)', price: 390, povType: 'far-stadium' },
       { name: 'Sektor B (Střed)', price: 650, povType: 'mid-stadium' },
       { name: 'Sektor A (Hřiště)', price: 1100, povType: 'near-stadium' }
-    ]
+    ],
+    liveConfig: {
+      enabled: true,
+      eventCategoryType: 'sports',
+      activeModules: ['timeline', 'crowd_pulse', 'express_bar', 'venue_map'],
+      statusHeader: '2. Poločas • 68:12 (ACS 1 : 0 SVS)',
+      statusBadge: 'ŽIVĚ',
+      timeline: [
+        { id: 't1', time: '18:00', title: 'Výkop 1. poločasu', status: 'past' },
+        { id: 't2', time: '18:34', title: 'GÓL! Haraslín (1:0)', subtitle: 'Asistence: Birmančevič', status: 'past', badge: 'GÓL' },
+        { id: 't3', time: '18:48', title: 'Poločasová přestávka', subtitle: 'NFC Bary Otevřeny', status: 'past' },
+        { id: 't4', time: '19:04', title: '2. Poločas v plném proudu', status: 'live', badge: 'HRAJE SE' },
+        { id: 't5', time: '19:55', title: 'Konec zápasu & Vyhlášení MVP', status: 'upcoming' }
+      ],
+      polls: [
+        {
+          id: 'poll-derby-mvp',
+          question: 'Kdo je hráčem zápasu (MVP 312. Derby)?',
+          totalVotes: 1420,
+          isActive: true,
+          options: [
+            { id: 'opt-1', label: 'Lukáš Haraslín (ACS)', votes: 850 },
+            { id: 'opt-2', label: 'Veljko Birmančevič (ACS)', votes: 340 },
+            { id: 'opt-3', label: 'Mojmír Chytil (SVS)', votes: 230 }
+          ]
+        }
+      ],
+      pois: [
+        { id: 'poi-1', name: 'NFC Bar Sektor B', category: 'bar', locationDetail: 'Vchod B2 • Přízemí', queueLevel: 'low', waitTimeMinutes: 2 },
+        { id: 'poi-2', name: 'WC Muži / Ženy', category: 'wc', locationDetail: 'Sektor B • Chodba 3', queueLevel: 'med', waitTimeMinutes: 5 },
+        { id: 'poi-3', name: 'Official FanShop', category: 'merch', locationDetail: 'Hlavní atrium', queueLevel: 'high', waitTimeMinutes: 14 },
+        { id: 'poi-4', name: 'První Pomoc', category: 'first_aid', locationDetail: 'Sektor A1', queueLevel: 'low', waitTimeMinutes: 0 }
+      ],
+      expressMenu: [
+        { id: 'ex-1', name: 'Pilsner Urquell 0.5L', category: 'pivo', price: 75, volumeOrSize: '0.5l', icon: 'beer' },
+        { id: 'ex-2', name: 'Kofola Čepovaná', category: 'nealko', price: 55, volumeOrSize: '0.5l', icon: 'cup' },
+        { id: 'ex-3', name: 'Klobása s Chlebem', category: 'snack', price: 125, volumeOrSize: '250g', icon: 'food' },
+        { id: 'ex-4', name: 'Derby Šála Sparta vs Slavia', category: 'merch', price: 390, volumeOrSize: '1ks', icon: 'shirt' }
+      ],
+      lightshowPresets: [
+        { id: 'ls-sparta', name: 'Sparta Rudé Světlo', colors: ['#DC2626', '#1E3A8A', '#F59E0B'] },
+        { id: 'ls-strobe', name: 'Gólový Stroboskop', colors: ['#FFFFFF', '#DC2626', '#000000'] }
+      ],
+      matchMomentum: {
+        homeScore: 1,
+        awayScore: 0,
+        homePossessionPct: 58,
+        awayPossessionPct: 42,
+        homeShotsOnTarget: 6,
+        awayShotsOnTarget: 3,
+        homeDangerousAttacks: 48,
+        awayDangerousAttacks: 29,
+        momentumGraph: [20, 35, 50, 65, -15, 10, 80, 85, 45]
+      },
+      homeLineup: [
+        { id: 'p1', name: 'Peter Vindahl', number: 1, position: 'GK', rating: 7.2, xPct: 50, yPct: 9, avatarUrl: '/api/player-avatar?name=Peter+Vindahl' },
+        { id: 'p2', name: 'Asger Sørensen', number: 3, position: 'DEF', rating: 7.4, xPct: 25, yPct: 20, avatarUrl: '/api/player-avatar?name=Asger+Sorensen' },
+        { id: 'p3', name: 'Martin Vitík', number: 41, position: 'DEF', rating: 7.6, xPct: 50, yPct: 20, avatarUrl: '/api/player-avatar?name=Martin+Vitik' },
+        { id: 'p4', name: 'Jaroslav Zelený', number: 30, position: 'DEF', rating: 7.1, xPct: 75, yPct: 20, avatarUrl: '/api/player-avatar?name=Jaroslav+Zeleny' },
+        { id: 'p5', name: 'Angelo Preciado', number: 2, position: 'MID', rating: 7.8, xPct: 15, yPct: 32, avatarUrl: '/api/player-avatar?name=Angelo+Preciado' },
+        { id: 'p6', name: 'Qazim Laci', number: 20, position: 'MID', rating: 7.3, xPct: 38, yPct: 32, avatarUrl: '/api/player-avatar?name=Qazim+Laci' },
+        { id: 'p7', name: 'Kaan Kairinen', number: 6, position: 'MID', rating: 7.5, xPct: 62, yPct: 32, avatarUrl: '/api/player-avatar?name=Kaan+Kairinen' },
+        { id: 'p8', name: 'Matej Ryneš', number: 32, position: 'MID', rating: 7.4, xPct: 85, yPct: 32, avatarUrl: '/api/player-avatar?name=Matej+Rynes' },
+        { id: 'p9', name: 'Veljko Birmančevič', number: 14, position: 'FWD', rating: 8.1, assists: 1, xPct: 28, yPct: 43, avatarUrl: '/api/player-avatar?name=Veljko+Birmancevic' },
+        { id: 'p10', name: 'Victor Olatunji', number: 7, position: 'FWD', rating: 7.0, xPct: 72, yPct: 43, avatarUrl: '/api/player-avatar?name=Victor+Olatunji' },
+        { id: 'p11', name: 'Lukáš Haraslín', number: 22, position: 'FWD', rating: 8.5, goals: 1, isCaptain: true, xPct: 50, yPct: 48, avatarUrl: '/api/player-avatar?name=Lukas+Haraslin' }
+      ],
+      awayLineup: [
+        { id: 'ap1', name: 'Aleš Mandous', number: 28, position: 'GK', rating: 6.8, xPct: 50, yPct: 93, avatarUrl: '/api/player-avatar?name=Ales+Mandous' },
+        { id: 'ap2', name: 'Tomáš Holeš', number: 3, position: 'DEF', rating: 7.0, isCaptain: true, xPct: 20, yPct: 85, avatarUrl: '/api/player-avatar?name=Tomas+Holes' },
+        { id: 'ap3', name: 'Igoh Ogbu', number: 5, position: 'DEF', rating: 7.2, xPct: 40, yPct: 85, avatarUrl: '/api/player-avatar?name=Igoh+Ogbu' },
+        { id: 'ap4', name: 'David Zima', number: 4, position: 'DEF', rating: 6.9, xPct: 60, yPct: 85, avatarUrl: '/api/player-avatar?name=David+Zima' },
+        { id: 'ap5', name: 'David Douděra', number: 21, position: 'MID', rating: 7.1, xPct: 80, yPct: 85, avatarUrl: '/api/player-avatar?name=David+Doudera' },
+        { id: 'ap6', name: 'Christos Zafeiris', number: 10, position: 'MID', rating: 7.4, xPct: 25, yPct: 75, avatarUrl: '/api/player-avatar?name=Christos+Zafeiris' },
+        { id: 'ap7', name: 'Oscar Dorley', number: 19, position: 'MID', rating: 7.3, yellowCards: 1, xPct: 50, yPct: 75, avatarUrl: '/api/player-avatar?name=Oscar+Dorley' },
+        { id: 'ap8', name: 'Lukáš Provod', number: 17, position: 'MID', rating: 7.2, xPct: 75, yPct: 75, avatarUrl: '/api/player-avatar?name=Lukas+Provod' },
+        { id: 'ap9', name: 'Conrad Wallem', number: 8, position: 'MID', rating: 6.8, xPct: 20, yPct: 65, avatarUrl: '/api/player-avatar?name=Conrad+Wallem' },
+        { id: 'ap10', name: 'Mojmír Chytil', number: 13, position: 'FWD', rating: 7.0, xPct: 50, yPct: 56, avatarUrl: 'https://i.pravatar.cc/150?u=ap10_chytil' },
+        { id: 'ap11', name: 'Tomáš Chorý', number: 11, position: 'FWD', rating: 7.1, xPct: 80, yPct: 65, avatarUrl: 'https://i.pravatar.cc/150?u=ap11_chory' }
+      ],
+
+      jerseyRaffle: {
+        title: 'Vyhraj originální podepsaný dres MVP 312. Derby!',
+        playerName: 'Lukáš Haraslín',
+        playerNumber: 22,
+        totalEntries: 1482
+      },
+      nextGoalTeamPoll: {
+        id: 'poll-next-goal-team',
+        question: 'Kdo vstřelí Další Gól v zápase?',
+        totalVotes: 1940,
+        isActive: true,
+        options: [
+          { id: 'opt-team-acs', label: 'AC Sparta Praha', votes: 1210 },
+          { id: 'opt-team-svs', label: 'SK Slavia Praha', votes: 610 },
+          { id: 'opt-team-none', label: 'Žádný další gól (1:0)', votes: 120 }
+        ]
+      },
+      nextGoalScorerPoll: {
+        id: 'poll-next-goal-scorer',
+        question: 'Který konkrétní hráč dá příští gól?',
+        totalVotes: 1620,
+        isActive: true,
+        options: [
+          { id: 'opt-sc-haraslin', label: 'Lukáš Haraslín (ACS)', votes: 780 },
+          { id: 'opt-sc-birmancevic', label: 'Veljko Birmančevič (ACS)', votes: 410 },
+          { id: 'opt-sc-chytil', label: 'Mojmír Chytil (SVS)', votes: 290 },
+          { id: 'opt-sc-chory', label: 'Tomáš Chorý (SVS)', votes: 140 }
+        ]
+      }
+    }
   },
+
   {
     id: 'metronome_festival',
     title: 'Metronome Festival Prague 2026',
@@ -67,7 +318,46 @@ export const MOCK_EVENTS: EventItem[] = [
     sectors: [
       { name: '3-Day Pass General Admission', price: 1890, povType: 'dancefloor-back' },
       { name: 'VIP Platform Lounge', price: 3490, povType: 'dancefloor-front' }
-    ]
+    ],
+    liveConfig: {
+      enabled: true,
+      eventCategoryType: 'festival',
+      activeModules: ['timeline', 'crowd_pulse', 'express_bar', 'venue_map'],
+      statusHeader: 'Main Stage • RAYE (Live 21:30 - 23:00)',
+      statusBadge: 'ON STAGE',
+      timeline: [
+        { id: 'mf-1', time: '17:00', title: 'Gates Open & Dj Welcome Set', status: 'past' },
+        { id: 'mf-2', time: '19:00', title: 'Milky Chance (Main Stage)', status: 'past' },
+        { id: 'mf-3', time: '21:30', title: 'RAYE (Headliner Main Stage)', status: 'live', badge: 'PROBÍHÁ' },
+        { id: 'mf-4', time: '23:15', title: 'Afterparty DJ Set (Moon Stage)', status: 'upcoming' }
+      ],
+      polls: [
+        {
+          id: 'poll-metronome-encore',
+          question: 'Jaký přídavek si přejete na závěr koncertu RAYE?',
+          totalVotes: 3290,
+          isActive: true,
+          options: [
+            { id: 'mopt-1', label: 'Escapism (Acoustic)', votes: 2100 },
+            { id: 'mopt-2', label: 'Prada (Live Remix)', votes: 890 },
+            { id: 'mopt-3', label: 'Flip A Switch', votes: 300 }
+          ]
+        }
+      ],
+      pois: [
+        { id: 'mpoi-1', name: 'Craft Beer Zone', category: 'bar', locationDetail: 'Fontána • Pravé Křídlo', queueLevel: 'med', waitTimeMinutes: 6 },
+        { id: 'mpoi-2', name: 'VIP Toilet Oasis', category: 'wc', locationDetail: 'Za VIP Tribunou', queueLevel: 'low', waitTimeMinutes: 1 },
+        { id: 'mpoi-3', name: 'Official Merch Shop', category: 'merch', locationDetail: 'Vstupní hala', queueLevel: 'high', waitTimeMinutes: 15 }
+      ],
+      expressMenu: [
+        { id: 'mex-1', name: 'Craft IPA 0.4L', category: 'pivo', price: 95, volumeOrSize: '0.4l', icon: 'beer' },
+        { id: 'mex-2', name: 'Fritz-Kola 0.33L', category: 'nealko', price: 65, volumeOrSize: '0.33l', icon: 'cup' },
+        { id: 'mex-3', name: 'Pulled Pork Burger', category: 'snack', price: 185, volumeOrSize: '1ks', icon: 'food' }
+      ],
+      lightshowPresets: [
+        { id: 'ls-festival', name: 'Neon Purple Wave', colors: ['#A855F7', '#EC4899', '#3B82F6'] }
+      ]
+    }
   },
   {
     id: 'zoo_praha',
@@ -88,7 +378,41 @@ export const MOCK_EVENTS: EventItem[] = [
     sectors: [
       { name: 'Dospělý večerní okruh', price: 350, povType: 'fountain-far' },
       { name: 'Rodinný zážitkový pas (2+2)', price: 650, povType: 'fountain-near' }
-    ]
+    ],
+    liveConfig: {
+      enabled: true,
+      eventCategoryType: 'zoo',
+      activeModules: ['timeline', 'crowd_pulse', 'venue_map'],
+      statusHeader: 'Rezervace: Večerní okruh • 19:30 Krmení Lvic',
+      statusBadge: 'PROHLÍDKA',
+      timeline: [
+        { id: 'z1', time: '18:30', title: 'Sraz u hlavního vchodu & Registrace', status: 'past' },
+        { id: 'z2', time: '19:00', title: 'Pavilon Trikolóra & Gorily', status: 'past' },
+        { id: 'z3', time: '19:30', title: 'Komentované krmení Lvic', status: 'live', badge: 'PRÁVĚ PROBÍHÁ' },
+        { id: 'z4', time: '20:30', title: 'Noční expozice Sloní Džungle', status: 'upcoming' }
+      ],
+      polls: [
+        {
+          id: 'poll-zoo-quiz',
+          question: 'Kvíz: Kolik váží nejstarší sloní samec v Zoo Praha?',
+          totalVotes: 410,
+          isActive: true,
+          options: [
+            { id: 'zopt-1', label: 'cca 3 500 kg', votes: 90 },
+            { id: 'zopt-2', label: 'cca 5 200 kg (Správně!)', votes: 280 },
+            { id: 'zopt-3', label: 'cca 7 000 kg', votes: 40 }
+          ]
+        }
+      ],
+      pois: [
+        { id: 'zpoi-1', name: 'Restaurace Oceán', category: 'bar', locationDetail: 'Centrum Zoo', queueLevel: 'low', waitTimeMinutes: 3 },
+        { id: 'zpoi-2', name: 'WC u Rezervace Bororo', category: 'wc', locationDetail: 'Dětský areál', queueLevel: 'low', waitTimeMinutes: 1 }
+      ],
+      expressMenu: [
+        { id: 'zex-1', name: 'Ledová Káva / Latte', category: 'nealko', price: 70, volumeOrSize: '0.3l', icon: 'cup' },
+        { id: 'zex-2', name: 'Domácí Malinovka', category: 'nealko', price: 50, volumeOrSize: '0.4l', icon: 'cup' }
+      ]
+    }
   },
   {
     id: 'plzen_hokej',

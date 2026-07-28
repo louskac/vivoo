@@ -84,6 +84,17 @@ export interface VideoStatsDbModel {
   viewsCount: number;
 }
 
+export interface ExpressOrderDbModel {
+  id: string;
+  userId: string;
+  eventId: string;
+  itemsSummary: string;
+  totalAmount: number;
+  pickupCode: string;
+  status: 'ordered' | 'preparing' | 'ready' | 'collected';
+  createdAt: string;
+}
+
 export interface ViVooDatabaseSchema {
   user: UserDbModel;
   likes: UserLikeDbModel[];
@@ -92,5 +103,7 @@ export interface ViVooDatabaseSchema {
   transactions: TransactionDbModel[];
   userVideos: UserVideoDbModel[];
   videoStats: Record<string, VideoStatsDbModel>;
+  expressOrders: ExpressOrderDbModel[];
 }
+
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useAppStore } from '@/lib/store';
 import { TabId } from '@/lib/types';
 import { Home, LayoutGrid, Ticket, User } from 'lucide-react';
@@ -9,12 +9,16 @@ export const FloatingNavCapsule: React.FC = () => {
   const activeTab = useAppStore((state) => state.activeTab);
   const setActiveTab = useAppStore((state) => state.setActiveTab);
   const selectedEvent = useAppStore((state) => state.selectedEvent);
+  const activeModal = useAppStore((state) => state.activeModal);
 
   const navRef = useRef<HTMLElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragX, setDragX] = useState<number | null>(null);
-  const [dragWidth, setDragWidth] = useState(84);
+  const [dragWidth, setDragWidth] = useState(80);
   const [shiftX, setShiftX] = useState(0);
+
+  // Measure actual active button position directly from the DOM for 100% alignment
+  const [activeBounds, setActiveBounds] = useState<{ left: number; width: number }>({ left: 11.5, width: 80 });
 
   const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
     { id: 'feed', label: 'Feed', icon: <Home className="w-5 h-5" /> },
@@ -25,30 +29,69 @@ export const FloatingNavCapsule: React.FC = () => {
 
   const activeIndex = Math.max(0, tabs.findIndex((t) => t.id === activeTab));
 
-  const updateHighlightPos = (pointerX: number, containerWidth: number) => {
-    const highlightWidth = 84;
-    const minCenterX = 8 + highlightWidth / 2;
-    const maxCenterX = containerWidth - 8 - highlightWidth / 2;
+  const updateActiveBounds = useCallback(() => {
+    if (!navRef.current) return;
+    const buttons = navRef.current.querySelectorAll<HTMLButtonElement>('.capsule-nav-item');
+    const activeBtn = buttons[activeIndex];
+    if (activeBtn) {
+      const btnLeft = activeBtn.offsetLeft;
+      const btnWidth = activeBtn.offsetWidth;
+      const hWidth = Math.min(80, Math.max(60, btnWidth - 6));
+      const hLeft = btnLeft + (btnWidth - hWidth) / 2;
+      setActiveBounds({ left: hLeft, width: hWidth });
+    }
+  }, [activeIndex]);
+
+  useEffect(() => {
+    updateActiveBounds();
+  }, [activeTab, activeIndex, updateActiveBounds]);
+
+  useEffect(() => {
+    const handleResize = () => updateActiveBounds();
+    window.addEventListener('resize', handleResize);
+
+    const el = navRef.current;
+    if (!el) return;
+
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => updateActiveBounds());
+      ro.observe(el);
+      return () => {
+        ro.disconnect();
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+    return () => window.removeEventListener('resize', handleResize);
+  }, [updateActiveBounds]);
+
+  const updateHighlightPos = (pointerX: number, currContainerWidth: number) => {
+    const pX = 8;
+    const iWidth = Math.max(0, currContainerWidth - pX * 2);
+    const sWidth = iWidth / tabs.length;
+    const hWidth = Math.min(80, Math.max(60, sWidth - 6));
+
+    const minCenterX = pX + hWidth / 2;
+    const maxCenterX = currContainerWidth - pX - hWidth / 2;
 
     let targetX = 0;
-    let stretchedWidth = highlightWidth;
+    let stretchedWidth = hWidth;
     let shift = 0;
 
     if (pointerX < minCenterX) {
       const overflow = minCenterX - pointerX;
-      stretchedWidth = highlightWidth + overflow * 0.45;
-      targetX = 8 - overflow * 0.15;
+      stretchedWidth = hWidth + overflow * 0.45;
+      targetX = pX - overflow * 0.15;
       targetX = Math.max(2, targetX);
       shift = -overflow * 0.2;
     } else if (pointerX > maxCenterX) {
       const overflow = pointerX - maxCenterX;
-      stretchedWidth = highlightWidth + overflow * 0.45;
-      targetX = containerWidth - 8 - highlightWidth + overflow * 0.15;
-      targetX = Math.min(containerWidth - stretchedWidth - 2, targetX);
+      stretchedWidth = hWidth + overflow * 0.45;
+      targetX = currContainerWidth - pX - hWidth + overflow * 0.15;
+      targetX = Math.min(currContainerWidth - stretchedWidth - 2, targetX);
       shift = overflow * 0.2;
     } else {
-      stretchedWidth = highlightWidth;
-      targetX = pointerX - highlightWidth / 2;
+      stretchedWidth = hWidth;
+      targetX = pointerX - hWidth / 2;
       shift = 0;
     }
 
@@ -57,8 +100,10 @@ export const FloatingNavCapsule: React.FC = () => {
     setShiftX(shift);
 
     // Live update active tab based on drag position proximity
-    const itemWidth = containerWidth / tabs.length;
-    const closestIdx = Math.max(0, Math.min(tabs.length - 1, Math.floor(pointerX / itemWidth)));
+    const closestIdx = Math.max(
+      0,
+      Math.min(tabs.length - 1, Math.floor((pointerX - pX) / sWidth))
+    );
     if (tabs[closestIdx] && tabs[closestIdx].id !== activeTab) {
       setActiveTab(tabs[closestIdx].id);
     }
@@ -101,12 +146,15 @@ export const FloatingNavCapsule: React.FC = () => {
 
     const rect = nav.getBoundingClientRect();
     const pointerX = e.clientX - rect.left;
-
-    const itemWidth = nav.offsetWidth / tabs.length;
-    const closestIdx = Math.max(0, Math.min(tabs.length - 1, Math.floor(pointerX / itemWidth)));
+    const iWidth = Math.max(0, nav.offsetWidth - 16);
+    const sWidth = iWidth / tabs.length;
+    const closestIdx = Math.max(
+      0,
+      Math.min(tabs.length - 1, Math.floor((pointerX - 8) / sWidth))
+    );
 
     setDragX(null);
-    setDragWidth(84);
+    setDragWidth(activeBounds.width);
     setShiftX(0);
 
     if (tabs[closestIdx]) {
@@ -138,10 +186,14 @@ export const FloatingNavCapsule: React.FC = () => {
     setIsDragging(false);
     const rect = nav.getBoundingClientRect();
     const pointerX = e.clientX - rect.left;
-    const itemWidth = nav.offsetWidth / tabs.length;
-    const closestIdx = Math.max(0, Math.min(tabs.length - 1, Math.floor(pointerX / itemWidth)));
+    const iWidth = Math.max(0, nav.offsetWidth - 16);
+    const sWidth = iWidth / tabs.length;
+    const closestIdx = Math.max(
+      0,
+      Math.min(tabs.length - 1, Math.floor((pointerX - 8) / sWidth))
+    );
     setDragX(null);
-    setDragWidth(84);
+    setDragWidth(activeBounds.width);
     setShiftX(0);
     if (tabs[closestIdx]) {
       setActiveTab(tabs[closestIdx].id);
@@ -171,22 +223,24 @@ export const FloatingNavCapsule: React.FC = () => {
     setIsDragging(false);
     const rect = nav.getBoundingClientRect();
     const pointerX = e.changedTouches[0].clientX - rect.left;
-    const itemWidth = nav.offsetWidth / tabs.length;
-    const closestIdx = Math.max(0, Math.min(tabs.length - 1, Math.floor(pointerX / itemWidth)));
+    const iWidth = Math.max(0, nav.offsetWidth - 16);
+    const sWidth = iWidth / tabs.length;
+    const closestIdx = Math.max(
+      0,
+      Math.min(tabs.length - 1, Math.floor((pointerX - 8) / sWidth))
+    );
     setDragX(null);
-    setDragWidth(84);
+    setDragWidth(activeBounds.width);
     setShiftX(0);
     if (tabs[closestIdx]) {
       setActiveTab(tabs[closestIdx].id);
     }
   };
 
-  const activeModal = useAppStore((state) => state.activeModal);
-
   if (selectedEvent || activeModal) return null;
 
-  const defaultStep = 88;
-  const currentX = isDragging && dragX !== null ? dragX : activeIndex * defaultStep;
+  const currentX = isDragging && dragX !== null ? dragX : activeBounds.left;
+  const activeWidth = isDragging ? dragWidth : activeBounds.width;
 
   return (
     <nav
@@ -210,7 +264,7 @@ export const FloatingNavCapsule: React.FC = () => {
       <div
         className="capsule-nav-highlight"
         style={{
-          width: `${dragWidth}px`,
+          width: `${activeWidth}px`,
           transform: `translate3d(${currentX}px, 0, 0)`,
           transition: isDragging
             ? 'none'
@@ -238,3 +292,4 @@ export const FloatingNavCapsule: React.FC = () => {
     </nav>
   );
 };
+

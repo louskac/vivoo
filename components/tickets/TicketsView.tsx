@@ -23,6 +23,19 @@ export const TicketsView: React.FC = () => {
 
   const defaultUpcomingTickets: TicketDetailSpec[] = [
     {
+      id: 'tkt-hradec-pardubice',
+      eventId: 'hradec_pardubice',
+      title: 'FC Hradec Králové vs FK Pardubice',
+      date: 'Pá 26. 7. · 18:00 · Malšovická Aréna',
+      location: 'Malšovická Aréna, Hradec Králové',
+      seatDetail: 'Sektor G · Řada 5 · Sedadlo 14',
+      bgImg: '/images/derby.jpg',
+      badge: 'ŽIVĚ V ARÉNĚ',
+      qrCode: 'VIVOO-DERBY-FCHK-PCE',
+      isTodayLive: true
+    },
+
+    {
       id: 'tkt-hero-1',
       title: 'Koncert pod živými hvězdami',
       date: 'Ne 18. 10. · 20:00 · Riegrovy sady',
@@ -39,23 +52,16 @@ export const TicketsView: React.FC = () => {
       location: 'epet ARENA, Praha 7',
       seatDetail: 'Sektor B · Řada 11 · Sedadlo 122',
       bgImg: '/images/prague_derby.jpg',
-      qrCode: 'VIVOO-DERBY-312004'
-    },
-    {
-      id: 'tkt-sparta-2',
-      title: 'Sparta x Slavia',
-      date: 'Pá 20. 10. · 18:00 · Epet Aréna',
-      location: 'epet ARENA, Praha 7',
-      seatDetail: 'Sektor B · Řada 11 · Sedadlo 123',
-      bgImg: '/images/prague_derby.jpg',
-      qrCode: 'VIVOO-DERBY-312005'
+      qrCode: 'VIVOO-DERBY-312004',
+      eventId: 'derby'
     }
   ];
 
   const upcomingTickets: TicketDetailSpec[] = [
-    ...userTicketsFormatted,
-    ...defaultUpcomingTickets
+    ...defaultUpcomingTickets,
+    ...userTicketsFormatted
   ];
+
 
   const pastTickets: TicketDetailSpec[] = [
     {
@@ -87,8 +93,13 @@ export const TicketsView: React.FC = () => {
           <img
             src={heroTicket.bgImg}
             alt={heroTicket.title}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/images/derby.jpg';
+            }}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
+
           {/* Dark scrim gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
 
@@ -99,20 +110,38 @@ export const TicketsView: React.FC = () => {
             </div>
           )}
 
-          {/* Bottom Card Info */}
-          <div className="absolute bottom-5 left-5 right-5 flex flex-col items-start gap-1">
-            <h2 className="text-xl font-extrabold text-white leading-tight drop-shadow">
-              {heroTicket.title}
-            </h2>
-            <p className="text-xs text-neutral-300 font-medium">
-              {heroTicket.date}
-            </p>
-            <p className="text-xs text-neutral-400 font-medium">
-              {heroTicket.seatDetail}
-            </p>
+          {/* Bottom Card Info & Live Mode CTA */}
+          <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-3">
+            <div className="flex flex-col items-start gap-1 min-w-0">
+              <h2 className="text-xl font-extrabold text-white leading-tight drop-shadow truncate">
+                {heroTicket.title}
+              </h2>
+              <p className="text-xs text-neutral-300 font-medium">
+                {heroTicket.date}
+              </p>
+              <p className="text-xs text-neutral-400 font-medium">
+                {heroTicket.seatDetail}
+              </p>
+            </div>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (heroTicket.eventId) {
+                  useAppStore.getState().setActiveLiveEventId(heroTicket.eventId);
+                }
+                useAppStore.getState().setActiveModal('live_mode');
+              }}
+              className="shrink-0 bg-red-600 hover:bg-red-500 text-white text-xs font-black px-3.5 py-2 rounded-xl shadow-lg border border-red-400/40 flex items-center gap-1.5 transition-transform active:scale-95"
+            >
+              <span>Aréna Mód</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
           </div>
         </div>
       )}
+
 
       {/* 2. Nadcházející Section */}
       <div className="flex flex-col gap-3 mb-8">

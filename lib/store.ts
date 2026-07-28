@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { TabId, EventItem, VibeCategory, ActiveModal, PurchasedTicket, TicketDetailSpec, DateFilterType } from './types';
-import { mockEvents } from './data';
+import { TabId, EventItem, VibeCategory, ActiveModal, PurchasedTicket, TicketDetailSpec, DateFilterType, ExpressOrder } from './types';
 
 interface AppStore {
   activeTab: TabId;
@@ -39,6 +38,20 @@ interface AppStore {
   
   gridSearchQuery: string;
   setGridSearchQuery: (query: string) => void;
+
+  // Live Mode Specific States
+  activeLiveEventId: string | null;
+  setActiveLiveEventId: (eventId: string | null) => void;
+
+  livePollVotes: Record<string, string>; // pollId -> optionId
+  voteLivePoll: (pollId: string, optionId: string) => void;
+
+  isLightshowActive: boolean;
+  toggleLightshow: () => void;
+  setLightshowActive: (active: boolean) => void;
+
+  expressOrders: ExpressOrder[];
+  addExpressOrder: (order: ExpressOrder) => void;
 
   syncFromContext?: (data: { userBalance?: number; savedEventIds?: string[]; tickets?: any[] }) => void;
 }
@@ -115,6 +128,25 @@ export const useAppStore = create<AppStore>((set, get) => ({
   gridSearchQuery: '',
   setGridSearchQuery: (query: string) => set({ gridSearchQuery: query }),
 
+  // Live Mode Implementations
+  activeLiveEventId: 'hradec_pardubice', // Real live match: FC Hradec Králové vs FK Pardubice
+  setActiveLiveEventId: (eventId) => set({ activeLiveEventId: eventId }),
+
+
+  livePollVotes: {},
+  voteLivePoll: (pollId, optionId) =>
+    set((state) => ({
+      livePollVotes: { ...state.livePollVotes, [pollId]: optionId }
+    })),
+
+  isLightshowActive: false,
+  toggleLightshow: () => set((state) => ({ isLightshowActive: !state.isLightshowActive })),
+  setLightshowActive: (active) => set({ isLightshowActive: active }),
+
+  expressOrders: [],
+  addExpressOrder: (order) =>
+    set((state) => ({ expressOrders: [order, ...state.expressOrders] })),
+
   syncFromContext: (data) =>
     set((state) => ({
       userBalance: data.userBalance !== undefined ? data.userBalance : state.userBalance,
@@ -122,3 +154,4 @@ export const useAppStore = create<AppStore>((set, get) => ({
       purchasedTickets: data.tickets !== undefined ? data.tickets : state.purchasedTickets
     }))
 }));
+
