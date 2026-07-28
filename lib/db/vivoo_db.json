@@ -1,13 +1,13 @@
 {
   "user": {
-    "id": "usr-1",
-    "username": "novakjan",
-    "handle": "@novakjan",
-    "fullName": "Jan Novák",
+    "id": "usr-pk-1785162158439",
+    "username": "passkey_user",
+    "handle": "@passkey_member",
+    "fullName": "Passkey Uživatel",
     "avatarUrl": "/images/avatar.jpg",
-    "bio": "Festival enthusiast & music lover",
-    "memberTier": "VIP Gold",
-    "cashlessCredit": 2360
+    "memberTier": "VIP Member",
+    "cashlessCredit": 500,
+    "isGuest": false
   },
   "likes": [
     {
@@ -26,6 +26,11 @@
       "userId": "usr-1",
       "eventId": "concert_hvezdy",
       "createdAt": "2026-07-27T13:02:51.963Z"
+    },
+    {
+      "userId": "usr-pk-1785162158439",
+      "eventId": "zoo_praha",
+      "createdAt": "2026-07-28T09:24:09.182Z"
     }
   ],
   "tickets": [
@@ -165,6 +170,66 @@
       "videoId": "basketball",
       "likesCount": 410,
       "viewsCount": 1800
+    },
+    "pardubice_hokej": {
+      "videoId": "pardubice_hokej",
+      "likesCount": 2840,
+      "viewsCount": 9400
+    },
+    "zoo_praha": {
+      "videoId": "zoo_praha",
+      "likesCount": 3120,
+      "viewsCount": 14200
+    },
+    "plzen_hokej": {
+      "videoId": "plzen_hokej",
+      "likesCount": 1950,
+      "viewsCount": 7800
+    },
+    "viktoria_plzen": {
+      "videoId": "viktoria_plzen",
+      "likesCount": 2100,
+      "viewsCount": 8100
+    },
+    "zeme_zivitelka": {
+      "videoId": "zeme_zivitelka",
+      "likesCount": 1680,
+      "viewsCount": 6200
+    },
+    "safari_park": {
+      "videoId": "safari_park",
+      "likesCount": 2450,
+      "viewsCount": 11300
+    },
+    "tatran_florbal": {
+      "videoId": "tatran_florbal",
+      "likesCount": 1340,
+      "viewsCount": 5100
+    },
+    "flora_olomouc": {
+      "videoId": "flora_olomouc",
+      "likesCount": 980,
+      "viewsCount": 3900
+    },
+    "oktagon_mma": {
+      "videoId": "oktagon_mma",
+      "likesCount": 5890,
+      "viewsCount": 24500
+    },
+    "standup_comedy": {
+      "videoId": "standup_comedy",
+      "likesCount": 740,
+      "viewsCount": 2900
+    },
+    "ecommerce_summit": {
+      "videoId": "ecommerce_summit",
+      "likesCount": 510,
+      "viewsCount": 1900
+    },
+    "barum_rally": {
+      "videoId": "barum_rally",
+      "likesCount": 3890,
+      "viewsCount": 16400
     }
   }
 }

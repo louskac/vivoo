@@ -81,7 +81,7 @@ export const SettingsModal: React.FC = () => {
             className="w-full py-3 rounded-full bg-white/10 border border-white/15 text-white font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-white/20 transition-all cursor-pointer"
           >
             <UserCheck className="w-4 h-4 text-emerald-400" />
-            Přepnout účet / Registrovat
+            Přepnout účet / Přihlásit se
           </button>
 
           {!isGuest && (
@@ -93,7 +93,7 @@ export const SettingsModal: React.FC = () => {
               className="w-full py-3 rounded-full bg-red-600/20 border border-red-500/30 text-red-400 font-extrabold text-sm flex items-center justify-center gap-2 hover:bg-red-600/30 transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
-              Odhlásit se do Guest Mode
+              Odhlásit se
             </button>
           )}
         </div>

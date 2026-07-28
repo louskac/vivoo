@@ -65,41 +65,44 @@ export const TicketQrModal: React.FC = () => {
         </div>
 
         {/* Action Row: Transfer & Apple Wallet */}
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={() => setWalletAdded(true)}
-            className="py-3 px-3 rounded-2xl bg-black border border-white/20 text-white text-xs font-bold flex items-center justify-center gap-2 hover:bg-neutral-900 active:scale-95 transition-all cursor-pointer"
-          >
-            {walletAdded ? (
-              <>
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span className="text-emerald-400">V Apple Wallet</span>
-              </>
-            ) : (
-              <>
-                <Wallet className="w-4 h-4 text-white" />
-                <span>Apple Wallet</span>
-              </>
-            )}
-          </button>
+        {transferred ? (
+          <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold flex items-center justify-between">
+            <span>Vstupenka byla předána uživateli @klara_s!</span>
+            <Check className="w-4 h-4" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => setWalletAdded(true)}
+              className="py-3 px-3 rounded-2xl bg-black border border-white/20 text-white text-xs font-bold flex items-center justify-center gap-2 hover:bg-neutral-900 active:scale-95 transition-all cursor-pointer"
+            >
+              {walletAdded ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-400" />
+                  <span className="text-emerald-400">V Apple Wallet</span>
+                </>
+              ) : (
+                <>
+                  <Wallet className="w-4 h-4 text-white" />
+                  <span>Apple Wallet</span>
+                </>
+              )}
+            </button>
 
-          <button
-            onClick={() => setTransferred(true)}
-            className="py-3 px-3 rounded-2xl bg-white/10 border border-white/15 text-white text-xs font-bold flex items-center justify-center gap-2 hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
-          >
-            {transferred ? (
-              <>
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span className="text-emerald-400">Předáno</span>
-              </>
-            ) : (
-              <>
-                <Share2 className="w-4 h-4 text-white" />
-                <span>Předat lístek</span>
-              </>
-            )}
-          </button>
-        </div>
+            <button
+              onClick={() => {
+                const handle = prompt('Zadejte @username nebo telefon kamaráda pro předání lístku:');
+                if (handle) {
+                  setTransferred(true);
+                }
+              }}
+              className="py-3 px-3 rounded-2xl bg-white/10 border border-white/15 text-white text-xs font-bold flex items-center justify-center gap-2 hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
+            >
+              <Share2 className="w-4 h-4 text-white" />
+              <span>Předat lístek</span>
+            </button>
+          </div>
+        )}
 
         {/* Close Button */}
         <button

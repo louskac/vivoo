@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { TabId, EventItem, VibeCategory, ActiveModal, PurchasedTicket, TicketDetailSpec } from './types';
+import { TabId, EventItem, VibeCategory, ActiveModal, PurchasedTicket, TicketDetailSpec, DateFilterType } from './types';
 import { mockEvents } from './data';
 
 interface AppStore {
@@ -33,6 +33,9 @@ interface AppStore {
   
   gridCityFilter: string;
   setGridCityFilter: (city: string) => void;
+  
+  gridDateFilter: DateFilterType;
+  setGridDateFilter: (filter: DateFilterType) => void;
   
   gridSearchQuery: string;
   setGridSearchQuery: (query: string) => void;
@@ -105,6 +108,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
   
   gridCityFilter: 'all',
   setGridCityFilter: (city) => set({ gridCityFilter: city }),
+  
+  gridDateFilter: 'all',
+  setGridDateFilter: (filter: DateFilterType) => set({ gridDateFilter: filter }),
   
   gridSearchQuery: '',
   setGridSearchQuery: (query: string) => set({ gridSearchQuery: query }),

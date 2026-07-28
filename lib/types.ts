@@ -1,4 +1,4 @@
-export type VibeCategory = 'vse' | 'koncerty' | 'festivaly' | 'sport' | 'divadlo' | 'party' | 'standup';
+export type VibeCategory = 'vse' | 'hokej' | 'fotbal' | 'koncerty' | 'festivaly' | 'zoo' | 'vystaviste' | 'florbal' | 'sport' | 'divadlo' | 'party' | 'standup' | 'konference';
 
 export interface EventItem {
   id: string;
@@ -58,6 +58,8 @@ export interface TicketDetailSpec {
   isPast?: boolean;
 }
 
+export type DateFilterType = 'all' | 'today' | 'tomorrow' | 'weekend' | 'this_month' | 'next_month';
+
 export type ActiveModal =
   | 'checkout'
   | 'topup'
@@ -66,10 +68,12 @@ export type ActiveModal =
   | 'my_videos'
   | 'transaction_receipt'
   | 'city_selector'
+  | 'date_selector'
   | 'filter_drawer'
   | 'ticket_qr'
   | 'settings'
   | 'ticket_transfer'
   | 'auth'
+  | 'edit_profile'
   | null;
 

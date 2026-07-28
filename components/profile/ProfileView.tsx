@@ -4,7 +4,7 @@ import React from 'react';
 import { useAppStore } from '@/lib/store';
 import { useUser } from '@/context/UserContext';
 import { ActiveModal } from '@/lib/types';
-import { Settings, Bookmark, Video, Gift, History, ChevronRight, CreditCard, Ticket, LogIn, Fingerprint, UserCheck } from 'lucide-react';
+import { Settings, Bookmark, Video, Gift, History, ChevronRight, CreditCard, Ticket, User } from 'lucide-react';
 
 export const ProfileView: React.FC = () => {
   const setActiveModal = useAppStore((state) => state.setActiveModal);
@@ -36,75 +36,96 @@ export const ProfileView: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#0A0B0E] text-white pb-32 pt-10 px-5 animate-fade-in max-w-md mx-auto">
-      {/* Top Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-black text-white">Profil</h1>
+      {/* Top Header Bar */}
+      <div className="flex items-center justify-between mb-5">
+        <h1 className="text-3xl font-black text-white tracking-tight">Profil</h1>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setActiveModal('auth')}
-            className="px-3.5 py-2 rounded-full bg-white/10 border border-white/15 text-xs font-bold text-white flex items-center gap-1.5 hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
-          >
-            <UserCheck className="w-4 h-4 text-emerald-400" />
-            {isGuest ? 'Přihlásit' : 'Přepnout'}
-          </button>
-          <button
-            onClick={() => setActiveModal('settings')}
-            className="w-10 h-10 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
+          {isGuest ? (
+            <button
+              onClick={() => setActiveModal('auth')}
+              className="px-4 py-2 rounded-full bg-[#DE1D3E] text-xs font-bold text-white hover:bg-red-600 active:scale-95 transition-all cursor-pointer"
+            >
+              Přihlásit se
+            </button>
+          ) : (
+            <button
+              onClick={() => setActiveModal('settings')}
+              className="w-10 h-10 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
+              title="Nastavení"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Guest Mode Banner or User Info Row */}
+      {/* Main Profile Header Card */}
       {isGuest ? (
-        <div className="mb-6 bg-gradient-to-r from-red-950/40 via-neutral-900 to-purple-950/40 p-5 rounded-2xl border border-red-500/30 flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-neutral-800 border border-white/20 flex items-center justify-center text-neutral-300 font-bold text-lg">
-              H
+        <div className="mb-6 bg-white/[0.04] border border-white/10 p-5 rounded-2xl flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-12 h-12 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-neutral-400 shrink-0">
+              <User className="w-5 h-5" />
             </div>
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#DE1D3E] block">TikTok Guest Mode</span>
-              <h2 className="text-lg font-extrabold text-white">Procházíte jako Návštěvník</h2>
+            <div className="min-w-0">
+              <h2 className="text-base font-bold text-white leading-snug">Vítejte ve ViVoo</h2>
+              <p className="text-xs text-neutral-400 truncate">Procházejte akce bez registrace</p>
             </div>
           </div>
-          <p className="text-xs text-neutral-300">
-            Můžete sledovat videa a akce bez registrácie. Pro zakoupení lístků a dobíjení kreditu se přihlaste 1-klikem biometrií Passkey.
-          </p>
           <button
             onClick={() => setActiveModal('auth')}
-            className="w-full py-3 rounded-full bg-[#DE1D3E] text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-red-600/30 hover:bg-red-600 active:scale-95 transition-all cursor-pointer"
+            className="px-4 py-2 rounded-full bg-[#DE1D3E] text-xs font-bold text-white hover:bg-red-600 active:scale-95 transition-all cursor-pointer shrink-0"
           >
-            <Fingerprint className="w-4 h-4" />
-            Přihlásit se bez hesla (Passkey / SMS)
+            Přihlásit se
           </button>
         </div>
       ) : (
-        <div className="flex items-center gap-4 py-3 mb-6 bg-white/5 p-4 rounded-2xl border border-white/10">
-          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-red-500/80 shrink-0 shadow-lg">
-            <img src={user.avatarUrl || '/images/avatar.jpg'} alt={user.fullName} className="w-full h-full object-cover" />
+        <div className="p-4 mb-6 bg-white/[0.04] rounded-2xl border border-white/10 flex items-center justify-between">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-14 h-14 rounded-full overflow-hidden border border-white/20 shrink-0">
+              <img src={user.avatarUrl || '/images/avatar.jpg'} alt={user.fullName} className="w-full h-full object-cover" />
+            </div>
+            <div className="min-w-0">
+              <h2 className="text-lg font-bold text-white truncate leading-snug">{user.fullName}</h2>
+              <p className="text-xs text-neutral-400 font-medium truncate mt-0.5">{user.handle} · {user.memberTier || 'VIP Member'}</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-extrabold text-white mb-0.5">{user.fullName}</h2>
-            <p className="text-xs text-neutral-400 font-medium">{user.handle} · {user.memberTier}</p>
+          <div className="flex items-center gap-2 shrink-0 ml-2">
+            <button
+              onClick={() => setActiveModal('edit_profile')}
+              className="px-3 py-1.5 rounded-full bg-white/10 text-xs font-medium text-neutral-200 hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
+            >
+              Upravit
+            </button>
+            <button
+              onClick={() => setActiveModal('auth')}
+              className="px-3 py-1.5 rounded-full bg-white/10 text-xs font-medium text-neutral-200 hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
+            >
+              Přepnout
+            </button>
           </div>
         </div>
       )}
 
-      {/* Cashless Credit Section matching Figma penezenka.png */}
-      <div className="mb-6 glass-panel p-5 rounded-2xl border border-white/10 flex flex-col gap-2 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black">
-        <span className="text-xs text-neutral-400 font-bold tracking-wider uppercase">NFC Cashless Kredit</span>
-        <div className="text-4xl font-black text-white tracking-tight">{user.cashlessCredit.toLocaleString('cs-CZ')} Kč</div>
+      {/* Cashless Credit Section */}
+      <div className="mb-6 p-5 rounded-2xl border border-white/10 bg-white/[0.03] flex flex-col gap-2">
+        <span className="text-xs text-neutral-400 font-bold tracking-wider uppercase">NFC CASHLESS KREDIT</span>
+        <div className="text-4xl font-black text-white tracking-tight my-1">{user.cashlessCredit.toLocaleString('cs-CZ')} Kč</div>
         <button
-          onClick={() => setActiveModal('topup')}
-          className="mt-3 w-full h-12 rounded-full bg-[#DE1D3E] text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-red-600/30 active:scale-95 hover:bg-red-600 transition-all cursor-pointer"
+          onClick={() => {
+            if (isGuest) {
+              setActiveModal('auth');
+            } else {
+              setActiveModal('topup');
+            }
+          }}
+          className="mt-2 w-full h-12 rounded-full bg-[#DE1D3E] text-white font-bold text-sm flex items-center justify-center gap-2 active:scale-95 hover:bg-red-600 transition-all cursor-pointer shadow-lg shadow-red-950/40"
         >
           <CreditCard className="w-4 h-4" />
           Dobít kredit
         </button>
       </div>
 
-      {/* 4 Figma Menu Rows */}
+      {/* Menu Rows */}
       <div className="flex flex-col divide-y divide-white/10 border-t border-b border-white/10 my-6">
         {menuRows.map((row) => (
           <div
@@ -141,7 +162,7 @@ export const ProfileView: React.FC = () => {
             <div
               key={act.id}
               onClick={() => setActiveModal('transaction_receipt')}
-              className="flex items-center justify-between p-3.5 glass-panel rounded-2xl border border-white/10 cursor-pointer hover:border-white/20 transition-all bg-white/5 group"
+              className="flex items-center justify-between p-3.5 rounded-2xl border border-white/10 cursor-pointer hover:border-white/20 transition-all bg-white/5 group"
             >
               {/* Activity Type Icon */}
               <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-neutral-300 group-hover:text-white transition-colors">
@@ -158,7 +179,7 @@ export const ProfileView: React.FC = () => {
                 <p className="text-[11px] text-neutral-400 font-medium mt-0.5">{act.dateStr}</p>
               </div>
 
-              {/* Amount - Single Line Guaranteed */}
+              {/* Amount */}
               <div className={`text-xs font-black shrink-0 whitespace-nowrap text-right ${act.isPositive ? 'text-emerald-400' : 'text-white'}`}>
                 {act.isPositive ? '+' : '-'}{act.amount.toLocaleString('cs-CZ')} Kč
               </div>
@@ -169,5 +190,3 @@ export const ProfileView: React.FC = () => {
     </div>
   );
 };
-
-

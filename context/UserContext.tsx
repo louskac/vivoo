@@ -33,6 +33,8 @@ interface UserContextType {
   loginWithPasskey: () => Promise<boolean>;
   loginWithPhone: (phoneNumber: string, otpCode: string) => Promise<boolean>;
   switchProfile: (targetUserId: string) => Promise<boolean>;
+  createTesterProfile: (data: { fullName: string; handle: string; memberTier?: string; cashlessCredit?: number }) => Promise<boolean>;
+  updateProfile: (data: Partial<UserDbModel>) => Promise<boolean>;
   logoutToGuest: () => Promise<boolean>;
   refreshAllData: () => Promise<void>;
 }
@@ -63,7 +65,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     derby: { videoId: 'derby', likesCount: 3120, viewsCount: 12800 },
     beats_for_love: { videoId: 'beats_for_love', likesCount: 4500, viewsCount: 18900 },
     ballet: { videoId: 'ballet', likesCount: 630, viewsCount: 2100 },
-    basketball: { videoId: 'basketball', likesCount: 410, viewsCount: 1800 }
+    basketball: { videoId: 'basketball', likesCount: 410, viewsCount: 1800 },
+    pardubice_hokej: { videoId: 'pardubice_hokej', likesCount: 2840, viewsCount: 9400 },
+    zoo_praha: { videoId: 'zoo_praha', likesCount: 3120, viewsCount: 14200 },
+    plzen_hokej: { videoId: 'plzen_hokej', likesCount: 1950, viewsCount: 7800 },
+    viktoria_plzen: { videoId: 'viktoria_plzen', likesCount: 2100, viewsCount: 8100 },
+    zeme_zivitelka: { videoId: 'zeme_zivitelka', likesCount: 1680, viewsCount: 6200 },
+    safari_park: { videoId: 'safari_park', likesCount: 2450, viewsCount: 11300 },
+    tatran_florbal: { videoId: 'tatran_florbal', likesCount: 1340, viewsCount: 5100 },
+    flora_olomouc: { videoId: 'flora_olomouc', likesCount: 980, viewsCount: 3900 },
+    oktagon_mma: { videoId: 'oktagon_mma', likesCount: 5890, viewsCount: 24500 },
+    standup_comedy: { videoId: 'standup_comedy', likesCount: 740, viewsCount: 2900 },
+    ecommerce_summit: { videoId: 'ecommerce_summit', likesCount: 510, viewsCount: 1900 },
+    barum_rally: { videoId: 'barum_rally', likesCount: 3890, viewsCount: 16400 }
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -313,6 +327,43 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return false;
   };
 
+  const createTesterProfile = async (data: { fullName: string; handle: string; memberTier?: string; cashlessCredit?: number }): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create_tester', ...data })
+      }).then((r) => r.json());
+
+      if (res.success && res.user) {
+        setUser(res.user);
+        await refreshAllData();
+        return true;
+      }
+    } catch (err) {
+      console.error('[UserContext] createTesterProfile error:', err);
+    }
+    return false;
+  };
+
+  const updateProfile = async (data: Partial<UserDbModel>): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/user', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then((r) => r.json());
+
+      if (res.success && res.data) {
+        setUser(res.data);
+        return true;
+      }
+    } catch (err) {
+      console.error('[UserContext] updateProfile error:', err);
+    }
+    return false;
+  };
+
   const logoutToGuest = async (): Promise<boolean> => {
     try {
       const res = await fetch('/api/auth', {
@@ -352,6 +403,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loginWithPasskey,
         loginWithPhone,
         switchProfile,
+        createTesterProfile,
+        updateProfile,
         logoutToGuest,
         refreshAllData
       }}

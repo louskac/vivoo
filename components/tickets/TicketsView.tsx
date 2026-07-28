@@ -21,8 +21,7 @@ export const TicketsView: React.FC = () => {
     qrCode: t.qrCode
   }));
 
-  // Map dynamic purchased tickets + default tickets
-  const upcomingTickets: TicketDetailSpec[] = [
+  const defaultUpcomingTickets: TicketDetailSpec[] = [
     {
       id: 'tkt-hero-1',
       title: 'Koncert pod živými hvězdami',
@@ -33,7 +32,6 @@ export const TicketsView: React.FC = () => {
       badge: 'DNES',
       qrCode: 'VIVOO-HVEZDY-881920'
     },
-    ...userTicketsFormatted,
     {
       id: 'tkt-sparta-1',
       title: 'Sparta x Slavia',
@@ -52,6 +50,11 @@ export const TicketsView: React.FC = () => {
       bgImg: '/images/prague_derby.jpg',
       qrCode: 'VIVOO-DERBY-312005'
     }
+  ];
+
+  const upcomingTickets: TicketDetailSpec[] = [
+    ...userTicketsFormatted,
+    ...defaultUpcomingTickets
   ];
 
   const pastTickets: TicketDetailSpec[] = [

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
 import { useUser } from '@/context/UserContext';
 import { mockEvents } from '@/lib/data';
@@ -8,9 +8,52 @@ import { Badge } from '@/components/ui/Badge';
 import { Volume2, VolumeX, Bookmark, Ticket, MapPin, Calendar, Share2, Heart } from 'lucide-react';
 import { VibeCategory, EventItem } from '@/lib/types';
 
+interface FeedVideoItemProps {
+  ev: EventItem;
+  isCurrent: boolean;
+  isMuted: boolean;
+  activeTab: string;
+}
+
+const FeedVideoItem: React.FC<FeedVideoItemProps> = ({ ev, isCurrent, isMuted, activeTab }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = isMuted;
+
+    if (isCurrent && activeTab === 'feed') {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Ignore autoplay restriction errors
+        });
+      }
+    } else {
+      video.pause();
+    }
+  }, [isCurrent, isMuted, activeTab]);
+
+  return (
+    <video
+      ref={videoRef}
+      loop
+      playsInline
+      preload="metadata"
+      muted={isMuted}
+      className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover z-0"
+      src={ev.videoUrl}
+      poster={ev.bgImg}
+    />
+  );
+};
+
 export const FeedView: React.FC = () => {
   const isMuted = useAppStore((state) => state.isMuted);
   const toggleMute = useAppStore((state) => state.toggleMute);
+  const activeTab = useAppStore((state) => state.activeTab);
   const setSelectedEvent = useAppStore((state) => state.setSelectedEvent);
 
   const { likedVideoIds, savedEventIds, videoStats, toggleLike, toggleSave } = useUser();
@@ -27,10 +70,17 @@ export const FeedView: React.FC = () => {
 
   const vibes: { id: VibeCategory; label: string }[] = [
     { id: 'vse', label: 'Vše' },
+    { id: 'hokej', label: 'Hokej' },
+    { id: 'fotbal', label: 'Fotbal' },
     { id: 'koncerty', label: 'Koncerty' },
     { id: 'festivaly', label: 'Festivaly' },
+    { id: 'zoo', label: 'ZOO' },
+    { id: 'vystaviste', label: 'Výstaviště' },
+    { id: 'florbal', label: 'Florbal' },
     { id: 'sport', label: 'Sport' },
-    { id: 'party', label: 'Party' },
+    { id: 'divadlo', label: 'Divadlo' },
+    { id: 'standup', label: 'Stand-up' },
+    { id: 'konference', label: 'Konference' },
   ];
 
   const currentEvent = filteredEvents[playingIndex % filteredEvents.length] || mockEvents[0];
@@ -84,9 +134,9 @@ export const FeedView: React.FC = () => {
   return (
     <div className="relative w-full h-screen bg-black text-white select-none overflow-hidden">
       {/* Top Header Controls (Fixed above all videos) */}
-      <div className="fixed top-12 left-4 right-4 z-30 flex items-center justify-between pointer-events-auto">
+      <div className="fixed top-12 left-4 right-4 z-30 flex items-center pointer-events-auto">
         {/* Vibe Category Topics Switcher */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 pr-2 max-w-[calc(100%-48px)] flex-nowrap shrink">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 w-full flex-nowrap shrink">
           {vibes.map((vibe) => (
             <button
               key={vibe.id}
@@ -98,34 +148,17 @@ export const FeedView: React.FC = () => {
                   containerRef.current.scrollTop = 0;
                 }
               }}
-              className={`feed-glass-pill ${activeVibe === vibe.id ? 'active' : ''}`}
+              className={`feed-glass-pill whitespace-nowrap shrink-0 ${activeVibe === vibe.id ? 'active' : ''}`}
             >
               {vibe.label}
             </button>
           ))}
         </div>
-
-        {/* Mute Button */}
-        <button
-          onClick={handleToggleMute}
-          className="feed-sound-btn shrink-0 ml-2"
-          aria-label="Sound toggle"
-        >
-          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-        </button>
       </div>
 
       {/* Static Fixed Action Column */}
       {currentEvent && (
         <div className="fixed right-6 bottom-[calc(200px+env(safe-area-inset-bottom,0px))] z-30 flex flex-col items-center gap-4 pointer-events-auto">
-          {/* Organizer Avatar Circle */}
-          <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-xl cursor-pointer">
-            <img src="/images/avatar.jpg" alt="Organizer" className="w-full h-full object-cover" />
-            <div className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 bg-[#DE1D3E] text-white text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">
-              +
-            </div>
-          </div>
-
           {/* Like / Heart Reaction Button */}
           <button
             onClick={(e) => {
@@ -151,7 +184,7 @@ export const FeedView: React.FC = () => {
             className="flex flex-col items-center gap-0.5 text-white group cursor-pointer active:scale-95 transition-transform"
           >
             <div className="w-9 h-9 flex items-center justify-center text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-              <Bookmark className={`w-6 h-6 stroke-[2.2] ${isSaved ? 'fill-red-500 stroke-red-500' : 'stroke-white'}`} />
+              <Bookmark className={`w-6 h-6 stroke-[2.2] ${isSaved ? 'fill-white stroke-white' : 'stroke-white'}`} />
             </div>
             <span className="text-[0.72rem] font-semibold text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">Uložit</span>
           </button>
@@ -202,7 +235,7 @@ export const FeedView: React.FC = () => {
               className="relative w-full h-screen snap-start snap-always shrink-0 overflow-hidden bg-black cursor-pointer"
             >
               {/* Double Tap Floating Heart Pop Micro-Animation */}
-              {showHeartPop && (
+              {showHeartPop && isCurrent && (
                 <div className="absolute inset-0 z-40 pointer-events-none flex items-center justify-center animate-bounce duration-300">
                   <div className="bg-black/40 backdrop-blur-md p-6 rounded-full border border-white/20 animate-ping">
                     <Heart className="w-20 h-20 fill-red-500 text-red-500 drop-shadow-[0_0_30px_rgba(239,68,68,0.9)]" />
@@ -217,15 +250,12 @@ export const FeedView: React.FC = () => {
                 className="absolute inset-0 w-full h-full object-cover"
               />
 
-              {/* Background Video */}
-              <video
-                autoPlay={isCurrent}
-                loop
-                muted={isMuted}
-                playsInline
-                className="absolute inset-0 w-full h-full min-w-full min-h-full object-cover z-0"
-                src={ev.videoUrl}
-                poster={ev.bgImg}
+              {/* Controlled Background Video */}
+              <FeedVideoItem
+                ev={ev}
+                isCurrent={isCurrent}
+                isMuted={isMuted}
+                activeTab={activeTab}
               />
 
               {/* Scrim Dark Gradient Overlay */}
@@ -274,3 +304,4 @@ export const FeedView: React.FC = () => {
     </div>
   );
 };
+

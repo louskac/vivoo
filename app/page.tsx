@@ -14,9 +14,11 @@ import { RewardsModal } from '@/components/profile/RewardsModal';
 import { MyVideosModal } from '@/components/profile/MyVideosModal';
 import { TicketQrModal } from '@/components/detail/TicketQrModal';
 import { CitySelectorModal } from '@/components/discover/CitySelectorModal';
+import { DateSelectorModal } from '@/components/discover/DateSelectorModal';
 import { TransactionHistoryModal } from '@/components/profile/TransactionHistoryModal';
 import { SettingsModal } from '@/components/profile/SettingsModal';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { FloatingNavCapsule } from '@/components/ui/FloatingNavCapsule';
 import { usePrecacheAppAssets } from '@/lib/precache';
 
@@ -51,9 +53,11 @@ export default function Home() {
       <MyVideosModal />
       <TicketQrModal />
       <CitySelectorModal />
+      <DateSelectorModal />
       <TransactionHistoryModal />
       <SettingsModal />
       <AuthModal />
+      <EditProfileModal />
 
       {/* Global Floating Navigation Capsule */}
       <FloatingNavCapsule />

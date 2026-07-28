@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useAppStore } from '@/lib/store';
+import { mockEvents } from '@/lib/data';
 import { X, MapPin, Check } from 'lucide-react';
 
 interface CityItem {
@@ -18,13 +19,18 @@ export const CitySelectorModal: React.FC = () => {
 
   if (activeModal !== 'city_selector') return null;
 
+  const countCity = (keyword: string) =>
+    mockEvents.filter((e) => e.location.toLowerCase().includes(keyword.toLowerCase())).length;
+
   const cities: CityItem[] = [
-    { id: 'all', name: 'Všechna města', count: 18 },
-    { id: 'praha', name: 'Praha', count: 12 },
-    { id: 'brno', name: 'Brno', count: 4 },
-    { id: 'ostrava', name: 'Ostrava', count: 2 },
-    { id: 'plzen', name: 'Plzeň', count: 1 },
-    { id: 'bratislava', name: 'Bratislava', count: 3 }
+    { id: 'all', name: 'Všechna města', count: mockEvents.length },
+    { id: 'praha', name: 'Praha', count: countCity('praha') },
+    { id: 'pardubice', name: 'Pardubice', count: countCity('pardubice') },
+    { id: 'plzen', name: 'Plzeň', count: countCity('plzeň') || countCity('plzen') },
+    { id: 'ostrava', name: 'Ostrava', count: countCity('ostrava') },
+    { id: 'budejovice', name: 'České Budějovice', count: countCity('budějovice') || countCity('budejovice') },
+    { id: 'olomouc', name: 'Olomouc', count: countCity('olomouc') },
+    { id: 'brno', name: 'Brno', count: countCity('brno') },
   ];
 
   return (

@@ -105,6 +105,28 @@ export async function POST(request: Request) {
       });
     }
 
+    if (action === 'create_tester') {
+      const { fullName, handle, memberTier, cashlessCredit } = body;
+      const newUser: UserDbModel = {
+        id: `usr-[#${Math.floor(1000 + Math.random() * 9000)}]`,
+        username: (handle || 'tester').replace('@', ''),
+        handle: handle ? (handle.startsWith('@') ? handle : `@${handle}`) : '@tester',
+        fullName: fullName || 'Tester Profil',
+        avatarUrl: '/images/avatar.jpg',
+        bio: 'Testovací profil pro vývoj a QA',
+        memberTier: memberTier || 'VIP Member',
+        cashlessCredit: typeof cashlessCredit === 'number' ? cashlessCredit : 1000,
+        isGuest: false
+      };
+      db.user = newUser;
+      saveDatabase(db);
+      return NextResponse.json({
+        success: true,
+        user: db.user,
+        message: 'Nový testovací profil vytvořen'
+      });
+    }
+
     if (action === 'guest') {
       db.user = { ...DEMO_USERS['guest'] };
       saveDatabase(db);

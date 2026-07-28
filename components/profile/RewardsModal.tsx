@@ -2,10 +2,12 @@
 
 import React from 'react';
 import { useAppStore } from '@/lib/store';
-import { X, Gift, Award, Zap, Ticket, CheckCircle2 } from 'lucide-react';
+import { useUser } from '@/context/UserContext';
+import { X, Gift, Award } from 'lucide-react';
 
 export const RewardsModal: React.FC = () => {
   const { activeModal, setActiveModal } = useAppStore();
+  const { user, isGuest } = useUser();
 
   if (activeModal !== 'rewards') return null;
 
@@ -21,7 +23,7 @@ export const RewardsModal: React.FC = () => {
         {/* Close Button */}
         <button
           onClick={() => setActiveModal(null)}
-          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-neutral-400 hover:text-white transition-all"
+          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-neutral-400 hover:text-white transition-all cursor-pointer z-10"
         >
           <X className="w-5 h-5" />
         </button>
@@ -43,10 +45,10 @@ export const RewardsModal: React.FC = () => {
             <Award className="w-8 h-8 text-amber-400 shrink-0" />
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-amber-400 block">Členství</span>
-              <h4 className="text-base font-extrabold text-white">VIP Gold Member</h4>
+              <h4 className="text-base font-extrabold text-white">{isGuest ? 'Návštěvník (Guest)' : user.memberTier || 'VIP Member'}</h4>
             </div>
           </div>
-          <span className="text-xs bg-amber-500 text-black font-black px-3 py-1 rounded-full">LEVEL 3</span>
+          <span className="text-xs bg-amber-500 text-black font-black px-3 py-1 rounded-full">{isGuest ? 'GUEST' : 'LEVEL 3'}</span>
         </div>
 
         {/* Available Vouchers List */}

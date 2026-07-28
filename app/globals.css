@@ -117,6 +117,8 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
   transition: all 0.2s ease !important;
 }
 
