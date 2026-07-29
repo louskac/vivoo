@@ -146,6 +146,17 @@ export type TabId = 'feed' | 'discover' | 'tickets' | 'profile';
 
 export type TicketTier = 'standard' | 'vip' | 'early_bird' | 'student';
 
+export interface SeatAllocation {
+  id: string;
+  seatNumber: number | string;
+  status: 'owner' | 'pending' | 'claimed' | 'free';
+  recipientName?: string;
+  recipientContact?: string;
+  recipientAvatarUrl?: string;
+  transferCode?: string;
+  claimedAt?: string;
+}
+
 export interface PurchasedTicket {
   id: string;
   eventId: string;
@@ -158,6 +169,7 @@ export interface PurchasedTicket {
   totalPrice: number;
   sectorName?: string;
   qrCode: string;
+  seats?: SeatAllocation[];
 }
 
 export interface TicketDetailSpec {
@@ -177,6 +189,7 @@ export interface TicketDetailSpec {
   gateInfo?: string;
   holderName?: string;
   categoryTag?: string;
+  seats?: SeatAllocation[];
 }
 
 export type DateFilterType = 'all' | 'today' | 'tomorrow' | 'weekend' | 'this_month' | 'next_month';
@@ -194,6 +207,7 @@ export type ActiveModal =
   | 'ticket_qr'
   | 'settings'
   | 'ticket_transfer'
+  | 'ticket_claim'
   | 'auth'
   | 'edit_profile'
   | 'live_mode'

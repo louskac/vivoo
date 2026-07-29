@@ -13,6 +13,8 @@ import { SavedEventsModal } from '@/components/profile/SavedEventsModal';
 import { RewardsModal } from '@/components/profile/RewardsModal';
 import { MyVideosModal } from '@/components/profile/MyVideosModal';
 import { TicketQrModal } from '@/components/detail/TicketQrModal';
+import { TicketTransferModal } from '@/components/detail/TicketTransferModal';
+import { TicketClaimModal } from '@/components/detail/TicketClaimModal';
 import { CitySelectorModal } from '@/components/discover/CitySelectorModal';
 import { DateSelectorModal } from '@/components/discover/DateSelectorModal';
 import { TransactionHistoryModal } from '@/components/profile/TransactionHistoryModal';
@@ -58,6 +60,8 @@ export default function Home() {
       <RewardsModal />
       <MyVideosModal />
       <TicketQrModal />
+      <TicketTransferModal />
+      <TicketClaimModal />
       <CitySelectorModal />
       <DateSelectorModal />
       <TransactionHistoryModal />
