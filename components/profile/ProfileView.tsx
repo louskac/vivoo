@@ -5,6 +5,7 @@ import { useAppStore } from '@/lib/store';
 import { useUser } from '@/context/UserContext';
 import { ActiveModal } from '@/lib/types';
 import { Settings, Bookmark, Video, Gift, History, ChevronRight, CreditCard, Ticket, User } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 
 export const ProfileView: React.FC = () => {
   const setActiveModal = useAppStore((state) => state.setActiveModal);
@@ -38,7 +39,7 @@ export const ProfileView: React.FC = () => {
     <div className="min-h-screen bg-[#0A0B0E] text-white pb-32 pt-10 px-5 animate-fade-in max-w-md mx-auto">
       {/* Top Header Bar */}
       <div className="flex items-center justify-between mb-5">
-        <h1 className="text-3xl font-black text-white tracking-tight">Profil</h1>
+        <Logo height={32} />
         <div className="flex items-center gap-2">
           {isGuest ? (
             <button

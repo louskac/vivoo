@@ -7,6 +7,7 @@ import { TicketTier } from '@/lib/types';
 import { X, Minus, Plus, Users, CreditCard, CheckCircle2 } from 'lucide-react';
 
 import { Badge } from '@/components/ui/Badge';
+import { Logo } from '@/components/ui/Logo';
 
 export const CheckoutModal: React.FC = () => {
   const { selectedEvent, activeModal, setActiveModal, setActiveTab, setSelectedEvent } = useAppStore();
@@ -192,7 +193,11 @@ export const CheckoutModal: React.FC = () => {
               className="w-full py-4 rounded-full bg-[#DE1D3E] text-white font-extrabold text-base shadow-lg shadow-red-600/30 hover:bg-red-600 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <CreditCard className="w-5 h-5" />
-              Zaplatit {perPersonPrice} Kč (ViVoo Kredit)
+              <span>Zaplatit {perPersonPrice} Kč</span>
+              <span className="inline-flex items-center gap-1 opacity-95 text-xs font-bold bg-black/20 px-2 py-0.5 rounded-full border border-white/10">
+                <Logo variant="icon" height={14} />
+                <span>ViVoo Kredit</span>
+              </span>
             </button>
           </div>
         )}

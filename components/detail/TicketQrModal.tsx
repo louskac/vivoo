@@ -6,6 +6,8 @@ import { useUser } from '@/context/UserContext';
 import { ChevronLeft, DoorClosed, LayoutGrid, User, ChevronDown, ChevronUp, Maximize2, Check } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 
+import { Logo } from '@/components/ui/Logo';
+
 export const TicketQrModal: React.FC = () => {
   const selectedTicket = useAppStore((state) => state.selectedTicket);
   const setSelectedTicket = useAppStore((state) => state.setSelectedTicket);
@@ -220,7 +222,10 @@ export const TicketQrModal: React.FC = () => {
                 <div className="pt-2 flex flex-col gap-1.5 text-xs text-neutral-300 font-normal">
                   <a href="#" className="hover:underline text-neutral-300">Obchodní podmínky</a>
                   <a href="#" className="hover:underline text-neutral-300">Reklamace</a>
-                  <span className="text-neutral-400 mt-1">ViVoo Events s.r.o.</span>
+                  <span className="text-neutral-400 mt-1 flex items-center gap-1.5 font-medium">
+                    <Logo variant="icon" height={16} />
+                    <span>ViVoo Events s.r.o.</span>
+                  </span>
                 </div>
               )}
             </div>
