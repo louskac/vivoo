@@ -65,7 +65,7 @@ export const TacticalPitchView: React.FC<TacticalPitchViewProps> = ({
             className={`fast-filter-pill !h-8 !px-3.5 !text-xs gap-1 ${viewMode === '3d' ? 'active' : ''}`}
           >
             <Box className="w-3 h-3" />
-            <span>3D Terén</span>
+            <span>3D Gyroscope</span>
           </button>
           <button
             onClick={() => setViewMode('list')}

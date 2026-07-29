@@ -181,23 +181,43 @@ export const CheckoutModal: React.FC = () => {
               </div>
             </div>
 
+            {/* OneID Verification Pill */}
+            <div className="flex items-center justify-between text-xs text-neutral-300 glass-panel p-3.5 rounded-2xl border border-blue-500/30 bg-blue-950/20">
+              <span className="flex items-center gap-1.5 font-extrabold text-blue-400">
+                <CheckCircle2 className="w-4 h-4" /> Ověřeno přes OneID
+              </span>
+              <span className="text-[10px] text-neutral-400 font-mono">ID: CZ-8829104</span>
+            </div>
+
             {/* User Balance Info */}
             <div className="flex items-center justify-between text-xs text-neutral-400 glass-panel p-3.5 rounded-2xl border border-white/10">
               <span>Váš kreditní zůstatek:</span>
               <span className="font-bold text-emerald-400">{user.cashlessCredit.toLocaleString('cs-CZ')} Kč</span>
             </div>
 
-            {/* Pay Button */}
+            {/* Apple Pay / Google Pay 1-Click Instant Buttons */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                onClick={handlePay}
+                className="w-full py-3.5 rounded-2xl bg-black hover:bg-neutral-900 border border-white/20 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer shadow-lg"
+              >
+                <span> Pay (1-Click)</span>
+              </button>
+              <button
+                onClick={handlePay}
+                className="w-full py-3.5 rounded-2xl bg-white hover:bg-neutral-100 text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer shadow-lg"
+              >
+                <span>G Pay (1-Click)</span>
+              </button>
+            </div>
+
+            {/* Pay with ViVoo NFC Credit Button */}
             <button
               onClick={handlePay}
-              className="w-full py-4 rounded-full bg-[#DE1D3E] text-white font-extrabold text-base shadow-lg shadow-red-600/30 hover:bg-red-600 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 rounded-full bg-[#DE1D3E] text-white font-extrabold text-base shadow-lg shadow-red-600/30 hover:bg-red-600 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer border border-white/20"
             >
               <CreditCard className="w-5 h-5" />
-              <span>Zaplatit {perPersonPrice} Kč</span>
-              <span className="inline-flex items-center gap-1 opacity-95 text-xs font-bold bg-black/20 px-2 py-0.5 rounded-full border border-white/10">
-                <Logo variant="icon" height={14} />
-                <span>ViVoo Kredit</span>
-              </span>
+              <span>Zaplatit {perPersonPrice} Kč (NFC Kredit)</span>
             </button>
           </div>
         )}

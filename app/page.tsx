@@ -25,11 +25,17 @@ import { LiveAmbientBanner } from '@/components/live/LiveAmbientBanner';
 import { LiveModeModal } from '@/components/live/LiveModeModal';
 import { LightshowOverlay } from '@/components/live/LightshowOverlay';
 import { FloatingNavCapsule } from '@/components/ui/FloatingNavCapsule';
+import { CreatorStudioModal } from '@/components/creator/CreatorStudioModal';
+import { UgcUploadModal } from '@/components/ugc/UgcUploadModal';
 import { usePrecacheAppAssets } from '@/lib/precache';
 
 export default function Home() {
   const activeTab = useAppStore((state) => state.activeTab);
   usePrecacheAppAssets();
+
+  React.useEffect(() => {
+    (window as any).useAppStore = useAppStore;
+  }, []);
 
   return (
     <main className="relative min-h-screen bg-[#0A0B0E] text-white">
@@ -72,6 +78,10 @@ export default function Home() {
       {/* Live Event Mode Overlay & Strobe Lightshow */}
       <LiveModeModal />
       <LightshowOverlay />
+
+      {/* Pitch Deck MVP Feature Modals */}
+      <CreatorStudioModal />
+      <UgcUploadModal />
 
       {/* Global Floating Navigation Capsule */}
       <FloatingNavCapsule />

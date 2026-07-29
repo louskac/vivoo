@@ -3,7 +3,7 @@
 import React from 'react';
 import { useAppStore } from '@/lib/store';
 import { Badge } from '@/components/ui/Badge';
-import { ChevronLeft, MapPin, Calendar } from 'lucide-react';
+import { ChevronLeft, MapPin, Calendar, Users, Clock, Sparkles } from 'lucide-react';
 
 export const EventDetailModal: React.FC = () => {
   const selectedEvent = useAppStore((state) => state.selectedEvent);
@@ -44,6 +44,42 @@ export const EventDetailModal: React.FC = () => {
 
       {/* Main Body Content */}
       <div className="p-5 flex flex-col gap-6 bg-[#0A0B0E]">
+        
+        {/* 24h Exkluzivní Předprodej Banner (Slide 11 Growth Hacking) */}
+        <div className="p-3.5 rounded-2xl bg-gradient-to-r from-red-950/40 via-[#181A26] to-black border border-[#DE1D3E]/40 flex items-center justify-between shadow-lg">
+          <div className="flex items-center gap-2.5">
+            <Sparkles className="w-4 h-4 text-[#DE1D3E]" />
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase text-[#DE1D3E] tracking-wider">EXKLUZIVITA VIVOO (PRVNÍCH 24H)</span>
+              <span className="text-xs font-extrabold text-white">Exkluzivní předprodej pouze v aplikaci</span>
+            </div>
+          </div>
+          <div className="px-2.5 py-1 rounded-full bg-red-500/20 text-[#DE1D3E] text-[10px] font-mono font-black border border-red-500/30 flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            <span>14:32:05</span>
+          </div>
+        </div>
+
+        {/* "Jdu s přáteli" Social Community Stack (Slide 7 Feature) */}
+        <div className="p-4 rounded-2xl glass-panel border border-white/10 flex items-center justify-between shadow-md">
+          <div className="flex items-center gap-3">
+            <div className="flex -space-x-2 overflow-hidden">
+              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-[#0A0B0E] object-cover" src="/images/avatar.jpg" alt="Petr" />
+              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-[#0A0B0E] object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60" alt="Ema" />
+              <img className="inline-block h-8 w-8 rounded-full ring-2 ring-[#0A0B0E] object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=60" alt="Martin" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-extrabold text-white">Jdu s přáteli (3 jdou)</span>
+              <span className="text-[10.5px] text-neutral-400">Petr, Ema a Martin si již koupili lístek</span>
+            </div>
+          </div>
+          <button
+            onClick={() => alert("Pozvánka pro přátele s odkazem na akce byla zkopírována!")}
+            className="px-3 py-1.5 rounded-full bg-white/10 text-xs font-bold text-white hover:bg-white/20 active:scale-95 transition-all cursor-pointer border border-white/15 shrink-0"
+          >
+            Pozvat
+          </button>
+        </div>
         {/* Metadata Rows */}
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3 text-sm text-neutral-200 font-medium">

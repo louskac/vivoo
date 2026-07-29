@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useAppStore } from '@/lib/store';
 import { useUser } from '@/context/UserContext';
-import { ChevronLeft, DoorClosed, LayoutGrid, User, ChevronDown, ChevronUp, Maximize2, Check } from 'lucide-react';
+import { ChevronLeft, DoorClosed, LayoutGrid, User, ChevronDown, ChevronUp, Maximize2, Check, Car } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 
 import { Logo } from '@/components/ui/Logo';
@@ -21,6 +21,23 @@ export const TicketQrModal: React.FC = () => {
   const [openHowToGetThere, setOpenHowToGetThere] = useState(false);
   const [openOrganizerTerms, setOpenOrganizerTerms] = useState(true);
 
+  // Dynamic 3s TOTP rotating QR code (Slide 8 UX Blueprint)
+  const [totpCounter, setTotpCounter] = useState(3);
+  const [totpSeed, setTotpSeed] = useState('881920');
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setTotpCounter((prev) => {
+        if (prev <= 1) {
+          setTotpSeed(Math.floor(100000 + Math.random() * 900000).toString());
+          return 3;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   if (!selectedTicket) return null;
 
   const handleCopyCode = () => {
@@ -28,6 +45,31 @@ export const TicketQrModal: React.FC = () => {
     navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleOrderTaxi = (provider: 'bolt' | 'uber') => {
+    const locationStr = selectedTicket?.location || 'Malšovická Aréna, Hradec Králové';
+    const isMalsovicka = locationStr.includes('Malšovická') || selectedTicket?.id?.includes('hradec');
+    const lat = isMalsovicka ? 50.2106 : 50.0997;
+    const lng = isMalsovicka ? 15.8458 : 14.4158;
+
+    if (provider === 'uber') {
+      const formattedAddress = encodeURIComponent(locationStr);
+      const nickname = encodeURIComponent(selectedTicket?.title || 'Malšovická Aréna');
+      const uberUrl = `https://m.uber.com/ul/?action=setPickup&dropoff[latitude]=${lat}&dropoff[longitude]=${lng}&dropoff[nickname]=${nickname}&dropoff[formatted_address]=${formattedAddress}`;
+      window.open(uberUrl, '_blank');
+    } else if (provider === 'bolt') {
+      const boltDeepLink = `bolt://call?destination_lat=${lat}&destination_lng=${lng}`;
+      const boltWebLink = `https://m.bolt.eu/ride?destination_lat=${lat}&destination_lng=${lng}`;
+      
+      const start = Date.now();
+      window.location.href = boltDeepLink;
+      setTimeout(() => {
+        if (Date.now() - start < 1500) {
+          window.open(boltWebLink, '_blank');
+        }
+      }, 800);
+    }
   };
 
   // Determine if this ticket is a group ticket (purchased for > 1 person)
@@ -73,13 +115,18 @@ export const TicketQrModal: React.FC = () => {
             </p>
           </div>
 
-          {/* 2. White Rounded QR Code Card (100% Figma Parity) */}
-          <div className="w-[280px] h-[280px] sm:w-[300px] sm:h-[300px] bg-white rounded-[32px] p-6 shadow-2xl flex items-center justify-center relative mx-auto my-4 border border-white/20">
+          {/* 2. White Rounded QR Code Card (100% Figma & Slide 8 Parity) */}
+          <div className="w-[280px] h-[280px] sm:w-[300px] sm:h-[300px] bg-white rounded-[32px] p-6 shadow-2xl flex flex-col items-center justify-center relative mx-auto my-4 border border-white/20">
             <img
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${ticketCode}`}
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${ticketCode}-${totpSeed}`}
               alt="QR Code"
-              className="w-56 h-56 block mx-auto object-contain"
+              className="w-52 h-52 block mx-auto object-contain"
             />
+            {/* Dynamic 3s TOTP Live Refresh Bar */}
+            <div className="mt-2 flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/85 text-[10px] font-mono font-bold text-emerald-400 border border-emerald-500/40 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span>DYNAMICKÝ QR • TOTP: {totpSeed} ({totpCounter}s)</span>
+            </div>
           </div>
 
           {/* QR Code Serial & Group Badge (Conditioned on ticketCount > 1) */}
@@ -218,8 +265,26 @@ export const TicketQrModal: React.FC = () => {
                 {openHowToGetThere ? <ChevronUp className="w-4 h-4 text-neutral-400" /> : <ChevronDown className="w-4 h-4 text-neutral-400" />}
               </button>
               {openHowToGetThere && (
-                <div className="pt-2 text-xs text-neutral-400 leading-relaxed font-normal">
-                  Spojení MHD: Metro A (Jiřího z Poděbrad) nebo Tramvaj 11 (Italská). Parkování přímo v areálu je omezené.
+                <div className="pt-2 flex flex-col gap-3">
+                  <p className="text-xs text-neutral-400 leading-relaxed font-normal">
+                    Spojení MHD: Autobusy/MHD na zastávku Malšovická Aréna. Parkování v areálu stadionu je omezené.
+                  </p>
+                  <div className="grid grid-cols-2 gap-2.5 pt-1">
+                    <button
+                      onClick={() => handleOrderTaxi('bolt')}
+                      className="py-2.5 px-3 rounded-xl bg-[#34D186] hover:bg-[#2cb874] text-black font-black text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer border border-white/20"
+                    >
+                      <Car className="w-3.5 h-3.5 fill-black stroke-none" />
+                      <span>Order Bolt</span>
+                    </button>
+                    <button
+                      onClick={() => handleOrderTaxi('uber')}
+                      className="py-2.5 px-3 rounded-xl bg-black hover:bg-neutral-900 text-white font-black text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer border border-white/30"
+                    >
+                      <Car className="w-3.5 h-3.5 fill-white stroke-none" />
+                      <span>Order Uber</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

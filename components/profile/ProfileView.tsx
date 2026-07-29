@@ -146,6 +146,66 @@ export const ProfileView: React.FC = () => {
         ))}
       </div>
 
+      {/* B2C Creator Studio Card (Slide 6 & 10 Feature) */}
+      <div className="mb-6 p-4 rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-950/40 to-black flex items-center justify-between shadow-xl">
+        <div className="flex flex-col gap-1">
+          <span className="text-[10px] font-black uppercase text-[#DE1D3E] tracking-wider">B2C CREATOR STUDIO</span>
+          <h3 className="text-sm font-extrabold text-white">Portál pro klubové markéťáky</h3>
+          <p className="text-[11px] text-neutral-400">Přímé měření konverzí lístků z videí</p>
+        </div>
+        <button
+          onClick={() => setActiveModal('creator_studio')}
+          className="px-3.5 py-2 rounded-xl bg-[#DE1D3E] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-red-600 active:scale-95 transition-all cursor-pointer shadow-md shrink-0"
+        >
+          Otevřít
+        </button>
+      </div>
+
+      {/* Spotify & Apple Music Integration Card (Slide 7 Feature) */}
+      <div className="mb-6 p-4 rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/30 via-black to-black flex flex-col gap-3 shadow-xl">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">HUDERNÍ INTEGRACE</span>
+            <h3 className="text-sm font-extrabold text-white">Spotify & Apple Music</h3>
+          </div>
+          <span className="text-[9.5px] font-mono text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
+            PROPOJENO
+          </span>
+        </div>
+        <p className="text-xs text-neutral-300">
+          Notifikace o koncertech oblíbených interpretů v okolí (Xindl X, Raye, Mirai).
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => alert("Spotify účet je propojován. Analýza oblibených interpretů probíhá...")}
+            className="py-2.5 rounded-xl bg-[#1DB954] hover:bg-[#1aa34a] text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer border border-white/20"
+          >
+            <span>Spotify Connected</span>
+          </button>
+          <button
+            onClick={() => alert("Apple Music účet je propojován. Analýza interpretů probíhá...")}
+            className="py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer border border-white/20"
+          >
+            <span>Apple Music</span>
+          </button>
+        </div>
+      </div>
+
+      {/* In-App RFID Stadium Chip Pairing (Slide 5 & 11 Feature) */}
+      <div className="mb-6 p-4 rounded-2xl border border-blue-500/30 bg-gradient-to-r from-blue-950/30 via-black to-black flex items-center justify-between shadow-xl">
+        <div className="flex flex-col gap-1 min-w-0 pr-2">
+          <span className="text-[10px] font-black uppercase text-blue-400 tracking-wider">AREÁLOVÝ RFID ČIP</span>
+          <h3 className="text-sm font-extrabold text-white truncate">Spárovat Stadium Náramek</h3>
+          <p className="text-[11px] text-neutral-400">NFC dobíjení fyzických čipů přímo z mobilu</p>
+        </div>
+        <button
+          onClick={() => alert("Přiložte stadium RFID náramek k zadní straně telefonu (NFC)...")}
+          className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs uppercase tracking-wider active:scale-95 transition-all cursor-pointer shadow-md shrink-0 border border-white/20"
+        >
+          Spárovat
+        </button>
+      </div>
+
       {/* Poslední aktivita */}
       <div className="flex flex-col gap-3 mt-8">
         <div className="flex items-center justify-between">

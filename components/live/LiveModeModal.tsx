@@ -37,7 +37,8 @@ import {
   Gift,
   Flame,
   Check,
-  DoorClosed
+  DoorClosed,
+  Car
 } from 'lucide-react';
 
 export const LiveModeModal: React.FC = () => {
@@ -61,6 +62,7 @@ export const LiveModeModal: React.FC = () => {
   const [orderError, setOrderError] = useState<string | null>(null);
   const [orderSuccessMsg, setOrderSuccessMsg] = useState<string | null>(null);
   const [isRaffleEntered, setIsRaffleEntered] = useState(false);
+  const [isVipUpgraded, setIsVipUpgraded] = useState(false);
 
   if (activeModal !== 'live_mode') return null;
 
@@ -154,6 +156,31 @@ export const LiveModeModal: React.FC = () => {
       });
     } catch (err) {
       console.error('Failed to register vote:', err);
+    }
+  };
+
+  const handleOrderTaxi = (provider: 'bolt' | 'uber') => {
+    const isMalsovicka = currentEvent.location?.includes('Malšovická') || currentEvent.id === 'hradec_pardubice';
+    const lat = isMalsovicka ? 50.2106 : 50.0997;
+    const lng = isMalsovicka ? 15.8458 : 14.4158;
+    const venueName = currentEvent.location || 'Malšovická Aréna, Hradec Králové';
+
+    if (provider === 'uber') {
+      const formattedAddress = encodeURIComponent(venueName);
+      const nickname = encodeURIComponent(currentEvent.title || 'Malšovická Aréna');
+      const uberUrl = `https://m.uber.com/ul/?action=setPickup&dropoff[latitude]=${lat}&dropoff[longitude]=${lng}&dropoff[nickname]=${nickname}&dropoff[formatted_address]=${formattedAddress}`;
+      window.open(uberUrl, '_blank');
+    } else if (provider === 'bolt') {
+      const boltDeepLink = `bolt://call?destination_lat=${lat}&destination_lng=${lng}`;
+      const boltWebLink = `https://m.bolt.eu/ride?destination_lat=${lat}&destination_lng=${lng}`;
+      
+      const start = Date.now();
+      window.location.href = boltDeepLink;
+      setTimeout(() => {
+        if (Date.now() - start < 1500) {
+          window.open(boltWebLink, '_blank');
+        }
+      }, 800);
     }
   };
 
@@ -251,6 +278,42 @@ export const LiveModeModal: React.FC = () => {
 
           return (
           <div className="flex flex-col gap-5 animate-fade-in">
+
+            {/* Smart VIP Seat Upgrade Banner (Slide 6 & 10 Feature) */}
+            <div className="p-4.5 rounded-3xl bg-gradient-to-r from-amber-500/20 via-[#181A26] to-amber-950/40 border border-amber-500/40 flex items-center justify-between shadow-xl">
+              <div className="flex flex-col gap-1 min-w-0 pr-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                  <span className="text-[10px] font-black uppercase text-amber-400 tracking-wider">SMART SEAT UPGRADE</span>
+                </div>
+                <h4 className="text-xs font-black text-white truncate">Detekována neobsazená VIP Lounge sedačka</h4>
+                <p className="text-[10.5px] text-neutral-300 font-medium">Sektor B • Přístup do VIP s občerstvením</p>
+              </div>
+
+              {isVipUpgraded ? (
+                <div className="px-4 py-2.5 rounded-full bg-amber-500 text-black font-mono font-black text-xs shrink-0 shadow-lg flex items-center gap-1">
+                  <Check className="w-4 h-4" />
+                  <span>VIP AŽNĚ</span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    const success = deductBalance(290);
+                    if (success) {
+                      setIsVipUpgraded(true);
+                      setOrderSuccessMsg('VIP Upgrade úspěšný! Vstupenka byla upgradována.');
+                      setTimeout(() => setOrderSuccessMsg(null), 4000);
+                    } else {
+                      setOrderError('Nedostatek NFC kreditu (potřeba 290 Kč). Dobijte kredit.');
+                      setTimeout(() => setOrderError(null), 4000);
+                    }
+                  }}
+                  className="px-4 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 active:scale-95 transition-all cursor-pointer shrink-0 border border-white/20"
+                >
+                  Upgrade 290 Kč
+                </button>
+              )}
+            </div>
             
             {/* Score & Possession Momentum Card */}
             <div className="glass-panel p-5.5 rounded-3xl border border-white/20 bg-gradient-to-b from-[#161822]/90 via-[#0e1017]/95 to-[#090a0e] flex flex-col gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
@@ -504,6 +567,31 @@ export const LiveModeModal: React.FC = () => {
         {/* TAB 2: ATMOSFÉRA / PULSE, MVP & PREDICTORS (Masterpiece Layout) */}
         {activeTab === 'pulse' && (
           <div className="flex flex-col gap-4 animate-fade-in">
+
+            {/* UGC Video Fan Reward Card (Slide 5, 7, 11 Feature) */}
+            <div className="p-5 rounded-3xl border border-white/20 bg-gradient-to-r from-red-950/40 via-[#161822] to-black flex flex-col gap-3 shadow-xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-2xl bg-[#DE1D3E]/20 border border-[#DE1D3E]/40 flex items-center justify-center text-[#DE1D3E]">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div className="flex flex-col">
+                    <h3 className="text-sm font-extrabold text-white">Nahrát UGC Video z Atmosféry</h3>
+                    <span className="text-[10px] text-neutral-400 font-medium">Získej okamžitě +50 Kč NFC Kredit</span>
+                  </div>
+                </div>
+                <span className="text-[9px] font-black uppercase text-[#DE1D3E] bg-[#DE1D3E]/15 border border-[#DE1D3E]/30 px-2.5 py-1 rounded-full">
+                  ODMĚNA
+                </span>
+              </div>
+              <button
+                onClick={() => setActiveModal('ugc_upload')}
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#DE1D3E] to-red-700 hover:from-red-600 hover:to-red-800 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-red-600/30 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer border border-white/20 mt-1"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Nahrát Video & Získat 50 Kč</span>
+              </button>
+            </div>
 
             {/* Signed Jersey Raffle & MVP Vote Card */}
             {liveConfig.jerseyRaffle && (
@@ -903,6 +991,47 @@ export const LiveModeModal: React.FC = () => {
                 <span className="flex items-center gap-1 text-rose-400">
                   <span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> Vytíženo (8+ min)
                 </span>
+              </div>
+            </div>
+
+            {/* Bolt / Uber Taxi Deep Link Order Card */}
+            <div
+              className="p-5 rounded-3xl border border-white/15 bg-gradient-to-br from-white/10 via-[#141620]/90 to-[#0A0B0E] flex flex-col gap-3.5 shadow-xl"
+              style={{ borderTop: '1px solid rgba(255, 255, 255, 0.25)' }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500/20 via-emerald-500/10 to-transparent border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-lg">
+                    <Car className="w-5.5 h-5.5 text-emerald-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-extrabold text-white">Odvoz na / z akce</h3>
+                    <p className="text-xs text-neutral-400 font-medium mt-0.5">Předvyplněný cíl: {currentEvent.location || 'Malšovická Aréna'}</p>
+                  </div>
+                </div>
+                <span className="text-[9.5px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 shadow-sm shrink-0 whitespace-nowrap">
+                  TAXI DEEP LINK
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mt-1">
+                {/* Order Bolt Button */}
+                <button
+                  onClick={() => handleOrderTaxi('bolt')}
+                  className="py-3.5 px-4 rounded-2xl bg-[#34D186] hover:bg-[#2cb874] text-black font-black text-xs uppercase tracking-wider shadow-lg shadow-[#34D186]/20 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer border border-white/20"
+                >
+                  <Car className="w-4 h-4 fill-black stroke-none" />
+                  <span>Order Bolt</span>
+                </button>
+
+                {/* Order Uber Button */}
+                <button
+                  onClick={() => handleOrderTaxi('uber')}
+                  className="py-3.5 px-4 rounded-2xl bg-black hover:bg-neutral-900 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-black/50 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer border border-white/30"
+                >
+                  <Car className="w-4 h-4 fill-white stroke-none" />
+                  <span>Order Uber</span>
+                </button>
               </div>
             </div>
 

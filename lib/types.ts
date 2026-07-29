@@ -211,6 +211,8 @@ export type ActiveModal =
   | 'auth'
   | 'edit_profile'
   | 'live_mode'
+  | 'creator_studio'
+  | 'ugc_upload'
   | null;
 
 
