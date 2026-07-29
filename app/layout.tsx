@@ -14,8 +14,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ViVoo – TikTok for Events",
+  title: "ViVoo – Live Events & Cashless Arena Platform",
   description: "Discover live events, buy tickets, and experience real atmosphere",
+  icons: {
+    icon: "/images/logo.png",
+    apple: "/images/logo.png"
+  }
 };
 
 export default function RootLayout({

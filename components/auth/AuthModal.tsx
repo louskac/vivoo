@@ -5,6 +5,8 @@ import { useAppStore } from '@/lib/store';
 import { useUser } from '@/context/UserContext';
 import { X, Fingerprint, Smartphone, Apple, Sparkles, CheckCircle2, UserCheck, ShieldCheck, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 
+import { Logo } from '@/components/ui/Logo';
+
 export const AuthModal: React.FC = () => {
   const { activeModal, setActiveModal } = useAppStore();
   const { loginWithPasskey, loginWithPhone, switchProfile, logoutToGuest } = useUser();
@@ -95,6 +97,7 @@ export const AuthModal: React.FC = () => {
           <div className="flex flex-col gap-5">
             {/* Header */}
             <div className="pr-8">
+              <Logo height={34} className="mb-3" />
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DE1D3E]/15 border border-[#DE1D3E]/30 text-[11px] font-extrabold text-[#DE1D3E] uppercase tracking-wider mb-2">
                 <Sparkles className="w-3.5 h-3.5" />
                 Rychlé přihlášení
