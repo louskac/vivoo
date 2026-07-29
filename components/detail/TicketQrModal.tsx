@@ -163,11 +163,26 @@ export const TicketQrModal: React.FC = () => {
               </div>
             </button>
 
+            {/* Live Match Mode Entry Button */}
+            <button
+              onClick={() => {
+                useAppStore.getState().setActiveLiveEventId(selectedTicket.eventId || 'hradec_pardubice');
+                useAppStore.getState().setActiveModal('live_mode');
+              }}
+              className="w-full bg-gradient-to-r from-[#DE1D3E] via-[#B91C1C] to-[#881337] hover:from-red-600 hover:to-red-800 text-white font-black text-sm py-3.5 px-6 rounded-full flex items-center justify-center gap-2 shadow-xl shadow-red-600/30 active:scale-95 transition-all cursor-pointer mt-2"
+            >
+              <span className="flex h-2.5 w-2.5 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+              </span>
+              <span>Vstoupit do 3D Arény (Živý Zápas)</span>
+            </button>
+
             {/* Split between friends (Shown only if ticket is for > 1 person) */}
             {isGroupMode && (
               <button
                 onClick={() => useAppStore.getState().setActiveModal('ticket_transfer')}
-                className="w-full bg-white hover:bg-neutral-100 text-black font-extrabold text-sm py-3.5 px-6 rounded-full flex items-center justify-center gap-2 shadow-xl active:scale-95 transition-all cursor-pointer mt-2"
+                className="w-full bg-white hover:bg-neutral-100 text-black font-extrabold text-sm py-3.5 px-6 rounded-full flex items-center justify-center gap-2 shadow-xl active:scale-95 transition-all cursor-pointer mt-1"
               >
                 <Maximize2 className="w-4 h-4 text-black" />
                 <span>Rozdělit mezi přátele</span>

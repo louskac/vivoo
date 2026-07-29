@@ -153,13 +153,34 @@ export const TicketsView: React.FC = () => {
 
               {/* Middle Ticket Details */}
               <div className="flex-1 min-w-0">
-                <h4 className="text-base font-extrabold text-white truncate">{ticket.title}</h4>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-base font-extrabold text-white truncate">{ticket.title}</h4>
+                  {ticket.isTodayLive && (
+                    <span className="px-2 py-0.5 rounded-full bg-[#DE1D3E] text-white text-[9px] font-black uppercase tracking-wider shrink-0 animate-pulse">
+                      ŽIVĚ
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs text-neutral-400 truncate mt-0.5">{ticket.date}</p>
                 <p className="text-xs text-neutral-500 truncate mt-0.5">{ticket.seatDetail}</p>
               </div>
 
-              {/* Right Chevron Arrow */}
-              <ChevronRight className="w-5 h-5 text-neutral-500 group-hover:text-white transition-colors shrink-0" />
+              {/* Right Action / Chevron Arrow */}
+              {ticket.isTodayLive ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    useAppStore.getState().setActiveLiveEventId(ticket.eventId || 'hradec_pardubice');
+                    useAppStore.getState().setActiveModal('live_mode');
+                  }}
+                  className="px-3 py-1.5 rounded-full bg-[#DE1D3E] hover:bg-red-600 text-white text-xs font-black shadow-lg flex items-center gap-1 shrink-0 active:scale-95 transition-all cursor-pointer"
+                >
+                  <span>3D Aréna</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              ) : (
+                <ChevronRight className="w-5 h-5 text-neutral-500 group-hover:text-white transition-colors shrink-0" />
+              )}
             </div>
           ))}
         </div>
