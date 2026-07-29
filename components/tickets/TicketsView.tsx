@@ -23,6 +23,32 @@ export const TicketsView: React.FC = () => {
 
   const defaultUpcomingTickets: TicketDetailSpec[] = [
     {
+      id: 'tkt-hero-1',
+      title: 'Koncert pod živými hvězdami',
+      date: 'Ne 15. 10. · 20:00 · Riegrovy sady',
+      location: 'Riegrovy sady, Praha 3',
+      seatDetail: 'Řada 12, Sedadlo 1',
+      bgImg: '/images/xindl_live.jpg',
+      badge: 'DNES',
+      qrCode: 'VIVOO-HVEZDY-881920',
+      eventId: 'concert_hvezdy',
+      ticketCount: 1,
+      categoryTag: 'HUDBA'
+    },
+    {
+      id: 'tkt-sparta-1',
+      title: 'Sparta x Slavia',
+      date: 'Pá 20. 10. · 18:00 · Epet Aréna',
+      location: 'epet ARENA, Praha 7',
+      seatDetail: 'Severní tribuna A3 · Ř.9 · 11–14',
+      bgImg: '/images/prague_derby.jpg',
+      qrCode: 'VV0-2026-145344',
+      eventId: 'derby',
+      ticketCount: 4,
+      groupSeats: 'Severní tribuna A3 · Ř.9 · 11–14',
+      categoryTag: 'SPORT'
+    },
+    {
       id: 'tkt-hradec-pardubice',
       eventId: 'hradec_pardubice',
       title: 'FC Hradec Králové vs FK Pardubice',
@@ -32,28 +58,9 @@ export const TicketsView: React.FC = () => {
       bgImg: '/images/derby.jpg',
       badge: 'ŽIVĚ V ARÉNĚ',
       qrCode: 'VIVOO-DERBY-FCHK-PCE',
-      isTodayLive: true
-    },
-
-    {
-      id: 'tkt-hero-1',
-      title: 'Koncert pod živými hvězdami',
-      date: 'Ne 18. 10. · 20:00 · Riegrovy sady',
-      location: 'Riegrovy sady, Praha 3',
-      seatDetail: 'Řada 12, Sedadlo 1',
-      bgImg: '/images/xindl_live.jpg',
-      badge: 'DNES',
-      qrCode: 'VIVOO-HVEZDY-881920'
-    },
-    {
-      id: 'tkt-sparta-1',
-      title: 'Sparta x Slavia',
-      date: 'Pá 20. 10. · 18:00 · Epet Aréna',
-      location: 'epet ARENA, Praha 7',
-      seatDetail: 'Sektor B · Řada 11 · Sedadlo 122',
-      bgImg: '/images/prague_derby.jpg',
-      qrCode: 'VIVOO-DERBY-312004',
-      eventId: 'derby'
+      isTodayLive: true,
+      ticketCount: 1,
+      categoryTag: 'SPORT'
     }
   ];
 
@@ -61,7 +68,6 @@ export const TicketsView: React.FC = () => {
     ...defaultUpcomingTickets,
     ...userTicketsFormatted
   ];
-
 
   const pastTickets: TicketDetailSpec[] = [
     {
@@ -80,22 +86,22 @@ export const TicketsView: React.FC = () => {
   const listUpcoming = upcomingTickets.slice(1);
 
   return (
-    <div className="flex flex-col min-h-screen pb-32 pt-8 px-5 max-w-md mx-auto animate-fade-in text-white">
+    <div className="flex flex-col min-h-screen pb-40 pt-8 px-5 max-w-md mx-auto animate-fade-in text-white select-none">
       {/* Figma Header Title */}
       <h1 className="text-4xl font-black tracking-tight text-white mb-6">Vstupenky</h1>
 
-      {/* 1. Featured Hero Ticket Card (matching Figma spec point 1) */}
+      {/* 1. Featured Hero Ticket Card (100% Figma Parity) */}
       {heroTicket && (
         <div
           onClick={() => setSelectedTicket(heroTicket)}
-          className="relative w-full h-[240px] rounded-3xl overflow-hidden mb-8 cursor-pointer group shadow-2xl border border-white/10"
+          className="relative w-full h-[250px] rounded-3xl overflow-hidden mb-8 cursor-pointer group shadow-2xl border border-white/10"
         >
           <img
             src={heroTicket.bgImg}
             alt={heroTicket.title}
             onError={(e) => {
               e.currentTarget.onerror = null;
-              e.currentTarget.src = '/images/derby.jpg';
+              e.currentTarget.src = '/images/xindl_live.jpg';
             }}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
@@ -110,38 +116,20 @@ export const TicketsView: React.FC = () => {
             </div>
           )}
 
-          {/* Bottom Card Info & Live Mode CTA */}
-          <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-3">
-            <div className="flex flex-col items-start gap-1 min-w-0">
-              <h2 className="text-xl font-extrabold text-white leading-tight drop-shadow truncate">
-                {heroTicket.title}
-              </h2>
-              <p className="text-xs text-neutral-300 font-medium">
-                {heroTicket.date}
-              </p>
-              <p className="text-xs text-neutral-400 font-medium">
-                {heroTicket.seatDetail}
-              </p>
-            </div>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (heroTicket.eventId) {
-                  useAppStore.getState().setActiveLiveEventId(heroTicket.eventId);
-                }
-                useAppStore.getState().setActiveModal('live_mode');
-              }}
-              className="shrink-0 bg-red-600 hover:bg-red-500 text-white text-xs font-black px-3.5 py-2 rounded-xl shadow-lg border border-red-400/40 flex items-center gap-1.5 transition-transform active:scale-95"
-            >
-              <span>Aréna Mód</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-
+          {/* Bottom Card Info - Clean Figma Typography */}
+          <div className="absolute bottom-5 left-5 right-5 flex flex-col items-start gap-1">
+            <h2 className="text-2xl font-extrabold text-white leading-tight drop-shadow truncate w-full">
+              {heroTicket.title}
+            </h2>
+            <p className="text-xs text-neutral-300 font-medium mt-0.5">
+              {heroTicket.date}
+            </p>
+            <p className="text-xs text-neutral-400 font-medium">
+              {heroTicket.seatDetail}
+            </p>
           </div>
         </div>
       )}
-
 
       {/* 2. Nadcházející Section */}
       <div className="flex flex-col gap-3 mb-8">

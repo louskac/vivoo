@@ -172,6 +172,11 @@ export interface TicketDetailSpec {
   isPast?: boolean;
   eventId?: string;
   isTodayLive?: boolean;
+  ticketCount?: number;
+  groupSeats?: string;
+  gateInfo?: string;
+  holderName?: string;
+  categoryTag?: string;
 }
 
 export type DateFilterType = 'all' | 'today' | 'tomorrow' | 'weekend' | 'this_month' | 'next_month';

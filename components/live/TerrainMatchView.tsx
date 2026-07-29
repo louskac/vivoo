@@ -264,6 +264,7 @@ export default function TerrainMatchView({
   const [playbackSpeed, setPlaybackSpeed] = useState(60); // multiplier (1s = 1 minute)
   const [currentTime, setCurrentTime] = useState(0); 
   const [duration, setDuration] = useState(5400); // 90 mins in seconds
+  const [isScrubbing, setIsScrubbing] = useState(false);
   const [momentumData, setMomentumData] = useState<MomentumPoint[]>([]);
   const [matchStats, setMatchStats] = useState<MatchStats | null>(null);
   const [showExplainer, setShowExplainer] = useState(false);
@@ -304,7 +305,7 @@ export default function TerrainMatchView({
   // Playback control refs
   const isPlayingRef = useRef(true);
   const timeRef = useRef(0);
-  const playbackSpeedRef = useRef(15);
+  const playbackSpeedRef = useRef(60);
   const visualEventsRef = useRef<VisualEvent[]>([]);
   const ballLocusRef = useRef<any[]>([]);
   const frontRef = useRef<Float32Array>(new Float32Array(48).fill(0.5));
@@ -563,7 +564,23 @@ export default function TerrainMatchView({
     return () => observer.disconnect();
   }, [drawSeismograph]);
 
-  const handleScrub = (clientX: number) => {
+  const togglePlay = useCallback(() => {
+    setIsPlaying(prev => {
+      const nextState = !prev;
+      if (nextState) {
+        if (timeRef.current >= durationRef.current) {
+          timeRef.current = 0;
+          setCurrentTime(0);
+        }
+        isPlayingRef.current = true;
+      } else {
+        isPlayingRef.current = false;
+      }
+      return nextState;
+    });
+  }, []);
+
+  const handleScrub = useCallback((clientX: number) => {
     if (!seismographRef.current) return;
     const rect = seismographRef.current.getBoundingClientRect();
     const clickX = clientX - rect.left;
@@ -571,30 +588,53 @@ export default function TerrainMatchView({
     const targetSeconds = progress * durationRef.current;
     timeRef.current = targetSeconds;
     setCurrentTime(targetSeconds);
-  };
+  }, []);
 
-  const handleSeismographPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+  const handleSeismographPointerDown = (e: React.PointerEvent<HTMLDivElement | HTMLCanvasElement>) => {
     isDraggingRef.current = true;
+    setIsScrubbing(true);
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
     } catch {}
     handleScrub(e.clientX);
   };
 
-  const handleSeismographPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+  const handleSeismographPointerMove = (e: React.PointerEvent<HTMLDivElement | HTMLCanvasElement>) => {
     if (isDraggingRef.current) {
       handleScrub(e.clientX);
     }
   };
 
-  const handleSeismographPointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+  const handleSeismographPointerUp = (e: React.PointerEvent<HTMLDivElement | HTMLCanvasElement>) => {
     if (isDraggingRef.current) {
       isDraggingRef.current = false;
+      setIsScrubbing(false);
       try {
         e.currentTarget.releasePointerCapture(e.pointerId);
       } catch {}
     }
   };
+
+  useEffect(() => {
+    const handleGlobalPointerMove = (e: PointerEvent) => {
+      if (isDraggingRef.current) {
+        handleScrub(e.clientX);
+      }
+    };
+    const handleGlobalPointerUp = () => {
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        setIsScrubbing(false);
+      }
+    };
+
+    window.addEventListener("pointermove", handleGlobalPointerMove);
+    window.addEventListener("pointerup", handleGlobalPointerUp);
+    return () => {
+      window.removeEventListener("pointermove", handleGlobalPointerMove);
+      window.removeEventListener("pointerup", handleGlobalPointerUp);
+    };
+  }, [handleScrub]);
 
   const handleResetCamera = () => {
     if (cameraRef.current && controlsRef.current) {
@@ -662,9 +702,10 @@ export default function TerrainMatchView({
         const ev = hoveredEventRef.current;
         timeRef.current = ev.t;
         setCurrentTime(ev.t);
+        isPlayingRef.current = true;
         setIsPlaying(true);
       } else {
-        setIsPlaying(prev => !prev);
+        togglePlay();
       }
     };
 
@@ -3060,11 +3101,6 @@ export default function TerrainMatchView({
         }}>
           {/* Compact Mobile Stats Pill */}
           <div className="pointer-events-auto glass-panel px-3.5 py-1.5 rounded-full border border-white/20 text-white font-mono text-[10.5px] flex items-center gap-2 shadow-xl backdrop-blur-xl bg-black/80">
-            <span className="text-white font-black flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#DE1D3E] animate-pulse" />
-              {Math.floor(currentTime/60)}'
-            </span>
-            <span className="text-white/20">|</span>
             <span>SH <strong style={{ color: homeColor }}>{dynamicStats.home.shots}</strong>-<strong style={{ color: awayColor }}>{dynamicStats.away.shots}</strong></span>
             <span className="text-white/20">|</span>
             <span>xG <strong style={{ color: homeColor }}>{dynamicStats.home.xg.toFixed(1)}</strong>-<strong style={{ color: awayColor }}>{dynamicStats.away.xg.toFixed(1)}</strong></span>
@@ -3245,34 +3281,44 @@ export default function TerrainMatchView({
           </div>
         </div>
 
-        {/* C. MINIMALIST MOMENTUM DOCK */}
-        <div className="absolute bottom-3 left-3 right-3 z-10 flex items-center gap-2 select-none">
-          {/* Seismograph Momentum Timeline Track */}
-          <div className="relative flex-grow h-9 rounded-xl bg-black/60 border border-white/15 backdrop-blur-md overflow-hidden flex items-center px-1 shadow-lg">
+        {/* C. BOGACHEV-INSPIRED CLEAN FLOATING MOMENTUM TIMELINE */}
+        <div className="absolute bottom-5 left-5 right-5 z-10 flex items-center gap-4 select-none">
+          {/* Frameless Seismograph Momentum Line Track */}
+          <div 
+            onPointerDown={handleSeismographPointerDown}
+            onPointerMove={handleSeismographPointerMove}
+            onPointerUp={handleSeismographPointerUp}
+            className="relative flex-grow h-12 flex items-center cursor-ew-resize touch-none"
+          >
             <canvas 
               ref={seismographRef} 
-              onPointerDown={handleSeismographPointerDown}
-              onPointerMove={handleSeismographPointerMove}
-              onPointerUp={handleSeismographPointerUp}
-              className="w-full h-full block cursor-ew-resize touch-none" 
+              className="w-full h-full block pointer-events-none opacity-90 hover:opacity-100 transition-opacity" 
             />
-            {/* Crimson Red scrub needle line */}
+
+            {/* Clean Scrubber Needle Line & Circular Knobs */}
             <div 
-              className="absolute top-0 bottom-0 w-0.5 bg-[#DE1D3E] shadow-[0_0_8px_#DE1D3E] pointer-events-none z-10 transition-[left] duration-75"
+              className={`absolute top-0 bottom-0 pointer-events-none z-10 ${isScrubbing ? '' : 'transition-[left] duration-75'}`}
               style={{ left: `${Math.min(99.5, Math.max(0.5, (currentTime / duration) * 100))}%` }}
-            />
+            >
+              {/* Vertical line */}
+              <div className="w-[1.5px] h-full bg-white/90 shadow-[0_0_8px_rgba(255,255,255,0.8)] mx-auto" />
+              {/* Top Handle Knob Dot */}
+              <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white border border-black/40 shadow-[0_0_10px_rgba(255,255,255,0.9)]" />
+              {/* Bottom Handle Knob Dot */}
+              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white border border-black/40 shadow-[0_0_10px_rgba(255,255,255,0.9)]" />
+            </div>
           </div>
 
-          {/* Minimalist Minute Toggle Button - Number turns Red when playing, Gray when paused */}
-          <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="h-9 px-3 rounded-xl bg-black/60 border border-white/15 backdrop-blur-md font-mono text-[11.5px] font-black flex-shrink-0 flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
+          {/* Clean Floating Minute Label (Clickable to pause/play, no play icon button) */}
+          <div
+            onClick={togglePlay}
+            className="flex-shrink-0 font-mono text-xs font-black tracking-wider cursor-pointer transition-transform active:scale-95 px-2.5 py-1 rounded-lg bg-black/40 backdrop-blur-md border border-white/10"
             title={isPlaying ? "Pozastavit" : "Přehrát"}
           >
-            <span style={{ color: isPlaying ? "#DE1D3E" : "#94A3B8" }}>
+            <span style={{ color: isPlaying ? "#ffffff" : "#94A3B8" }}>
               {Math.floor(currentTime / 60)}'
             </span>
-          </button>
+          </div>
         </div>
 
         {/* Mobile Milestones Drawer */}
