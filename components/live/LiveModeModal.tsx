@@ -36,7 +36,8 @@ import {
   Target,
   Gift,
   Flame,
-  Check
+  Check,
+  DoorClosed
 } from 'lucide-react';
 
 export const LiveModeModal: React.FC = () => {
@@ -71,11 +72,11 @@ export const LiveModeModal: React.FC = () => {
   const isSports = liveConfig.eventCategoryType === 'sports';
 
   const getItemIcon = (item: ExpressOrderItem) => {
-    if (item.category === 'pivo') return <Beer className="w-5 h-5 text-amber-400" />;
-    if (item.category === 'nealko') return <Coffee className="w-5 h-5 text-blue-400" />;
-    if (item.category === 'snack') return <Utensils className="w-5 h-5 text-orange-400" />;
-    if (item.category === 'merch') return <Shirt className="w-5 h-5 text-purple-400" />;
-    return <Tag className="w-5 h-5 text-neutral-400" />;
+    if (item.category === 'pivo') return <Beer className="w-5 h-5 text-white" />;
+    if (item.category === 'nealko') return <Coffee className="w-5 h-5 text-white" />;
+    if (item.category === 'snack') return <Utensils className="w-5 h-5 text-white" />;
+    if (item.category === 'merch') return <Shirt className="w-5 h-5 text-white" />;
+    return <Tag className="w-5 h-5 text-white" />;
   };
 
   const handleQuantityChange = (item: ExpressOrderItem, delta: number) => {
@@ -184,12 +185,12 @@ export const LiveModeModal: React.FC = () => {
           {/* NFC Credit Badge */}
           <div
             onClick={() => setActiveModal('topup')}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-white/20 backdrop-blur-md cursor-pointer hover:bg-black/80 transition-colors shadow-lg shrink-0"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md cursor-pointer hover:bg-white/20 transition-all shadow-lg shrink-0"
           >
-            <Wallet className="w-4 h-4 text-emerald-400 shrink-0" />
-            <div className="flex flex-col leading-tight">
+            <Wallet className="w-4 h-4 text-white shrink-0" />
+            <div className="flex flex-col leading-none">
               <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">NFC Kredit</span>
-              <span className="text-xs font-black text-emerald-400">{user.cashlessCredit} Kč</span>
+              <span className="text-xs font-black text-white mt-0.5">{user.cashlessCredit} Kč</span>
             </div>
           </div>
         </div>
@@ -215,14 +216,13 @@ export const LiveModeModal: React.FC = () => {
       {/* Main Body */}
       <div className="p-5 flex flex-col gap-5 bg-[#0A0B0E]">
 
-
         {/* Liquid Glass Segmented Navigation Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
           {[
             ...(isSports ? [{ id: 'match', label: 'Zápas', icon: <Activity className="w-3.5 h-3.5" /> }] : []),
             { id: 'timeline', label: 'Program', icon: <Clock className="w-3.5 h-3.5" /> },
             { id: 'pulse', label: 'Atmosféra', icon: <Zap className="w-3.5 h-3.5" /> },
-            { id: 'bar', label: 'Express Bar', icon: <Beer className="w-3.5 h-3.5" /> },
+            { id: 'bar', label: 'Express Bar', icon: <ShoppingBag className="w-3.5 h-3.5" /> },
             { id: 'map', label: 'Radar', icon: <MapPin className="w-3.5 h-3.5" /> }
           ].map((tab) => {
             const isActive = activeTab === tab.id;
@@ -230,7 +230,11 @@ export const LiveModeModal: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`fast-filter-pill gap-1.5 ${isActive ? 'active' : ''}`}
+                className={`px-4 py-2 rounded-full text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap border ${
+                  isActive
+                    ? 'bg-white text-black border-white shadow-lg'
+                    : 'bg-white/[0.06] text-neutral-400 border-white/10 hover:border-white/20 hover:text-white'
+                }`}
               >
                 {tab.icon}
                 <span>{tab.label}</span>
@@ -497,36 +501,41 @@ export const LiveModeModal: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 2: ATMOSFÉRA / PULSE, MVP & PREDICTORS */}
+        {/* TAB 2: ATMOSFÉRA / PULSE, MVP & PREDICTORS (Masterpiece Layout) */}
         {activeTab === 'pulse' && (
           <div className="flex flex-col gap-4 animate-fade-in">
 
             {/* Signed Jersey Raffle & MVP Vote Card */}
             {liveConfig.jerseyRaffle && (
-              <div className="glass-panel p-5 rounded-3xl border border-amber-500/40 bg-gradient-to-br from-amber-950/30 via-neutral-900/90 to-neutral-950 flex flex-col gap-3 shadow-xl">
+              <div
+                className="p-5 rounded-3xl border border-white/20 bg-gradient-to-br from-white/10 via-[#151722]/90 to-[#0A0B10] flex flex-col gap-3.5 shadow-2xl relative overflow-hidden"
+                style={{ borderTop: '1px solid rgba(255, 255, 255, 0.3)' }}
+              >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-full bg-amber-500/20 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
-                      <Gift className="w-5 h-5" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-white/20 via-white/10 to-transparent border border-white/20 flex items-center justify-center text-white shrink-0 shadow-lg">
+                      <Gift className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="text-base font-extrabold text-white">Vyhraj Podepsaný Dres MVP</h3>
+                    <h3 className="text-base font-extrabold text-white leading-tight">Vyhraj Podepsaný Dres MVP</h3>
                   </div>
-                  <Badge text="SOUTĚŽ" variant="gold" />
+                  <span className="text-[9.5px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-white shadow-sm shrink-0 whitespace-nowrap">
+                    SOUTĚŽ
+                  </span>
                 </div>
 
-                <p className="text-xs text-neutral-300 leading-relaxed">
-                  Hlasujte pro Hráče Utkání a budete automaticky zařazeni do losování o originální podepsaný dres <strong className="text-amber-300">{liveConfig.jerseyRaffle.playerName} (#{liveConfig.jerseyRaffle.playerNumber})</strong>.
+                <p className="text-xs text-neutral-300 leading-relaxed font-medium">
+                  Hlasujte pro Hráče Utkání a budete automaticky zařazeni do losování o originální podepsaný dres <strong className="text-white font-bold">{liveConfig.jerseyRaffle.playerName} (#{liveConfig.jerseyRaffle.playerNumber})</strong>.
                 </p>
 
-                <div className="glass-panel p-3.5 rounded-2xl border border-white/10 flex items-center justify-between text-xs">
+                <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-between text-xs">
                   <span className="text-neutral-400 font-medium">Stav zapojení:</span>
                   {isRaffleEntered ? (
-                    <span className="flex items-center gap-1 font-bold text-emerald-400">
-                      <Check className="w-4 h-4" />
+                    <span className="flex items-center gap-1.5 font-extrabold text-white">
+                      <Check className="w-4 h-4 text-white" />
                       Zařazeno do losování!
                     </span>
                   ) : (
-                    <span className="font-bold text-amber-400">Hlasujte níže pro zařazení</span>
+                    <span className="font-extrabold text-neutral-200">Hlasujte níže pro zařazení</span>
                   )}
                 </div>
               </div>
@@ -536,10 +545,16 @@ export const LiveModeModal: React.FC = () => {
             {liveConfig.polls.map((poll: LivePoll) => {
               const votedOptId = livePollVotes[poll.id];
               return (
-                <div key={poll.id} className="glass-panel p-4.5 rounded-3xl border border-white/15 flex flex-col gap-3.5 shadow-xl">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-extrabold text-white">{poll.question}</h4>
-                    <span className="text-[11px] font-semibold text-neutral-400">{poll.totalVotes} hlasů</span>
+                <div
+                  key={poll.id}
+                  className="p-5 rounded-3xl border border-white/15 bg-gradient-to-br from-white/10 via-[#141620]/90 to-[#0A0B0E] flex flex-col gap-4 shadow-xl"
+                  style={{ borderTop: '1px solid rgba(255, 255, 255, 0.25)' }}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <h4 className="text-sm font-extrabold text-white leading-snug flex-1 min-w-0">{poll.question}</h4>
+                    <span className="text-xs font-mono font-bold text-neutral-300 px-3 py-1 rounded-full bg-white/10 border border-white/15 shrink-0 whitespace-nowrap">
+                      {poll.totalVotes} hlasů
+                    </span>
                   </div>
 
                   <div className="flex flex-col gap-2.5">
@@ -550,24 +565,24 @@ export const LiveModeModal: React.FC = () => {
                         <div
                           key={opt.id}
                           onClick={() => handlePollVote(poll.id, opt.id)}
-                          className={`relative overflow-hidden p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                          className={`relative overflow-hidden p-4 rounded-2xl border cursor-pointer transition-all duration-300 ${
                             isVoted
-                              ? 'bg-[#DE1D3E]/20 border-[#DE1D3E] text-white shadow-[0_0_15px_rgba(222,29,62,0.25)]'
-                              : 'glass-panel border-white/10 hover:border-white/20 text-neutral-200'
+                              ? 'bg-white/15 border-white/40 text-white shadow-lg'
+                              : 'bg-white/[0.04] border-white/10 hover:border-white/25 text-neutral-200'
                           }`}
                         >
-                          {/* Progress fill */}
+                          {/* Sleek Liquid Glass Progress fill */}
                           <div
-                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-red-600 to-[#DE1D3E] opacity-35 shadow-[0_0_12px_rgba(222,29,62,0.4)] transition-all duration-500 pointer-events-none"
+                            className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-white/20 via-white/15 to-white/5 border-r border-white/30 transition-all duration-500 pointer-events-none"
                             style={{ width: `${pct}%` }}
                           />
 
-                          <div className="relative z-10 flex items-center justify-between text-xs font-extrabold">
-                            <span className="flex items-center gap-2">
-                              {isVoted && <CheckCircle2 className="w-4 h-4 text-red-400 shrink-0" />}
-                              {opt.label}
+                          <div className="relative z-10 flex items-center justify-between text-xs font-extrabold gap-3">
+                            <span className="flex items-center gap-2 text-white truncate min-w-0">
+                              {isVoted && <CheckCircle2 className="w-4 h-4 text-white shrink-0" />}
+                              <span className="truncate">{opt.label}</span>
                             </span>
-                            <span className="font-mono text-red-400 font-black text-sm">{pct}%</span>
+                            <span className="font-mono text-white font-black text-sm shrink-0">{pct}%</span>
                           </div>
                         </div>
                       );
@@ -576,14 +591,21 @@ export const LiveModeModal: React.FC = () => {
                 </div>
               );
             })}
+
+            {/* Next Goal Team Predictor */}
             {liveConfig.nextGoalTeamPoll && (
-              <div className="glass-panel p-4.5 rounded-3xl border border-white/15 flex flex-col gap-3.5 shadow-xl">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-[#DE1D3E]" />
-                    <h4 className="text-sm font-extrabold text-white">{liveConfig.nextGoalTeamPoll.question}</h4>
+              <div
+                className="p-5 rounded-3xl border border-white/15 bg-gradient-to-br from-white/10 via-[#141620]/90 to-[#0A0B0E] flex flex-col gap-4 shadow-xl"
+                style={{ borderTop: '1px solid rgba(255, 255, 255, 0.25)' }}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <Target className="w-4 h-4 text-white shrink-0" />
+                    <h4 className="text-sm font-extrabold text-white leading-snug truncate">{liveConfig.nextGoalTeamPoll.question}</h4>
                   </div>
-                  <span className="text-[11px] font-semibold text-neutral-400">{liveConfig.nextGoalTeamPoll.totalVotes} tipů</span>
+                  <span className="text-xs font-mono font-bold text-neutral-300 px-3 py-1 rounded-full bg-white/10 border border-white/15 shrink-0 whitespace-nowrap">
+                    {liveConfig.nextGoalTeamPoll.totalVotes} tipů
+                  </span>
                 </div>
 
                 <div className="flex flex-col gap-2.5">
@@ -595,23 +617,23 @@ export const LiveModeModal: React.FC = () => {
                       <div
                         key={opt.id}
                         onClick={() => handlePollVote(liveConfig.nextGoalTeamPoll!.id, opt.id)}
-                        className={`relative overflow-hidden p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                        className={`relative overflow-hidden p-4 rounded-2xl border cursor-pointer transition-all duration-300 ${
                           isVoted
-                            ? 'bg-[#DE1D3E]/20 border-[#DE1D3E] text-white shadow-[0_0_15px_rgba(222,29,62,0.25)]'
-                            : 'glass-panel border-white/10 hover:border-white/20 text-neutral-200'
+                            ? 'bg-white/15 border-white/40 text-white shadow-lg'
+                            : 'bg-white/[0.04] border-white/10 hover:border-white/25 text-neutral-200'
                         }`}
                       >
                         <div
-                          className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-red-600 to-[#DE1D3E] opacity-35 shadow-[0_0_12px_rgba(222,29,62,0.4)] transition-all duration-500 pointer-events-none"
+                          className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-white/20 via-white/15 to-white/5 border-r border-white/30 transition-all duration-500 pointer-events-none"
                           style={{ width: `${pct}%` }}
                         />
 
-                        <div className="relative z-10 flex items-center justify-between text-xs font-extrabold">
-                          <span className="flex items-center gap-2">
-                            {isVoted && <CheckCircle2 className="w-4 h-4 text-red-400 shrink-0" />}
-                            {opt.label}
+                        <div className="relative z-10 flex items-center justify-between text-xs font-extrabold gap-3">
+                          <span className="flex items-center gap-2 text-white truncate min-w-0">
+                            {isVoted && <CheckCircle2 className="w-4 h-4 text-white shrink-0" />}
+                            <span className="truncate">{opt.label}</span>
                           </span>
-                          <span className="font-mono text-red-400 font-black text-sm">{pct}%</span>
+                          <span className="font-mono text-white font-black text-sm shrink-0">{pct}%</span>
                         </div>
                       </div>
                     );
@@ -622,13 +644,18 @@ export const LiveModeModal: React.FC = () => {
 
             {/* Specific Player Scorer Predictor */}
             {liveConfig.nextGoalScorerPoll && (
-              <div className="glass-panel p-4.5 rounded-3xl border border-white/15 flex flex-col gap-3.5 shadow-xl">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="w-4 h-4 text-amber-400" />
-                    <h4 className="text-sm font-extrabold text-white">{liveConfig.nextGoalScorerPoll.question}</h4>
+              <div
+                className="p-5 rounded-3xl border border-white/15 bg-gradient-to-br from-white/10 via-[#141620]/90 to-[#0A0B0E] flex flex-col gap-4 shadow-xl"
+                style={{ borderTop: '1px solid rgba(255, 255, 255, 0.25)' }}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <Trophy className="w-4 h-4 text-white shrink-0" />
+                    <h4 className="text-sm font-extrabold text-white leading-snug truncate">{liveConfig.nextGoalScorerPoll.question}</h4>
                   </div>
-                  <span className="text-[11px] font-semibold text-neutral-400">{liveConfig.nextGoalScorerPoll.totalVotes} tipů</span>
+                  <span className="text-xs font-mono font-bold text-neutral-300 px-3 py-1 rounded-full bg-white/10 border border-white/15 shrink-0 whitespace-nowrap">
+                    {liveConfig.nextGoalScorerPoll.totalVotes} tipů
+                  </span>
                 </div>
 
                 <div className="flex flex-col gap-2.5">
@@ -640,23 +667,23 @@ export const LiveModeModal: React.FC = () => {
                       <div
                         key={opt.id}
                         onClick={() => handlePollVote(liveConfig.nextGoalScorerPoll!.id, opt.id)}
-                        className={`relative overflow-hidden p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                        className={`relative overflow-hidden p-4 rounded-2xl border cursor-pointer transition-all duration-300 ${
                           isVoted
-                            ? 'bg-[#DE1D3E]/20 border-[#DE1D3E] text-white shadow-[0_0_15px_rgba(222,29,62,0.25)]'
-                            : 'glass-panel border-white/10 hover:border-white/20 text-neutral-200'
+                            ? 'bg-white/15 border-white/40 text-white shadow-lg'
+                            : 'bg-white/[0.04] border-white/10 hover:border-white/25 text-neutral-200'
                         }`}
                       >
                         <div
-                          className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-red-600 to-[#DE1D3E] opacity-35 shadow-[0_0_12px_rgba(222,29,62,0.4)] transition-all duration-500 pointer-events-none"
+                          className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-white/20 via-white/15 to-white/5 border-r border-white/30 transition-all duration-500 pointer-events-none"
                           style={{ width: `${pct}%` }}
                         />
 
-                        <div className="relative z-10 flex items-center justify-between text-xs font-extrabold">
-                          <span className="flex items-center gap-2">
-                            {isVoted && <CheckCircle2 className="w-4 h-4 text-red-400 shrink-0" />}
-                            {opt.label}
+                        <div className="relative z-10 flex items-center justify-between text-xs font-extrabold gap-3">
+                          <span className="flex items-center gap-2 text-white truncate min-w-0">
+                            {isVoted && <CheckCircle2 className="w-4 h-4 text-white shrink-0" />}
+                            <span className="truncate">{opt.label}</span>
                           </span>
-                          <span className="font-mono text-red-400 font-black text-sm">{pct}%</span>
+                          <span className="font-mono text-white font-black text-sm shrink-0">{pct}%</span>
                         </div>
                       </div>
                     );
@@ -666,23 +693,32 @@ export const LiveModeModal: React.FC = () => {
             )}
 
             {/* Strobe Lightshow Sync Card */}
-            <div className="glass-panel p-5 rounded-2xl border border-white/10 flex flex-col gap-3">
+            <div
+              className="p-5 rounded-3xl border border-white/15 bg-gradient-to-br from-white/10 via-[#141620]/90 to-[#0A0B0E] flex flex-col gap-3.5 shadow-xl"
+              style={{ borderTop: '1px solid rgba(255, 255, 255, 0.25)' }}
+            >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-red-400" />
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-white/20 via-white/10 to-transparent border border-white/20 flex items-center justify-center text-white shrink-0 shadow-lg">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
                   <h3 className="text-base font-extrabold text-white">Světelný Stroboskop</h3>
                 </div>
-                <Badge text="SYNCHRO" variant="dark" />
+                <span className="text-[9.5px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-white shadow-sm shrink-0 whitespace-nowrap">
+                  SYNCHRO
+                </span>
               </div>
-              <p className="text-xs text-neutral-300 leading-relaxed">
+
+              <p className="text-xs text-neutral-300 leading-relaxed font-medium">
                 Obrazovka telefonu se synchronizuje se světelnou choreografií v aréně při vstřelení gólu.
               </p>
+
               <button
                 onClick={toggleLightshow}
-                className="w-full py-3 rounded-full bg-[#DE1D3E] hover:bg-red-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer"
+                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#DE1D3E] via-red-600 to-[#B91C1C] hover:from-red-600 hover:to-red-800 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-red-600/30 flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer border border-white/20 mt-1"
               >
                 <Sparkles className="w-4 h-4" />
-                Spustit Světelnou Show
+                <span>Spustit Světelnou Show</span>
               </button>
             </div>
           </div>
@@ -708,48 +744,85 @@ export const LiveModeModal: React.FC = () => {
               </div>
             )}
 
-            {/* Express Menu List */}
-            <div className="flex flex-col gap-3">
+            {/* Express Menu List (Liquid Glass Facelift) */}
+            <div className="flex flex-col gap-3.5">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400">Express Bar Menu</h3>
-                <span className="text-xs text-emerald-400 font-bold">Zůstatek: {user.cashlessCredit} Kč</span>
+                <div className="flex items-center gap-2">
+                  <ShoppingBag className="w-4 h-4 text-white" />
+                  <h3 className="text-xs font-black uppercase tracking-wider text-white">Express Bar Menu</h3>
+                </div>
+                <div className="px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-mono font-black text-white backdrop-blur-md">
+                  Zůstatek: {user.cashlessCredit} Kč
+                </div>
               </div>
 
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-3">
                 {liveConfig.expressMenu.map((menuItem: ExpressOrderItem) => {
                   const qty = cartItems[menuItem.id] || 0;
+                  const isSelected = qty > 0;
+                  const categoryLabel = menuItem.category === 'pivo' ? 'PIVO' : menuItem.category === 'nealko' ? 'NEALKO' : menuItem.category === 'snack' ? 'JÍDLO' : 'MERCH';
+
                   return (
                     <div
                       key={menuItem.id}
-                      className="glass-panel p-4 rounded-3xl border border-white/10 flex items-center justify-between gap-3"
+                      className={`p-4 rounded-3xl border transition-all duration-300 relative overflow-hidden flex items-center justify-between gap-3 ${
+                        isSelected
+                          ? 'bg-[#DE1D3E]/15 border-[#DE1D3E] shadow-[0_0_25px_rgba(222,29,62,0.25)]'
+                          : 'bg-gradient-to-br from-white/10 via-[#141620]/90 to-[#0A0B0E] border-white/15 hover:border-white/30 shadow-xl'
+                      }`}
+                      style={{
+                        borderTop: isSelected ? undefined : '1px solid rgba(255, 255, 255, 0.25)'
+                      }}
                     >
+                      {/* Left: Glass Icon Avatar Box + Details */}
                       <div className="flex items-center gap-3.5 min-w-0">
-                        <div className="feed-action-icon-box shrink-0">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-white/20 via-white/10 to-transparent border border-white/20 flex items-center justify-center text-white shrink-0 shadow-lg relative">
                           {getItemIcon(menuItem)}
                         </div>
+
                         <div className="flex flex-col min-w-0">
-                          <h4 className="text-sm font-extrabold text-white truncate">{menuItem.name}</h4>
-                          <div className="flex items-center gap-2 text-xs text-neutral-400">
-                            <span className="font-bold text-white">{menuItem.price} Kč</span>
-                            {menuItem.volumeOrSize && <span>• {menuItem.volumeOrSize}</span>}
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-extrabold text-white truncate leading-tight">
+                              {menuItem.name}
+                            </h4>
+                            <span className="text-[8.5px] font-black uppercase text-neutral-300 bg-white/10 px-1.5 py-0.5 rounded-md border border-white/15 shrink-0">
+                              {categoryLabel}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-xs text-neutral-400 mt-1">
+                            <span className="px-2 py-0.5 rounded-md bg-white/10 text-white font-mono font-black text-[11px] border border-white/15">
+                              {menuItem.price} Kč
+                            </span>
+                            {menuItem.volumeOrSize && <span className="font-semibold text-neutral-400">• {menuItem.volumeOrSize}</span>}
                           </div>
                         </div>
                       </div>
 
-                      {/* Quantity Modifier */}
+                      {/* Right: Quantity Modifier Controls */}
                       <div className="flex items-center gap-2 shrink-0">
                         {qty > 0 && (
                           <button
                             onClick={() => handleQuantityChange(menuItem, -1)}
-                            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer"
                           >
                             <Minus className="w-4 h-4" />
                           </button>
                         )}
-                        {qty > 0 && <span className="w-5 text-center text-sm font-black text-white">{qty}</span>}
+
+                        {qty > 0 && (
+                          <span className="w-6 text-center text-base font-mono font-black text-white drop-shadow">
+                            {qty}
+                          </span>
+                        )}
+
                         <button
                           onClick={() => handleQuantityChange(menuItem, 1)}
-                          className="w-8 h-8 rounded-full bg-[#DE1D3E] hover:bg-red-600 text-white flex items-center justify-center shadow-md transition-all active:scale-95"
+                          className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-black shadow-lg transition-all active:scale-95 cursor-pointer ${
+                            isSelected
+                              ? 'bg-[#DE1D3E] hover:bg-red-600 shadow-red-600/40'
+                              : 'bg-gradient-to-r from-[#DE1D3E] to-[#B91C1C] hover:from-red-600 hover:to-red-800 shadow-red-600/30'
+                          }`}
                         >
                           <Plus className="w-4 h-4" />
                         </button>
@@ -760,15 +833,17 @@ export const LiveModeModal: React.FC = () => {
               </div>
             </div>
 
+
+
             {/* Alerts */}
             {orderError && (
-              <div className="p-3.5 rounded-xl bg-red-950/80 border border-red-500/50 text-red-300 text-xs font-semibold flex items-center gap-2">
+              <div className="p-3.5 rounded-2xl bg-red-950/80 border border-red-500/50 text-red-300 text-xs font-semibold flex items-center gap-2 shadow-lg">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 {orderError}
               </div>
             )}
             {orderSuccessMsg && (
-              <div className="p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-xs font-semibold flex items-center gap-2">
+              <div className="p-3.5 rounded-2xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-xs font-semibold flex items-center gap-2 shadow-lg">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 {orderSuccessMsg}
               </div>
@@ -776,48 +851,119 @@ export const LiveModeModal: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 4: RADAR / VENUE MAP */}
+        {/* TAB 4: RADAR / VENUE MAP (Rich Informative Radar) */}
         {activeTab === 'map' && (
           <div className="flex flex-col gap-4 animate-fade-in">
-            {/* Blueprint Card */}
-            <div className="relative w-full h-[180px] rounded-2xl bg-white/[0.04] border border-white/10 overflow-hidden flex flex-col items-center justify-center p-4">
-              <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px] opacity-10" />
-              
-              <div className="w-[85%] h-[70%] rounded-2xl border-2 border-emerald-500/40 bg-emerald-950/20 flex items-center justify-center relative">
-                <span className="text-xs font-black uppercase text-emerald-400/70 tracking-widest">HŘIŠTĚ / PÓDIUM</span>
-                
-                <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-blue-500/30 text-[9px] font-bold text-blue-200 border border-blue-400/30">
-                  WC Sektor B
+            {/* Interactive Stadium Radar Blueprint */}
+            <div className="relative w-full rounded-3xl bg-gradient-to-b from-white/10 via-[#121420]/90 to-[#0A0B0F] border border-white/20 overflow-hidden flex flex-col p-4 shadow-xl">
+              {/* Top Header */}
+              <div className="flex items-center justify-between mb-3 z-10">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs font-black uppercase text-white tracking-wider">Živý Radar Arény</span>
                 </div>
-                <div className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-full bg-emerald-500/30 text-[9px] font-bold text-emerald-200 border border-emerald-400/30">
-                  Express Bar 1
+                <span className="text-[10px] font-mono text-neutral-400">Aktualizace: živě</span>
+              </div>
+
+              {/* Arena Blueprint Pitch Box */}
+              <div className="relative w-full h-[155px] rounded-2xl border-2 border-emerald-500/40 bg-gradient-to-b from-emerald-950/30 via-[#0E151A] to-emerald-950/30 flex items-center justify-center overflow-hidden shadow-inner">
+                {/* Pitch Grid Background */}
+                <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:14px_14px] opacity-20 pointer-events-none" />
+
+                {/* Center Pitch Circle */}
+                <div className="w-24 h-24 rounded-full border border-emerald-500/30 flex items-center justify-center">
+                  <span className="text-[9.5px] font-black uppercase text-emerald-400/70 tracking-widest">PÓDIUM / HŘIŠTĚ</span>
+                </div>
+
+                {/* Live Pins with Color Spectrum */}
+                <div className="absolute top-2.5 left-3 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md text-[10px] font-extrabold text-white border border-amber-500/40 shadow-lg flex items-center gap-1.5 cursor-pointer hover:scale-105 transition-transform">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span>WC B • 4 min</span>
+                </div>
+
+                <div className="absolute bottom-2.5 right-3 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md text-[10px] font-extrabold text-white border border-emerald-500/40 shadow-lg flex items-center gap-1.5 cursor-pointer hover:scale-105 transition-transform">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Express Bar • 2 min</span>
+                </div>
+
+                <div className="absolute top-2.5 right-3 px-2.5 py-1 rounded-full bg-black/85 backdrop-blur-md text-[10px] font-extrabold text-white border border-rose-500/40 shadow-lg flex items-center gap-1.5 cursor-pointer hover:scale-105 transition-transform">
+                  <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
+                  <span>FanShop • 10 min</span>
                 </div>
               </div>
 
-              <span className="text-[10px] font-semibold text-neutral-400 mt-2">Plán Arény & Živé Fronty</span>
+              {/* Status Legend Bar */}
+              <div className="flex items-center justify-around mt-3 text-[10px] font-bold text-neutral-400 pt-2 border-t border-white/10">
+                <span className="flex items-center gap-1 text-emerald-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Volno (&lt;3 min)
+                </span>
+                <span className="flex items-center gap-1 text-amber-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Střední (4-7 min)
+                </span>
+                <span className="flex items-center gap-1 text-rose-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> Vytíženo (8+ min)
+                </span>
+              </div>
             </div>
 
-            {/* POI Queue List */}
+            {/* POI Queue List with Walking Distance Metrics */}
             <div className="flex flex-col gap-3">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400">Délka Front v Aréně</h3>
+              <div className="flex items-center justify-between px-1">
+                <h3 className="text-xs font-black uppercase tracking-wider text-white">Délka Front & Vzdálenost</h3>
+                <span className="text-xs text-neutral-400 font-medium">Podle vzdálenosti</span>
+              </div>
 
               <div className="flex flex-col gap-2.5">
                 {liveConfig.pois.map((poi: VenuePOI) => {
                   const isLow = poi.queueLevel === 'low';
                   const isMed = poi.queueLevel === 'med';
-                  const queueText = isLow ? 'Nízká fronta' : isMed ? 'Střední fronta' : 'Vysoká fronta';
-                  const badgeVariant = isLow ? 'dark' : isMed ? 'gold' : 'red';
+
+                  // Informative walking metrics & color pill
+                  const walkDist = isLow ? '45m • 1 min chůze' : isMed ? '110m • 2 min chůze' : '180m • 3 min chůze';
+                  const statusStyle = isLow
+                    ? { dot: 'bg-emerald-400', pill: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', border: 'border-l-4 border-l-emerald-500' }
+                    : isMed
+                    ? { dot: 'bg-amber-400', pill: 'bg-amber-500/15 text-amber-400 border-amber-500/30', border: 'border-l-4 border-l-amber-500' }
+                    : { dot: 'bg-rose-400', pill: 'bg-rose-500/15 text-rose-400 border-rose-500/30', border: 'border-l-4 border-l-rose-500' };
+
+                  const getPoiIcon = (cat: string) => {
+                    if (cat === 'bar') return <Beer className="w-4.5 h-4.5 text-white" />;
+                    if (cat === 'wc') return <DoorClosed className="w-4.5 h-4.5 text-white" />;
+                    if (cat === 'merch') return <Shirt className="w-4.5 h-4.5 text-white" />;
+                    return <MapPin className="w-4.5 h-4.5 text-white" />;
+                  };
 
                   return (
-                    <div key={poi.id} className="glass-panel p-3.5 rounded-2xl border border-white/10 flex items-center justify-between gap-3">
-                      <div className="flex flex-col min-w-0">
-                        <h4 className="text-sm font-extrabold text-white truncate">{poi.name}</h4>
-                        <span className="text-xs text-neutral-400">{poi.locationDetail}</span>
+                    <div
+                      key={poi.id}
+                      onClick={() => alert(`Spouštím navigaci k: ${poi.name} (${poi.locationDetail})`)}
+                      className={`p-3.5 rounded-2xl bg-gradient-to-r from-white/10 via-[#141620] to-[#0D0E15] border border-white/15 hover:border-white/30 flex items-center justify-between gap-3 transition-all cursor-pointer shadow-lg active:scale-[0.99] ${statusStyle.border}`}
+                    >
+                      {/* Left: Icon + Title & Distance Subtext */}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="w-11 h-11 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0 shadow-md">
+                          {getPoiIcon(poi.category)}
+                        </div>
+
+                        <div className="flex flex-col min-w-0">
+                          <h4 className="text-sm font-extrabold text-white truncate leading-tight">
+                            {poi.name}
+                          </h4>
+                          <div className="flex items-center gap-1.5 text-xs text-neutral-400 font-medium mt-0.5 truncate">
+                            <span>{poi.locationDetail}</span>
+                            <span>•</span>
+                            <span className="text-neutral-300 font-semibold">{walkDist}</span>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="flex flex-col items-end shrink-0 gap-1">
-                        <Badge text={queueText} variant={badgeVariant} />
-                        <span className="text-xs font-bold text-neutral-300">~{poi.waitTimeMinutes} min čekání</span>
+                      {/* Right: Live Queue Wait Time Pill */}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className={`px-3 py-1.5 rounded-full border text-xs font-mono font-bold flex items-center gap-1.5 shadow-sm ${statusStyle.pill}`}>
+                          <span className={`w-2 h-2 rounded-full animate-pulse ${statusStyle.dot}`} />
+                          <span>~{poi.waitTimeMinutes} min</span>
+                        </div>
+                        <ChevronLeft className="w-4 h-4 text-neutral-400 rotate-180" />
                       </div>
                     </div>
                   );
@@ -829,20 +975,25 @@ export const LiveModeModal: React.FC = () => {
 
       </div>
 
-      {/* Sticky Fixed Bottom Purchase Bar for Express Bar */}
+      {/* Single Fixed Bottom Purchase Bar for Express Bar */}
       {activeTab === 'bar' && cartTotalAmount > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 h-[80px] bg-[#0A0B0E]/95 backdrop-blur-xl border-t border-white/10 px-5 flex items-center justify-between z-50 max-w-md mx-auto">
-          <div>
-            <span className="text-[0.68rem] text-neutral-400 block uppercase tracking-wider font-bold">Celkem za nápoje</span>
-            <span className="text-xl font-black text-white">{cartTotalAmount.toLocaleString()} Kč</span>
+        <div className="fixed bottom-0 left-0 right-0 h-[84px] bg-[#0A0B0E]/95 backdrop-blur-2xl border-t border-white/15 px-6 flex items-center justify-between z-[90] max-w-md mx-auto shadow-[0_-10px_30px_rgba(0,0,0,0.8)] animate-fade-in">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
+              Celkem za občerstvení ({Object.values(cartItems).reduce((a, b) => a + b, 0)} {Object.values(cartItems).reduce((a, b) => a + b, 0) === 1 ? 'položka' : 'položek'})
+            </span>
+            <span className="text-xl font-mono font-black text-white mt-0.5">
+              {cartTotalAmount.toLocaleString()} Kč
+            </span>
           </div>
+
           <button
             disabled={isOrdering}
             onClick={handleCheckoutExpressOrder}
-            className="bg-[#DE1D3E] text-white px-7 py-3 rounded-full text-sm font-bold shadow-lg shadow-red-600/30 hover:bg-red-600 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:opacity-50"
+            className="bg-gradient-to-r from-[#DE1D3E] via-red-600 to-[#B91C1C] text-white px-6 py-3.5 rounded-full text-xs font-black uppercase tracking-wider shadow-lg shadow-red-600/30 hover:from-red-600 hover:to-red-800 active:scale-95 transition-all cursor-pointer flex items-center gap-2 disabled:opacity-50 shrink-0"
           >
             <ShoppingBag className="w-4 h-4" />
-            {isOrdering ? 'Objednávám...' : 'Zaplatit z NFC'}
+            <span>{isOrdering ? 'Objednávám...' : 'Zaplatit z NFC'}</span>
           </button>
         </div>
       )}

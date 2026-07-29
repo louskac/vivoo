@@ -175,7 +175,7 @@ export const TicketQrModal: React.FC = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
               </span>
-              <span>Vstoupit do 3D Arény (Živý Zápas)</span>
+              <span>Vstoupit</span>
             </button>
 
             {/* Split between friends (Shown only if ticket is for > 1 person) */}

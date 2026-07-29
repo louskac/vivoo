@@ -175,7 +175,7 @@ export const TicketsView: React.FC = () => {
                   }}
                   className="px-3 py-1.5 rounded-full bg-[#DE1D3E] hover:bg-red-600 text-white text-xs font-black shadow-lg flex items-center gap-1 shrink-0 active:scale-95 transition-all cursor-pointer"
                 >
-                  <span>3D Aréna</span>
+                  <span>Vstoupit</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               ) : (
