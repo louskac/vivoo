@@ -50,10 +50,10 @@ export const TicketQrModal: React.FC = () => {
       <div className="min-h-screen pt-12 px-5 pb-20 flex flex-col justify-between">
         <div>
           {/* Top Bar: Circular Glass Back Button & Category Badge */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => setSelectedTicket(null)}
-              className="w-11 h-11 rounded-full bg-[#181A20] border border-white/10 flex items-center justify-center text-white active:scale-95 transition-all cursor-pointer shadow-lg"
+              className="w-11 h-11 rounded-full bg-[#181A20] border border-white/10 flex items-center justify-center text-white active:scale-95 transition-all cursor-pointer shadow-lg shrink-0 z-10"
               aria-label="Back"
             >
               <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
@@ -63,12 +63,12 @@ export const TicketQrModal: React.FC = () => {
             <Badge text={categoryTag} variant="red" />
           </div>
 
-          {/* Event Title & Date/Venue */}
-          <div className="flex flex-col gap-1 mb-6">
-            <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight tracking-tight drop-shadow-md">
+          {/* Centered Event Title & Date/Venue (Designer Feedback: Zarovnat na střed nadpis a label) */}
+          <div className="flex flex-col items-center text-center gap-1 mb-6 px-2">
+            <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight tracking-tight drop-shadow-md text-center max-w-xs sm:max-w-sm">
               {selectedTicket.title}
             </h1>
-            <p className="text-sm text-neutral-400 font-medium">
+            <p className="text-sm text-neutral-400 font-medium text-center">
               {selectedTicket.date}
             </p>
           </div>
