@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useAppStore } from '@/lib/store';
 import { useUser } from '@/context/UserContext';
 import { mockEvents } from '@/lib/data';
@@ -50,23 +50,26 @@ const FeedVideoItem: React.FC<FeedVideoItemProps> = ({ ev, isCurrent, isMuted, a
   );
 };
 
+export interface StreamFeedItem extends EventItem {
+  feedKey: string;
+}
+
 export const FeedView: React.FC = () => {
   const isMuted = useAppStore((state) => state.isMuted);
   const toggleMute = useAppStore((state) => state.toggleMute);
   const activeTab = useAppStore((state) => state.activeTab);
   const setSelectedEvent = useAppStore((state) => state.setSelectedEvent);
 
-  const { likedVideoIds, savedEventIds, videoStats, toggleLike, toggleSave } = useUser();
+  const { userVideos, likedVideoIds, savedEventIds, videoStats, toggleLike, toggleSave } = useUser();
 
   const [activeVibe, setActiveVibe] = useState<VibeCategory>('vse');
   const [playingIndex, setPlayingIndex] = useState(0);
   const [copied, setCopied] = useState(false);
   const [showHeartPop, setShowHeartPop] = useState(false);
+  const [feedStream, setFeedStream] = useState<StreamFeedItem[]>([]);
+  const batchCounterRef = useRef<number>(0);
   const lastTapRef = useRef<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Filter events by selected category topic
-  const filteredEvents = mockEvents.filter((ev) => activeVibe === 'vse' || ev.vibe === activeVibe);
 
   const vibes: { id: VibeCategory; label: string }[] = [
     { id: 'vse', label: 'Vše' },
@@ -83,18 +86,82 @@ export const FeedView: React.FC = () => {
     { id: 'konference', label: 'Konference' },
   ];
 
-  const currentEvent = filteredEvents[playingIndex % filteredEvents.length] || mockEvents[0];
-  const isLiked = currentEvent ? likedVideoIds.includes(currentEvent.id) : false;
-  const isSaved = currentEvent ? savedEventIds.includes(currentEvent.id) : false;
+  // Convert community user uploaded videos to feed event items
+  const userEventItems: EventItem[] = userVideos.map((uv) => ({
+    id: uv.id,
+    title: uv.title,
+    tag: 'COMMUNITY',
+    vibe: 'vse',
+    location: 'Česká Republika',
+    date: 'Fanouškovský moment',
+    lineup: 'Fanouškovská komunita ViVoo',
+    videoUrl: uv.videoUrl || '/videos/metronome_festival.mp4',
+    bgImg: uv.img || '/images/metronome_festival.jpg',
+    priceMin: 0,
+    priceMax: 0,
+    isFree: true,
+    promoter: 'Fanoušek ViVoo'
+  }));
+
+  // Combine user videos + mock events
+  const combinedSourceEvents = [...userEventItems, ...mockEvents];
+  const filteredEvents = combinedSourceEvents.filter(
+    (ev) => activeVibe === 'vse' || ev.vibe === activeVibe
+  );
+
+  // Helper to build a batch of feed items with unique stream keys
+  const createBatch = useCallback((events: EventItem[], iterations: number = 2): StreamFeedItem[] => {
+    if (events.length === 0) return [];
+    const result: StreamFeedItem[] = [];
+    for (let i = 0; i < iterations; i++) {
+      batchCounterRef.current += 1;
+      const bId = batchCounterRef.current;
+      events.forEach((ev, idx) => {
+        result.push({
+          ...ev,
+          feedKey: `${ev.id}-b${bId}-i${idx}`
+        });
+      });
+    }
+    return result;
+  }, []);
+
+  // Initialize or reset feed stream when category changes
+  useEffect(() => {
+    batchCounterRef.current = 0;
+    const initialBatch = createBatch(filteredEvents, 3);
+    setFeedStream(initialBatch);
+    setPlayingIndex(0);
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
+  }, [activeVibe, userVideos.length, createBatch]);
+
+  // Infinite scroll detection: append more batches dynamically when approaching the end
+  const appendMoreItemsIfNeeded = useCallback((currentIndex: number) => {
+    if (filteredEvents.length === 0) return;
+    if (currentIndex >= feedStream.length - 4) {
+      const nextBatch = createBatch(filteredEvents, 2);
+      setFeedStream((prev) => [...prev, ...nextBatch]);
+    }
+  }, [feedStream.length, filteredEvents, createBatch]);
+
+  const currentStreamItem = feedStream[playingIndex] || feedStream[0] || (filteredEvents[0] as StreamFeedItem);
+  const realEvent = currentStreamItem
+    ? mockEvents.find((e) => e.id === currentStreamItem.id) || currentStreamItem
+    : mockEvents[0];
+
+  const isLiked = realEvent ? likedVideoIds.includes(realEvent.id) : false;
+  const isSaved = realEvent ? savedEventIds.includes(realEvent.id) : false;
   
-  const rawLikeCount = currentEvent ? (videoStats[currentEvent.id]?.likesCount ?? 1420) : 1420;
+  const rawLikeCount = realEvent ? (videoStats[realEvent.id]?.likesCount ?? 1420) : 1420;
   const formattedLikeCount = rawLikeCount >= 1000 ? `${(rawLikeCount / 1000).toFixed(1)}k` : `${rawLikeCount}`;
 
   const handleDoubleTapLike = () => {
     const now = Date.now();
     if (now - lastTapRef.current < 300) {
-      if (currentEvent) {
-        toggleLike(currentEvent.id);
+      if (realEvent) {
+        toggleLike(realEvent.id);
       }
       setShowHeartPop(true);
       setTimeout(() => setShowHeartPop(false), 900);
@@ -104,9 +171,9 @@ export const FeedView: React.FC = () => {
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (navigator.share && currentEvent) {
+    if (navigator.share && realEvent) {
       navigator.share({
-        title: currentEvent.title,
+        title: realEvent.title,
         url: window.location.href
       }).catch(() => {});
     } else {
@@ -115,18 +182,14 @@ export const FeedView: React.FC = () => {
     }
   };
 
-  const handleToggleMute = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleMute();
-  };
-
   const handleScroll = () => {
     if (!containerRef.current) return;
     const itemHeight = containerRef.current.clientHeight;
     if (itemHeight > 0) {
       const idx = Math.round(containerRef.current.scrollTop / itemHeight);
-      if (idx !== playingIndex && idx >= 0 && idx < filteredEvents.length) {
+      if (idx !== playingIndex && idx >= 0 && idx < feedStream.length) {
         setPlayingIndex(idx);
+        appendMoreItemsIfNeeded(idx);
       }
     }
   };
@@ -143,10 +206,6 @@ export const FeedView: React.FC = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveVibe(vibe.id);
-                setPlayingIndex(0);
-                if (containerRef.current) {
-                  containerRef.current.scrollTop = 0;
-                }
               }}
               className={`feed-glass-pill whitespace-nowrap shrink-0 ${activeVibe === vibe.id ? 'active' : ''}`}
             >
@@ -157,13 +216,13 @@ export const FeedView: React.FC = () => {
       </div>
 
       {/* Static Fixed Action Column */}
-      {currentEvent && (
-        <div className="fixed right-6 bottom-[calc(200px+env(safe-area-inset-bottom,0px))] z-30 flex flex-col items-center gap-4 pointer-events-auto">
+      {realEvent && (
+        <div className="fixed right-6 bottom-[calc(290px+env(safe-area-inset-bottom,0px))] z-30 flex flex-col items-center gap-4 pointer-events-auto">
           {/* Like / Heart Reaction Button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
-              toggleLike(currentEvent.id);
+              toggleLike(realEvent.id);
             }}
             className="flex flex-col items-center gap-0.5 text-white group cursor-pointer active:scale-95 transition-transform"
           >
@@ -179,7 +238,7 @@ export const FeedView: React.FC = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              toggleSave(currentEvent.id);
+              toggleSave(realEvent.id);
             }}
             className="flex flex-col items-center gap-0.5 text-white group cursor-pointer active:scale-95 transition-transform"
           >
@@ -206,7 +265,7 @@ export const FeedView: React.FC = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedEvent(currentEvent);
+              setSelectedEvent(realEvent);
             }}
             className="flex flex-col items-center gap-0.5 text-white group cursor-pointer active:scale-95 transition-transform"
             aria-label="Lístek"
@@ -225,12 +284,12 @@ export const FeedView: React.FC = () => {
         onScroll={handleScroll}
         className="w-full h-full overflow-y-scroll snap-y snap-mandatory no-scrollbar"
       >
-        {filteredEvents.map((ev: EventItem, idx: number) => {
+        {feedStream.map((ev: StreamFeedItem, idx: number) => {
           const isCurrent = idx === playingIndex;
 
           return (
             <div
-              key={ev.id}
+              key={ev.feedKey}
               onClick={handleDoubleTapLike}
               className="relative w-full h-screen snap-start snap-always shrink-0 overflow-hidden bg-black cursor-pointer"
             >
@@ -261,13 +320,13 @@ export const FeedView: React.FC = () => {
               {/* Scrim Dark Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 pointer-events-none" />
 
-              {/* Bottom Event Meta Details (Positioned with 20px responsive margin above floating nav capsule) */}
+              {/* Bottom Event Meta Details */}
               <div className="absolute left-4 right-4 bottom-[calc(108px+env(safe-area-inset-bottom,0px))] z-20 flex flex-col items-start gap-1.5 pointer-events-auto">
                 {/* Enigoo Tag & Promoter */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap max-w-full">
                   <Badge text={ev.tag} variant="red" />
                   {ev.promoter && (
-                    <span className="text-[0.68rem] text-white/90 font-extrabold tracking-wider uppercase bg-black/40 border border-white/20 backdrop-blur-md px-3 py-1 rounded-full">
+                    <span className="text-[0.68rem] text-white/90 font-extrabold tracking-wider uppercase bg-black/40 border border-white/20 backdrop-blur-md px-3 py-1 rounded-full truncate max-w-full">
                       {ev.promoter}
                     </span>
                   )}
@@ -304,4 +363,3 @@ export const FeedView: React.FC = () => {
     </div>
   );
 };
-

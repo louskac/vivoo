@@ -98,7 +98,9 @@ export const EventDetailModal: React.FC = () => {
             <img src={selectedEvent.bgImg} alt="Headliner" className="w-full h-full object-cover" />
           </div>
           <div>
-            <h3 className="text-base font-extrabold text-white">{selectedEvent.lineup.split(',')[0]}</h3>
+            <h3 className="text-base font-extrabold text-white">
+              {selectedEvent.lineup ? selectedEvent.lineup.split(',')[0] : selectedEvent.title}
+            </h3>
             <p className="text-xs text-neutral-400 font-medium">Headliner · 20:00</p>
           </div>
         </div>

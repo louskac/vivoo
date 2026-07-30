@@ -4,8 +4,9 @@ import React from 'react';
 import { useAppStore } from '@/lib/store';
 import { useUser } from '@/context/UserContext';
 import { ActiveModal } from '@/lib/types';
-import { Settings, Bookmark, Video, Gift, History, ChevronRight, CreditCard, Ticket, User } from 'lucide-react';
+import { Settings, Bookmark, Video, Gift, History, ChevronRight, CreditCard, Ticket, User, Clapperboard, Music2, Radio, Nfc, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
+import { Badge } from '@/components/ui/Badge';
 
 export const ProfileView: React.FC = () => {
   const setActiveModal = useAppStore((state) => state.setActiveModal);
@@ -146,61 +147,66 @@ export const ProfileView: React.FC = () => {
         ))}
       </div>
 
-      {/* B2C Creator Studio Card (Slide 6 & 10 Feature) */}
-      <div className="mb-6 p-4 rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-950/40 to-black flex items-center justify-between shadow-xl">
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] font-black uppercase text-[#DE1D3E] tracking-wider">B2C CREATOR STUDIO</span>
-          <h3 className="text-sm font-extrabold text-white">Portál pro klubové markéťáky</h3>
-          <p className="text-[11px] text-neutral-400">Přímé měření konverzí lístků z videí</p>
+      {/* B2C Creator Studio Card */}
+      <div className="relative overflow-hidden mb-4 p-4 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md flex items-center justify-between gap-4 group hover:border-white/20 transition-all">
+        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <span className="text-[10px] text-neutral-400 font-bold tracking-wider uppercase">CREATOR STUDIO</span>
+          <h3 className="text-sm font-bold text-white leading-snug">Portál pro klubové markéťáky</h3>
+          <p className="text-xs text-neutral-400 truncate">Přímé měření konverzí lístků z videí</p>
         </div>
         <button
           onClick={() => setActiveModal('creator_studio')}
-          className="px-3.5 py-2 rounded-xl bg-[#DE1D3E] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-red-600 active:scale-95 transition-all cursor-pointer shadow-md shrink-0"
+          className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-xs font-semibold text-white border border-white/10 active:scale-95 transition-all cursor-pointer shrink-0"
         >
           Otevřít
         </button>
       </div>
 
-      {/* Spotify & Apple Music Integration Card (Slide 7 Feature) */}
-      <div className="mb-6 p-4 rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/30 via-black to-black flex flex-col gap-3 shadow-xl">
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">HUDERNÍ INTEGRACE</span>
-            <h3 className="text-sm font-extrabold text-white">Spotify & Apple Music</h3>
+      {/* Spotify & Apple Music Integration Card */}
+      <div className="relative overflow-hidden mb-4 p-4 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md flex flex-col gap-3 group hover:border-white/20 transition-all">
+        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[10px] text-neutral-400 font-bold tracking-wider uppercase">HUDEBNÍ INTEGRACE</span>
+            <h3 className="text-sm font-bold text-white leading-snug">Spotify & Apple Music</h3>
           </div>
-          <span className="text-[9.5px] font-mono text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
-            PROPOJENO
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold text-neutral-300 bg-white/10 border border-white/10">
+            Propojeno
           </span>
         </div>
-        <p className="text-xs text-neutral-300">
+        <p className="text-xs text-neutral-400 leading-relaxed">
           Notifikace o koncertech oblíbených interpretů v okolí (Xindl X, Raye, Mirai).
         </p>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 mt-0.5">
           <button
-            onClick={() => alert("Spotify účet je propojován. Analýza oblibených interpretů probíhá...")}
-            className="py-2.5 rounded-xl bg-[#1DB954] hover:bg-[#1aa34a] text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer border border-white/20"
+            onClick={() => alert("Spotify účet je propojován. Analýza oblíbených interpretů probíhá...")}
+            className="py-2 px-3 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium text-white border border-white/10 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
           >
-            <span>Spotify Connected</span>
+            <Music2 className="w-3.5 h-3.5 text-neutral-400" />
+            <span>Spotify</span>
           </button>
           <button
             onClick={() => alert("Apple Music účet je propojován. Analýza interpretů probíhá...")}
-            className="py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer border border-white/20"
+            className="py-2 px-3 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium text-white border border-white/10 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
           >
+            <Radio className="w-3.5 h-3.5 text-neutral-400" />
             <span>Apple Music</span>
           </button>
         </div>
       </div>
 
-      {/* In-App RFID Stadium Chip Pairing (Slide 5 & 11 Feature) */}
-      <div className="mb-6 p-4 rounded-2xl border border-blue-500/30 bg-gradient-to-r from-blue-950/30 via-black to-black flex items-center justify-between shadow-xl">
-        <div className="flex flex-col gap-1 min-w-0 pr-2">
-          <span className="text-[10px] font-black uppercase text-blue-400 tracking-wider">AREÁLOVÝ RFID ČIP</span>
-          <h3 className="text-sm font-extrabold text-white truncate">Spárovat Stadium Náramek</h3>
-          <p className="text-[11px] text-neutral-400">NFC dobíjení fyzických čipů přímo z mobilu</p>
+      {/* In-App RFID Stadium Chip Pairing */}
+      <div className="relative overflow-hidden mb-6 p-4 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md flex items-center justify-between gap-4 group hover:border-white/20 transition-all">
+        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <span className="text-[10px] text-neutral-400 font-bold tracking-wider uppercase">AREÁLOVÝ RFID ČIP</span>
+          <h3 className="text-sm font-bold text-white leading-snug truncate">Spárovat Stadium Náramek</h3>
+          <p className="text-xs text-neutral-400 truncate">NFC dobíjení fyzických čipů přímo z mobilu</p>
         </div>
         <button
           onClick={() => alert("Přiložte stadium RFID náramek k zadní straně telefonu (NFC)...")}
-          className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs uppercase tracking-wider active:scale-95 transition-all cursor-pointer shadow-md shrink-0 border border-white/20"
+          className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-xs font-semibold text-white border border-white/10 active:scale-95 transition-all cursor-pointer shrink-0"
         >
           Spárovat
         </button>

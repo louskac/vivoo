@@ -708,6 +708,134 @@ export const MOCK_EVENTS: EventItem[] = [
       { name: 'Celostátní Divácká Vstupenka', price: 350, povType: 'far-stadium' },
       { name: 'VIP RZ Zlín Servisní Zóna', price: 1200, povType: 'near-stadium' }
     ]
+  },
+  {
+    id: 'symphonic_rock',
+    title: 'Symphonic Rock Arena Night 2026',
+    tag: 'KONCERTY',
+    vibe: 'koncerty',
+    location: 'O2 arena, Praha 9',
+    date: 'So 14. listopadu 2026 · 20:00',
+    lineup: 'Czech National Symphony Orchestra & Rock Legends',
+    promoter: 'Live Nation Czech Republic',
+    weather: { temp: '20°C', text: 'Hala', icon: 'indoor' },
+    videoUrl: '/videos/symphonic_rock.mp4',
+    bgImg: '/images/xindl_live.jpg',
+    priceMin: 890,
+    priceMax: 2490,
+    isFree: false,
+    badge: 'EXCLUSIVE',
+    description: 'Největší rockové hymny v monumentálním aranžmá symfonického orchestru v O2 areně.',
+    sectors: [
+      { name: 'Stání u pódia', price: 890, povType: 'dancefloor-front' },
+      { name: 'VIP Sezení Tribuna A', price: 2490, povType: 'mid-stadium' }
+    ]
+  },
+  {
+    id: 'summerbeats_openair',
+    title: 'SummerBeats Festival 2026 – Sunset Edition',
+    tag: 'FESTIVAL',
+    vibe: 'festivaly',
+    location: 'Naplavka Rašínovo nábřeží, Praha 2',
+    date: 'Pá 7. srpna 2026 · 16:00',
+    lineup: 'Deep House & Organic Electronic Collective',
+    promoter: 'SummerBeats Prague',
+    weather: { temp: '27°C', text: 'Slunečno', icon: 'clear' },
+    videoUrl: '/videos/summerbeats.mp4',
+    bgImg: '/images/metronome_festival.jpg',
+    priceMin: 390,
+    priceMax: 990,
+    isFree: false,
+    description: 'Západ slunce na Vltavě s nejlepší elektronickou hudbou a letním koktejlovým barem.',
+    sectors: [
+      { name: 'Standard Beach Ticket', price: 390, povType: 'dancefloor-back' },
+      { name: 'VIP Boat Lounge', price: 990, povType: 'dancefloor-front' }
+    ]
+  },
+  {
+    id: 'techno_warehouse',
+    title: 'Techno Warehouse Rave – Industrial Chapter IV',
+    tag: 'PARTY',
+    vibe: 'party',
+    location: 'Hala 7, Pragovka Art District, Praha 9',
+    date: 'So 28. listopadu 2026 · 22:00',
+    lineup: 'Berlin Underground Residents & Local Techno Pioneer',
+    promoter: 'Warehouse Events',
+    weather: { temp: '18°C', text: 'Klub', icon: 'indoor' },
+    videoUrl: '/videos/techno.mp4',
+    bgImg: '/images/beats_for_love.jpg',
+    priceMin: 450,
+    priceMax: 890,
+    isFree: false,
+    description: 'Temný industriální rave v autentických prostorách staré fabrika Pragovka.',
+    sectors: [
+      { name: 'Warehouse Main Floor Pass', price: 450, povType: 'dancefloor-back' },
+      { name: 'VIP Backstage Deck', price: 890, povType: 'backstage' }
+    ]
+  },
+  {
+    id: 'flora_praha',
+    title: 'Květinová Výstava Botanica Praha',
+    tag: 'VÝSTAVIŠTĚ',
+    vibe: 'vystaviste',
+    location: 'Botanická zahrada Praha, Troja',
+    date: 'So 16. – Ne 24. května 2026',
+    lineup: 'Exotické orchideje, Tropický skleník Fata Morgana',
+    promoter: 'Botanická zahrada hl. m. Prahy',
+    weather: { temp: '22°C', text: 'Polojasno', icon: 'clear' },
+    videoUrl: '/videos/flora.mp4',
+    bgImg: '/images/flora_olomouc.jpg',
+    priceMin: 200,
+    priceMax: 450,
+    isFree: false,
+    description: 'Jarní výstava tropických květin a motýlů v mezinárodně uznávaném skleníku.',
+    sectors: [
+      { name: 'Vstupenka Fata Morgana', price: 200, povType: 'fountain-far' },
+      { name: 'Rodinné Vstupné', price: 450, povType: 'fountain-near' }
+    ]
+  },
+  {
+    id: 'prague_streetball',
+    title: 'Prague 3x3 Streetball Masters 2026',
+    tag: 'SPORT',
+    vibe: 'sport',
+    location: 'Václavské Náměstí, Praha 1',
+    date: 'So 15. srpna 2026 · 12:00',
+    lineup: 'FIBA 3x3 World Tour Qualifiers',
+    promoter: 'Czech Streetball Association',
+    weather: { temp: '25°C', text: 'Jasno', icon: 'clear' },
+    videoUrl: '/videos/basketball.mp4',
+    bgImg: '/images/allstar_game.jpg',
+    priceMin: 0,
+    priceMax: 350,
+    isFree: true,
+    badge: 'FREE ENTRY',
+    description: 'Špičkový pouliční basketbal přímo v centru Prahy. Vstup pro veřejnost zdarma!',
+    sectors: [
+      { name: 'Volné Stání u Kurtu', price: 0, povType: 'dancefloor-back' },
+      { name: 'VIP Tribunka', price: 350, povType: 'near-stadium' }
+    ]
+  },
+  {
+    id: 'louskacek_balet',
+    title: 'Louskáček – Vánoční Balet Národního Divadla',
+    tag: 'DIVADLO',
+    vibe: 'divadlo',
+    location: 'Státní opera Praha, Praha 1',
+    date: 'Čt 17. prosince 2026 · 19:00',
+    lineup: 'Balet Státní Opery & Dětský sbor',
+    promoter: 'Národní divadlo',
+    weather: { temp: '15°C', text: 'Divadlo', icon: 'indoor' },
+    videoUrl: '/videos/ballet.mp4',
+    bgImg: '/images/labuti_jezero.jpg',
+    priceMin: 690,
+    priceMax: 1990,
+    isFree: false,
+    description: 'Magické vánoční představení P. I. Čajkovského ve velkolepých kulisách Státní opery.',
+    sectors: [
+      { name: 'Balkón Sezení', price: 690, povType: 'far-stadium' },
+      { name: 'Přízemí Lóže', price: 1990, povType: 'near-stadium' }
+    ]
   }
 ];
 

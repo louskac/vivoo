@@ -124,11 +124,11 @@ export interface EventItem {
   videoUrl: string;
   tag: string;
   vibe: VibeCategory;
-  lineup: string;
+  lineup?: string;
   promoter?: string;
   description?: string;
   isFree?: boolean;
-  badge?: 'SOLD OUT' | 'VIP' | 'EARLY BIRD' | 'LIMITED' | 'FESTIVAL' | 'HUDBA';
+  badge?: string;
   weather?: { temp: string; text: string; icon: string };
   sectors?: { name: string; price: number; povType: string }[];
   liveConfig?: LiveEventConfig;
